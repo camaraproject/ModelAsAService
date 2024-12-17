@@ -31,8 +31,7 @@ The repository has no (pre)releases yet, work in progress is within the main bra
 * Meetings are held virtually <!-- for new API families request a meeting link from the LF admin team or replace the information with the existing meeting information (of the API family) -->
     * Schedule: !! tbd
     * [Registration / Join](https://wiki.camaraproject.org/x/TQAG) !! Update this link with your meeting registration/join link
-    * Minutes: Access [meeting minutes] !! update this link to your wiki page using the "Share" link
+    * Minutes: Access [meeting minutes](https://lf-camaraproject.atlassian.net/l/cp/GpKaVSqC)
 * Mailing List
-    <!-- Note: the $sub-project-mailinglistname$ is either already existing or will be created by the CAMARA Admin Team  -->
-    * Subscribe / Unsubscribe to the mailing list of this Sub Project <https://lists.camaraproject.org/g/sp-§sub-project-mailinglistname§>.
-    * A message to the community of this Sub Project can be sent using <sp-§sub-project-mailinglistname§@lists.camaraproject.org>.
+    * Subscribe / Unsubscribe to the mailing list of this Sub Project <https://lists.camaraproject.org/g/sp-maas>.
+    * A message to the community of this Sub Project can be sent using <sp-maas@lists.camaraproject.org>.
