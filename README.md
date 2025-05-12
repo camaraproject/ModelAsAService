@@ -13,8 +13,12 @@ API Repository to describe, develop, document, and test the service APIs of the 
 ## Scope
 
 * Service APIs “ModelAsAService” (see APIBacklog.md)
+* MaaS (Model as a Services) refers to the packaging of AI models and their associated capabilities into reusable services, enabling users to quickly and efficiently build, deploy, monitor, and invoke models without the need to develop and maintain underlying foundational capabilities.
 * The API provides the customer with the ability to:  
-  * §Short API scope description§
+  * build and manage personalized Knowledge Bases (knowledge-base-manage)
+  * quickly construct unique Q&A Assistant applications (qa-assistant-manage)
+  * provide Q&A services to the users of the application (qa-assistant-service)
+  * NOTE: more model service to be added.
 * Describe, develop, document, and test the APIs
 * Started: November 2024
 
