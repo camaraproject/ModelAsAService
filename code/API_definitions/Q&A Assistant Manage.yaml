@@ -1,0 +1,339 @@
+openapi: 3.0.4
+info:
+  title: Q&A Assistant - Manage
+  description: >-
+    QA Knowledge Assistant Management: Functionality Overview
+    
+
+    The QA Knowledge Assistant Management system provides APIs to create, retrieve, update, and delete QA assistants. These assistants are configured to handle question-answering tasks using large language models (LLMs) and optional knowledge bases. Below is a detailed explanation of the request parameters and response parameters used in these operations.
+
+
+    ## Request Parameters
+    
+    - ### name (Required) 
+
+      Type: string
+    
+      Description: A unique or descriptive name for the QA assistant (e.g., "Tech Support Assistant").
+    
+      Purpose: Identifies the assistant for management and user interaction.
+    
+    - ### description (Optional)
+
+      Type: string
+      
+      Description: A human-readable description of the assistant’s purpose or functionality.
+      
+      Example: "Handles customer inquiries about product features and troubleshooting."
+      
+    - ### knowledgeBaseId (Optional)
+
+      Type: string
+      
+      Description: The ID of an associated knowledge base (e.g., "kb123").
+      
+      Purpose: Links the assistant to a specific knowledge base for context-aware responses.
+      
+    - ### largeModelParameters (Required)
+
+      Type: object
+      
+      Description: Configuration for the large language model (LLM) used by the assistant.
+      
+      Structure:
+      
+            {
+              "model": "string",          // e.g., "gpt-4", "llama-3"
+              "parameters": {
+              "temperature": 0.5,      // Controls randomness (0.0 to 1.0)
+              "max_tokens": 200,       // Maximum response length
+              "top_p": 0.8             // Alternative to temperature
+              }
+            }
+            
+      Purpose: Customizes the LLM’s output quality and behavior.
+      
+    - ###   openingRemarks (Optional)
+
+      Type: string
+      
+      Description: A greeting or initial message the assistant uses when starting a conversation.
+      
+      Example: "Hello! How can I assist you today?"
+      
+      
+    ## Response Parameters
+     - ### success (Always Present)
+
+        Type: boolean
+      
+        Description: Indicates whether the operation succeeded (true) or failed (false).
+      
+        Example:
+        
+              "success": true
+              
+              
+    - ### assistantId (On Success)
+
+        Type: string
+        
+        Description: The unique identifier (UUID) of the created or updated assistant (e.g., "a1b2c3d4").
+        
+        Purpose: Used to reference the assistant in subsequent operations (e.g., updates or deletions).
+
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1
+
+servers:
+  - url: '{apiRoot}/qa/v1'
+    variables:
+      apiRoot:
+        default: http://localhost:8080
+
+    
+paths:
+  /assistants:
+    post:
+      summary: Create a new QA assistant
+      tags:
+        - Assistants
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssistantCreateRequest'
+      responses:
+        '201':
+          description: Assistant created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    get:
+      summary: List all QA assistants
+      tags:
+        - Assistants
+      responses:
+        '200':
+          description: List of assistants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Assistant'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /assistants/{assistantId}:
+    parameters:
+      - name: assistantId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier of the assistant
+
+    get:
+      summary: Get a specific QA assistant
+      tags:
+        - Assistants
+      responses:
+        '200':
+          description: Assistant details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assistant'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      summary: Update a QA assistant
+      tags:
+        - Assistants
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssistantUpdateRequest'
+      responses:
+        '200':
+          description: Assistant updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      summary: Delete a QA assistant
+      tags:
+        - Assistants
+      responses:
+        '204':
+          description: Assistant deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+components:
+  schemas:
+    AssistantCreateRequest:
+      type: object
+      required:
+        - name
+        - configurationPrompt
+        - largeModelParameters
+      properties:
+        name:
+          type: string
+          description: Name of the assistant
+        description:
+          type: string
+          description: Description of the assistant
+        knowledgeBaseId:
+          type: string
+          description: Optional ID of the associated knowledge base
+        configurationPrompt:
+          type: string
+          description: Configuration prompt for the assistant
+        largeModelParameters:
+          type: object
+          description: Parameters for the large language model
+          properties:
+            model:
+              type: string
+              example: "gpt-4"
+            parameters:
+              type: object
+              example:
+                temperature: 0.7
+                max_tokens: 200
+        openingRemarks:
+          type: string
+          description: Optional opening remarks for the assistant
+
+    AssistantUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: New name of the assistant
+        description:
+          type: string
+          description: New description of the assistant
+        knowledgeBaseId:
+          type: string
+          description: Optional new knowledge base ID
+        configurationPrompt:
+          type: string
+          description: Updated configuration prompt
+        largeModelParameters:
+          type: object
+          description: Updated model parameters
+          properties:
+            model:
+              type: string
+            parameters:
+              type: object
+        openingRemarks:
+          type: string
+          description: Updated opening remarks
+
+    Assistant:
+      type: object
+      properties:
+        assistantId:
+          type: string
+          description: Unique identifier of the assistant
+        name:
+          type: string
+        description:
+          type: string
+        knowledgeBaseId:
+          type: string
+        configurationPrompt:
+          type: string
+        largeModelParameters:
+          type: object
+        openingRemarks:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    AssistantResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Whether the operation succeeded
+        assistantId:
+          type: string
+          description: Unique identifier of the assistant
+        message:
+          type: string
+          description: Success/failure message
+        error:
+          $ref: '#/components/schemas/Error'
+      example:
+        success: true
+        assistantId: "a1b2c3d4"
+        message: "Assistant created successfully"
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP status code
+        message:
+          type: string
+          description: Error message
+      example:
+        code: 400
+        message: "Missing required parameter 'configurationPrompt'"
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters or missing required fields
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Assistant or resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    ServerError:
+      description: Internal server error occurred
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

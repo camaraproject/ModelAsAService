@@ -1,0 +1,192 @@
+openapi: 3.0.4
+info:
+  title: Q&A Assistant - Service
+  description: >-
+    API for querying answers from a QA assistant using a specified knowledge base and model configuration.
+
+
+    ## Request Parameters
+    
+    - ### assistantId (Required)
+
+        Type: string
+        
+        Description: Unique identifier of the QA assistant (e.g., "a1b2c3d4").
+        
+        Purpose: Identifies which configured assistant should process the query.
+    
+    - ### prompt (Required)
+
+        Type: string
+        
+        Description: The user's question or input (e.g., "What is the return policy?").
+        
+        Purpose: The text to be analyzed and answered by the assistant.
+   
+  
+      
+      
+    ## Response Parameters
+     - ### success (Required)
+
+        Type: boolean
+        
+        Description: Returns true if the query was processed successfully, false otherwise.
+
+        Example:
+        
+              "success": true
+              
+              
+    - ### finished (Required)
+
+      Type: string
+      
+      Description: Indicates how the response generation terminated:
+         - Stop: Normal completion (e.g., answer generated).
+         - Length: Response truncated due to token limit.
+         - Error: Processing error (e.g., model timeout).
+         - Filter: Answer blocked by content filter.
+        
+      Example: 
+      
+            "finished": "Stop"
+            
+    - ###    answerText (Required)
+
+      Type: string
+      
+      Description: The assistant's generated answer (e.g., "Our return policy allows 30 days...").
+      
+      Example: 
+      
+          "answerText": "..."
+          
+          
+    - ###  reference (Optional)
+
+      Type: string
+      
+      Description: Optional source reference (e.g., "kb123_section5") from the knowledge base.
+      
+      Example: 
+      
+          "reference": "kb123_section5"
+
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1
+
+servers:
+  - url: '{apiRoot}/qa/v1'
+    variables:
+      apiRoot:
+        default: http://localhost:8080
+
+    
+paths:
+  /answer:
+    post:
+      summary: Get an answer from a QA assistant
+      tags:
+        - Query
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryRequest'
+      responses:
+        '200':
+          description: Successful answer retrieval
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/AssistantNotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+components:
+  schemas:
+    QueryRequest:
+      type: object
+      required:
+        - assistantId
+        - prompt
+      properties:
+        assistantId:
+          type: string
+          description: Unique identifier of the QA assistant (e.g., "a1b2c3d4").
+        prompt:
+          type: string
+          description: The user's question or query (e.g., "How do I reset my password?").
+
+    QueryResponse:
+      type: object
+      required:
+        - success
+        - finished
+        - answerText
+      properties:
+        success:
+          type: boolean
+          description: Indicates whether the query was processed successfully.
+        finished:
+          type: string
+          description: Termination status of the response generation.
+          enum:
+            - Stop
+            - Length
+            - Error
+            - Filter
+          example: "Stop"
+        answerText:
+          type: string
+          description: The assistant's generated answer.
+          example: "To reset your password, go to settings > security..."
+        reference:
+          type: string
+          description: Optional reference to the knowledge base source (e.g., "kb123_section5").
+        error:
+          $ref: '#/components/schemas/Error'
+          description: Error details (present only on failure).
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP status code (e.g., 400 for bad request).
+        message:
+          type: string
+          description: Human-readable error message (e.g., "Assistant not found").
+      example:
+        code: 404
+        message: "Assistant with ID 'invalid-id' does not exist"
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters (e.g., missing 'prompt').
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    AssistantNotFound:
+      description: The specified assistant does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    ServerError:
+      description: Internal server error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
