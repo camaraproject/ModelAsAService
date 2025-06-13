@@ -1,0 +1,272 @@
+openapi: 3.0.4
+info:
+  title: Knowledge Base - Manage
+  description: >-
+    This API enables users to manage the knowledge base, including creating, reading, updating, and deleting entries within it.
+
+
+    ## API Functionality
+    
+    This API allows API clients to perform CRUD (Create, Read, Update, Delete) operations on the knowledge base hosted on the server. For example:
+
+    - GET retrieves the knowledge base list, with the response including the knowledge base ID, description, etc.
+
+    - POST is used to upload a knowledge entry. The supported formats include doc/pdf/txt/csv, and the file is uploaded to a specified knowledge base ID.
+    
+    ## Inputs
+
+    The endpoint request body is a JSON object with the following parameters:
+    
+    - `name`: knowledge base name.
+    
+    - `description`: A detailed description of the current knowledge base.
+    
+    - `document`: The files in the current knowledge base, with supported formats: doc/pdf/txt/csv.
+    
+    ## Outputs
+
+    If successful, a JSON object is returned containing the following data:
+    
+    - `knowledgeBaseID`: knowledge base ID .
+
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1
+
+servers:
+  - url: '{apiRoot}/qa/v1'
+    variables:
+      apiRoot:
+        default: http://localhost:8080
+tags:
+  - name: knowledge-base
+    description: knowledge base manage
+    
+paths:
+  /knowledge_bases:
+    post:
+      summary: Create a new knowledge base
+      tags:
+        - Knowledge Bases
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBaseCreateRequest'
+      responses:
+        '201':
+          description: Knowledge base created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBase'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    get:
+      summary: Get all knowledge bases
+      tags:
+        - Knowledge Bases
+      responses:
+        '200':
+          description: List of knowledge bases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KnowledgeBase'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /knowledge_bases/{knowledgeBaseID}:
+    parameters:
+      - name: knowledgeBaseID
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the knowledge base
+
+    get:
+      summary: Get a specific knowledge base
+      tags:
+        - Knowledge Bases
+      responses:
+        '200':
+          description: Knowledge base details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBase'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      summary: Update a knowledge base
+      tags:
+        - Knowledge Bases
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBaseUpdateRequest'
+      responses:
+        '200':
+          description: Knowledge base updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBase'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      summary: Delete a knowledge base
+      tags:
+        - Knowledge Bases
+      responses:
+        '204':
+          description: Knowledge base deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /knowledge_bases/{knowledgeBaseID}/documents:
+    post:
+      summary: Upload a document to a knowledge base
+      tags:
+        - Documents
+      parameters:
+        - name: knowledgeBaseID
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                document:
+                  type: string
+                  format: binary
+              required:
+                - document
+        required: true
+      responses:
+        '201':
+          description: Document uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Document uploaded successfully"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+components:
+  schemas:
+    KnowledgeBase:
+      type: object
+      properties:
+        knowledgeBaseID:
+          type: string
+          description: Unique identifier of the knowledge base
+        name:
+          type: string
+          description: Name of the knowledge base
+        description:
+          type: string
+          description: Detailed description of the knowledge base
+        documents:
+          type: array
+          items:
+            type: object
+            properties:
+              filename:
+                type: string
+              format:
+                type: string
+                description: File format (doc/pdf/txt/csv)
+              uploadDate:
+                type: string
+                format: date-time
+          description: List of documents in the knowledge base
+
+    KnowledgeBaseCreateRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Name of the knowledge base
+        description:
+          type: string
+          description: Detailed description of the knowledge base
+
+    KnowledgeBaseUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: New name of the knowledge base
+        description:
+          type: string
+          description: New description of the knowledge base
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP status code
+        message:
+          type: string
+          description: Error message
+      example:
+        code: 400
+        message: "Invalid document format. Supported formats: doc/pdf/txt/csv"
+
+  responses:
+    BadRequest:
+      description: Bad request due to invalid input
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Knowledge base or document not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
