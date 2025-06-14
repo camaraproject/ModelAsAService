@@ -8,6 +8,7 @@
 <a href="https://github.com/camaraproject/Governance/blob/main/ProjectStructureAndRoles.md" title="Sandbox API Repository"><img src="https://img.shields.io/badge/Sandbox%20API%20Repository-yellow?style=plastic"></a>
 
 # ModelAsAService
+
 Sandbox API Repository to describe, develop, document, and test the ModelAsAService Service API(s). The repository does not yet belong to a CAMARA Sub Project.
 
 * API Repository [wiki page](https://lf-camaraproject.atlassian.net/wiki/spaces/CAM/pages/52658427/ModelAsAService)
@@ -34,7 +35,7 @@ The repository has no (pre)releases yet, work in progress is within the main bra
 <!-- For changes see [CHANGELOG.md](https://github.com/camaraproject/ModelAsAService/blob/main/CHANGELOG.md) -->
 
 ## Contributing
-* Meetings are held virtually <!-- for new API families request a meeting link from the LF admin team or replace the information with the existing meeting information (of the API family) -->
+* Meetings are held virtually <!-- for new Sandbox API repositories request a meeting link from the LF admin team or replace the information with the existing meeting information -->
     * Schedule: !! tbd
     * [Registration / Join](https://wiki.camaraproject.org/x/TQAG) !! Update this link with your meeting registration/join link
     * Minutes: Access [meeting minutes](https://lf-camaraproject.atlassian.net/l/cp/GpKaVSqC)
