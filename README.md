@@ -11,7 +11,7 @@
 
 Sandbox API Repository to describe, develop, document, and test the ModelAsAService Service API(s). The repository does not yet belong to a CAMARA Sub Project.
 
-* API Repository [wiki page](https://lf-camaraproject.atlassian.net/wiki/spaces/CAM/pages/52658427/ModelAsAService)
+* API Repository [wiki page](https://lf-camaraproject.atlassian.net/wiki/x/_4AjAw)
 
 ## Scope
 
