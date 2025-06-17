@@ -1,105 +1,37 @@
-openapi: 3.0.4
+openapi: 3.0.3
 info:
   title: Q&A Assistant - Manage
   description: >-
-    QA Knowledge Assistant Management: Functionality Overview
-    
-
     The QA Knowledge Assistant Management system provides APIs to create, retrieve, update, and delete QA assistants. These assistants are configured to handle question-answering tasks using large language models (LLMs) and optional knowledge bases. Below is a detailed explanation of the request parameters and response parameters used in these operations.
 
-
-    ## Request Parameters
-    
-    - ### name (Required) 
-
-      Type: string
-    
-      Description: A unique or descriptive name for the QA assistant (e.g., "Tech Support Assistant").
-    
-      Purpose: Identifies the assistant for management and user interaction.
-    
-    - ### description (Optional)
-
-      Type: string
-      
-      Description: A human-readable description of the assistant’s purpose or functionality.
-      
-      Example: "Handles customer inquiries about product features and troubleshooting."
-      
-    - ### knowledgeBaseId (Optional)
-
-      Type: string
-      
-      Description: The ID of an associated knowledge base (e.g., "kb123").
-      
-      Purpose: Links the assistant to a specific knowledge base for context-aware responses.
-      
-    - ### largeModelParameters (Required)
-
-      Type: object
-      
-      Description: Configuration for the large language model (LLM) used by the assistant.
-      
-      Structure:
-      
-            {
-              "model": "string",          // e.g., "gpt-4", "llama-3"
-              "parameters": {
-              "temperature": 0.5,      // Controls randomness (0.0 to 1.0)
-              "max_tokens": 200,       // Maximum response length
-              "top_p": 0.8             // Alternative to temperature
-              }
-            }
-            
-      Purpose: Customizes the LLM’s output quality and behavior.
-      
-    - ###   openingRemarks (Optional)
-
-      Type: string
-      
-      Description: A greeting or initial message the assistant uses when starting a conversation.
-      
-      Example: "Hello! How can I assist you today?"
-      
-      
-    ## Response Parameters
-     - ### success (Always Present)
-
-        Type: boolean
-      
-        Description: Indicates whether the operation succeeded (true) or failed (false).
-      
-        Example:
-        
-              "success": true
-              
-              
-    - ### assistantId (On Success)
-
-        Type: string
-        
-        Description: The unique identifier (UUID) of the created or updated assistant (e.g., "a1b2c3d4").
-        
-        Purpose: Used to reference the assistant in subsequent operations (e.g., updates or deletions).
+    ## Security and Authentication
+    This API uses OAuth 2.0 with OpenID Connect for authentication. The following scopes are required:
+    - assistants:create - Create new assistants
+    - assistants:read - Read assistant details
+    - assistants:update - Update existing assistants
+    - assistants:delete - Delete assistants
 
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.0.1
+  version: wip
 
 servers:
-  - url: '{apiRoot}/qa/v1'
+  - url: '{apiRoot}/qa/vwip/v1'
     variables:
       apiRoot:
         default: http://localhost:8080
 
-    
 paths:
   /assistants:
     post:
       summary: Create a new QA assistant
       tags:
         - Assistants
+      parameters:
+        - $ref: '#/components/parameters/x-correlator'  # Added correlator
+      security:
+        - openId: ['assistants:create']  # Added security scope
       requestBody:
         required: true
         content:
@@ -114,14 +46,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/AssistantResponse'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
         '500':
-          $ref: '#/components/responses/ServerError'
+          $ref: '#/components/responses/Generic500'
 
     get:
       summary: List all QA assistants
       tags:
         - Assistants
+      parameters:
+        - $ref: '#/components/parameters/x-correlator'  # Added correlator
+      security:
+        - openId: ['assistants:read']  # Added security scope
       responses:
         '200':
           description: List of assistants
@@ -131,8 +71,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Assistant'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
         '500':
-          $ref: '#/components/responses/ServerError'
+          $ref: '#/components/responses/Generic500'
 
   /assistants/{assistantId}:
     parameters:
@@ -142,11 +86,14 @@ paths:
         schema:
           type: string
         description: Unique identifier of the assistant
+      - $ref: '#/components/parameters/x-correlator'  # Added correlator
 
     get:
       summary: Get a specific QA assistant
       tags:
         - Assistants
+      security:
+        - openId: ['assistants:read']  # Added security scope
       responses:
         '200':
           description: Assistant details
@@ -154,15 +101,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Assistant'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
         '404':
-          $ref: '#/components/responses/NotFound'
+          $ref: '#/components/responses/Generic404'
         '500':
-          $ref: '#/components/responses/ServerError'
+          $ref: '#/components/responses/Generic500'
 
     put:
       summary: Update a QA assistant
       tags:
         - Assistants
+      security:
+        - openId: ['assistants:update']  # Added security scope
       requestBody:
         required: true
         content:
@@ -177,25 +130,52 @@ paths:
               schema:
                 $ref: '#/components/schemas/AssistantResponse'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
         '404':
-          $ref: '#/components/responses/NotFound'
+          $ref: '#/components/responses/Generic404'
         '500':
-          $ref: '#/components/responses/ServerError'
+          $ref: '#/components/responses/Generic500'
 
     delete:
       summary: Delete a QA assistant
       tags:
         - Assistants
+      security:
+        - openId: ['assistants:delete']  # Added security scope
       responses:
         '204':
           description: Assistant deleted successfully
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
         '404':
-          $ref: '#/components/responses/NotFound'
+          $ref: '#/components/responses/Generic404'
         '500':
-          $ref: '#/components/responses/ServerError'
+          $ref: '#/components/responses/Generic500'
 
 components:
+  securitySchemes:
+    openId:
+      type: openIdConnect
+      openIdConnectUrl: https://example.com/.well-known/openid-configuration
+      description: OpenID Connect authentication
+
+  parameters:
+    x-correlator:
+      name: x-correlator
+      in: header
+      description: Correlation ID for request tracing
+      required: true
+      schema:
+        type: string
+        pattern: '^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$'
+        example: "b4333c46-49c0-4f62-80d7-f0ef930f1c46"
+
   schemas:
     AssistantCreateRequest:
       type: object
@@ -219,15 +199,35 @@ components:
         largeModelParameters:
           type: object
           description: Parameters for the large language model
+          required:
+            - model
+            - parameters
           properties:
             model:
               type: string
               example: "gpt-4"
             parameters:
               type: object
-              example:
-                temperature: 0.7
-                max_tokens: 200
+              required:
+                - temperature
+                - max_tokens
+              properties:
+                temperature:
+                  type: number
+                  format: float
+                  minimum: 0.0
+                  maximum: 1.0
+                  example: 0.7
+                max_tokens:
+                  type: integer
+                  minimum: 1
+                  example: 200
+                top_p:
+                  type: number
+                  format: float
+                  minimum: 0.0
+                  maximum: 1.0
+                  example: 0.8
         openingRemarks:
           type: string
           description: Optional opening remarks for the assistant
@@ -255,6 +255,15 @@ components:
               type: string
             parameters:
               type: object
+              properties:
+                temperature:
+                  type: number
+                  format: float
+                max_tokens:
+                  type: integer
+                top_p:
+                  type: number
+                  format: float
         openingRemarks:
           type: string
           description: Updated opening remarks
@@ -265,6 +274,8 @@ components:
         assistantId:
           type: string
           description: Unique identifier of the assistant
+          format: uuid
+          example: "a1b2c3d4-5678-90ab-cdef-1234567890ab"
         name:
           type: string
         description:
@@ -275,6 +286,11 @@ components:
           type: string
         largeModelParameters:
           type: object
+          properties:
+            model:
+              type: string
+            parameters:
+              type: object
         openingRemarks:
           type: string
         createdAt:
@@ -293,47 +309,106 @@ components:
         assistantId:
           type: string
           description: Unique identifier of the assistant
+          format: uuid
         message:
           type: string
           description: Success/failure message
-        error:
-          $ref: '#/components/schemas/Error'
-      example:
-        success: true
-        assistantId: "a1b2c3d4"
-        message: "Assistant created successfully"
 
-    Error:
+    ErrorInfo:
       type: object
+      required:
+        - status
+        - code
+        - message
       properties:
-        code:
+        status:
           type: integer
           description: HTTP status code
+        code:
+          type: string
+          description: Error code identifier
         message:
           type: string
-          description: Error message
-      example:
-        code: 400
-        message: "Missing required parameter 'configurationPrompt'"
+          description: Human-readable error message
 
   responses:
-    BadRequest:
-      description: Invalid request parameters or missing required fields
+    Generic400:
+      description: Bad request due to invalid input
+      headers:
+        x-correlator:
+          $ref: '#/components/parameters/x-correlator'
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/ErrorInfo'
+          examples:
+            MissingParameter:
+              value:
+                status: 400
+                code: MISSING_REQUIRED_PARAM
+                message: "Required parameter 'configurationPrompt' is missing"
+            InvalidParameter:
+              value:
+                status: 400
+                code: INVALID_PARAMETER_VALUE
+                message: "Temperature must be between 0.0 and 1.0"
 
-    NotFound:
-      description: Assistant or resource not found
+    Generic401:
+      description: Authentication required
+      headers:
+        x-correlator:
+          $ref: '#/components/parameters/x-correlator'
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            value:
+              status: 401
+              code: UNAUTHENTICATED
+              message: Authentication credentials missing or invalid
 
-    ServerError:
-      description: Internal server error occurred
+    Generic403:
+      description: Insufficient permissions
+      headers:
+        x-correlator:
+          $ref: '#/components/parameters/x-correlator'
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            value:
+              status: 403
+              code: PERMISSION_DENIED
+              message: User lacks required permissions for this operation
+
+    Generic404:
+      description: Resource not found
+      headers:
+        x-correlator:
+          $ref: '#/components/parameters/x-correlator'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            value:
+              status: 404
+              code: ASSISTANT_NOT_FOUND
+              message: "Specified assistant ID does not exist"
+
+    Generic500:
+      description: Internal server error
+      headers:
+        x-correlator:
+          $ref: '#/components/parameters/x-correlator'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            value:
+              status: 500
+              code: INTERNAL_SERVER_ERROR
+              message: "Unexpected server error occurred"
