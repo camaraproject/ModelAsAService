@@ -1,0 +1,402 @@
+openapi: 3.0.3
+info:
+  title: Knowledge Base - Manage
+  description: >-
+    This API enables users to manage the knowledge base, including creating, reading, updating, and deleting entries within it.
+
+
+    ## API Functionality
+    
+     This API allows API clients to perform CRUD operations on the knowledge base hosted on the server.
+     
+    ## Security and Authentication
+    This API uses OAuth 2.0 with OpenID Connect for authentication. The following scopes are required:
+    - knowledge-base:create - Create new knowledge bases
+    - knowledge-base:read - Read knowledge base entries
+    - knowledge-base:update - Update existing knowledge bases
+    - knowledge-base:delete - Delete knowledge bases
+    - documents:upload - Upload documents to knowledge bases
+
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: wip 
+
+servers:
+  - url: '{apiRoot}/qa/vwip/v1'
+    variables:
+      apiRoot:
+        default: http://localhost:8080
+
+tags:
+  - name: knowledge-base
+    description: Knowledge base management
+
+paths:
+  /knowledge_bases:
+    post:
+      summary: Create a new knowledge base
+      tags:
+        - Knowledge Bases
+      parameters:
+        - $ref: '#/components/parameters/x-correlator'  # Added correlator
+      security:
+        - openId: ['knowledge-base:create']  # Added security scope
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBaseCreateRequest'
+      responses:
+        '201':
+          description: Knowledge base created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBase'
+        '400':
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '500':
+          $ref: '#/components/responses/Generic500'
+
+    get:
+      summary: Get all knowledge bases
+      tags:
+        - Knowledge Bases
+      parameters:
+        - $ref: '#/components/parameters/x-correlator'  # Added correlator
+      security:
+        - openId: ['knowledge-base:read']  # Added security scope
+      responses:
+        '200':
+          description: List of knowledge bases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KnowledgeBase'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '500':
+          $ref: '#/components/responses/Generic500'
+
+  /knowledge_bases/{knowledgeBaseID}:
+    parameters:
+      - name: knowledgeBaseID
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the knowledge base
+      - $ref: '#/components/parameters/x-correlator'  # Added correlator
+
+    get:
+      summary: Get a specific knowledge base
+      tags:
+        - Knowledge Bases
+      security:
+        - openId: ['knowledge-base:read']  # Added security scope
+      responses:
+        '200':
+          description: Knowledge base details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBase'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '404':
+          $ref: '#/components/responses/Generic404'
+        '500':
+          $ref: '#/components/responses/Generic500'
+
+    put:
+      summary: Update a knowledge base
+      tags:
+        - Knowledge Bases
+      security:
+        - openId: ['knowledge-base:update']  # Added security scope
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBaseUpdateRequest'
+      responses:
+        '200':
+          description: Knowledge base updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBase'
+        '400':
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '404':
+          $ref: '#/components/responses/Generic404'
+        '500':
+          $ref: '#/components/responses/Generic500'
+
+    delete:
+      summary: Delete a knowledge base
+      tags:
+        - Knowledge Bases
+      security:
+        - openId: ['knowledge-base:delete']  # Added security scope
+      responses:
+        '204':
+          description: Knowledge base deleted successfully
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '404':
+          $ref: '#/components/responses/Generic404'
+        '500':
+          $ref: '#/components/responses/Generic500'
+
+  /knowledge_bases/{knowledgeBaseID}/documents:
+    post:
+      summary: Upload a document to a knowledge base
+      tags:
+        - Documents
+      parameters:
+        - name: knowledgeBaseID
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/x-correlator'  # Added correlator
+      security:
+        - openId: ['documents:upload']  # Added security scope
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                document:
+                  type: string
+                  format: binary
+              required:
+                - document
+        required: true
+      responses:
+        '201':
+          description: Document uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Document uploaded successfully"
+        '400':
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '404':
+          $ref: '#/components/responses/Generic404'
+        '415':
+          $ref: '#/components/responses/Generic415'
+        '500':
+          $ref: '#/components/responses/Generic500'
+
+components:
+  securitySchemes:
+    openId:
+      type: openIdConnect
+      openIdConnectUrl: https://example.com/.well-known/openid-configuration
+      description: OpenID Connect authentication
+
+  parameters:
+    x-correlator:
+      name: x-correlator
+      in: header
+      description: Correlation ID for request tracing
+      required: true
+      schema:
+        type: string
+        pattern: '^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$'
+        example: "b4333c46-49c0-4f62-80d7-f0ef930f1c46"
+
+  schemas:
+    KnowledgeBase:
+      type: object
+      properties:
+        knowledgeBaseID:
+          type: string
+          description: Unique identifier of the knowledge base
+        name:
+          type: string
+          description: Name of the knowledge base
+        description:
+          type: string
+          description: Detailed description of the knowledge base
+        documents:
+          type: array
+          items:
+            type: object
+            properties:
+              filename:
+                type: string
+              format:
+                type: string
+                enum: [doc, pdf, txt, csv]
+                description: File format
+              uploadDate:
+                type: string
+                format: date-time
+          description: List of documents in the knowledge base
+
+    KnowledgeBaseCreateRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Name of the knowledge base
+        description:
+          type: string
+          description: Detailed description of the knowledge base
+
+    KnowledgeBaseUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: New name of the knowledge base
+        description:
+          type: string
+          description: New description of the knowledge base
+
+    ErrorInfo:
+      type: object
+      required:
+        - status
+        - code
+        - message
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+        code:
+          type: string
+          description: Error code identifier
+        message:
+          type: string
+          description: Human-readable error message
+
+  responses:
+    Generic400:
+      description: Bad request due to invalid input
+      headers:
+        x-correlator:
+          $ref: '#/components/parameters/x-correlator'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          examples:
+            InvalidFormat:
+              value:
+                status: 400
+                code: INVALID_DOCUMENT_FORMAT
+                message: "Invalid document format. Supported formats: doc/pdf/txt/csv"
+            MissingParameter:
+              value:
+                status: 400
+                code: MISSING_REQUIRED_PARAM
+                message: "Required parameter 'name' is missing"
+
+    Generic401:
+      description: Authentication required
+      headers:
+        x-correlator:
+          $ref: '#/components/parameters/x-correlator'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            value:
+              status: 401
+              code: UNAUTHENTICATED
+              message: Authentication credentials missing or invalid
+
+    Generic403:
+      description: Insufficient permissions
+      headers:
+        x-correlator:
+          $ref: '#/components/parameters/x-correlator'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            value:
+              status: 403
+              code: PERMISSION_DENIED
+              message: User lacks required permissions for this operation
+
+    Generic404:
+      description: Resource not found
+      headers:
+        x-correlator:
+          $ref: '#/components/parameters/x-correlator'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            value:
+              status: 404
+              code: KNOWLEDGE_BASE_NOT_FOUND
+              message: "Specified knowledge base ID does not exist"
+
+    Generic415:
+      description: Unsupported media type
+      headers:
+        x-correlator:
+          $ref: '#/components/parameters/x-correlator'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            value:
+              status: 415
+              code: UNSUPPORTED_MEDIA_TYPE
+              message: "Unsupported document format. Supported formats: doc/pdf/txt/csv"
+
+    Generic500:
+      description: Internal server error
+      headers:
+        x-correlator:
+          $ref: '#/components/parameters/x-correlator'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            value:
+              status: 500
+              code: INTERNAL_SERVER_ERROR
+              message: "Unexpected server error occurred"
