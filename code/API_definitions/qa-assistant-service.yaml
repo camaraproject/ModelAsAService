@@ -1,0 +1,221 @@
+openapi: 3.0.3
+info:
+  title: Q&A Assistant - Service
+  description: >-
+    API for querying answers from a QA assistant using a specified knowledge base and model configuration.
+
+    ## Security and Authentication
+    This API uses OAuth 2.0 with OpenID Connect for authentication. The following scope is required:
+    - assistant:query - Permission to query assistants
+
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: wip
+
+servers:
+  - url: '{apiRoot}/qa/vwip/v1'
+    variables:
+      apiRoot:
+        default: http://localhost:8080
+
+paths:
+  /answer:
+    post:
+      summary: Get an answer from a QA assistant
+      tags:
+        - Query
+      parameters:
+        - $ref: '#/components/parameters/x-correlator'  # Added correlator
+      security:
+        - openId: ['assistant:query']  # Added security scope
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryRequest'
+      responses:
+        '200':
+          description: Successful answer retrieval
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+        '400':
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '404':
+          $ref: '#/components/responses/Generic404'
+        '500':
+          $ref: '#/components/responses/Generic500'
+
+components:
+  securitySchemes:
+    openId:
+      type: openIdConnect
+      openIdConnectUrl: https://example.com/.well-known/openid-configuration
+      description: OpenID Connect authentication
+
+  parameters:
+    x-correlator:
+      name: x-correlator
+      in: header
+      description: Correlation ID for request tracing
+      required: true
+      schema:
+        type: string
+        pattern: '^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$'
+        example: "b4333c46-49c0-4f62-80d7-f0ef930f1c46"
+
+  schemas:
+    QueryRequest:
+      type: object
+      required:
+        - assistantId
+        - prompt
+      properties:
+        assistantId:
+          type: string
+          format: uuid
+          description: Unique identifier of the QA assistant
+          example: "a1b2c3d4-5678-90ab-cdef-1234567890ab"
+        prompt:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          description: The user's question or query
+          example: "How do I reset my password?"
+
+    QueryResponse:
+      type: object
+      required:
+        - success
+        - finished
+        - answerText
+      properties:
+        success:
+          type: boolean
+          description: Indicates whether the query was processed successfully
+        finished:
+          type: string
+          description: Termination status of the response generation
+          enum:
+            - Stop
+            - Length
+            - Error
+            - Filter
+          example: "Stop"
+        answerText:
+          type: string
+          description: The assistant's generated answer
+          example: "To reset your password, go to settings > security..."
+        reference:
+          type: string
+          description: Optional reference to the knowledge base source
+          example: "kb123_section5"
+
+    ErrorInfo:
+      type: object
+      required:
+        - status
+        - code
+        - message
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+        code:
+          type: string
+          description: Error code identifier
+        message:
+          type: string
+          description: Human-readable error message
+
+  responses:
+    Generic400:
+      description: Bad request due to invalid input
+      headers:
+        x-correlator:
+          $ref: '#/components/parameters/x-correlator'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          examples:
+            MissingPrompt:
+              value:
+                status: 400
+                code: MISSING_PROMPT
+                message: "Required parameter 'prompt' is missing"
+            InvalidAssistantId:
+              value:
+                status: 400
+                code: INVALID_ASSISTANT_ID
+                message: "Assistant ID must be a valid UUID"
+
+    Generic401:
+      description: Authentication required
+      headers:
+        x-correlator:
+          $ref: '#/components/parameters/x-correlator'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            value:
+              status: 401
+              code: UNAUTHENTICATED
+              message: Authentication credentials missing or invalid
+
+    Generic403:
+      description: Insufficient permissions
+      headers:
+        x-correlator:
+          $ref: '#/components/parameters/x-correlator'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            value:
+              status: 403
+              code: PERMISSION_DENIED
+              message: User lacks required permissions to query this assistant
+
+    Generic404:
+      description: Resource not found
+      headers:
+        x-correlator:
+          $ref: '#/components/parameters/x-correlator'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            value:
+              status: 404
+              code: ASSISTANT_NOT_FOUND
+              message: "Specified assistant ID does not exist"
+
+    Generic500:
+      description: Internal server error
+      headers:
+        x-correlator:
+          $ref: '#/components/parameters/x-correlator'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorInfo'
+          example:
+            value:
+              status: 500
+              code: INTERNAL_SERVER_ERROR
+              message: "Unexpected server error occurred while processing query"
