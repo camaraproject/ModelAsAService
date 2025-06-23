@@ -340,18 +340,44 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 400
+                  code:
+                    enum:
+                      - MISSING_REQUIRED_PARAM
+                      - INVALID_PARAMETER_VALUE
+                      - INVALID_ARGUMENT
+                      - "{{SPECIFIC_CODE}}"
           examples:
-            MissingParameter:
+            GENERIC_400_MISSING_REQUIRED_PARAM:
+              description: Missing required parameter
               value:
                 status: 400
                 code: MISSING_REQUIRED_PARAM
                 message: "Required parameter 'configurationPrompt' is missing"
-            InvalidParameter:
+            GENERIC_400_INVALID_PARAMETER_VALUE:
+              description: Invalid parameter value
               value:
                 status: 400
                 code: INVALID_PARAMETER_VALUE
                 message: "Temperature must be between 0.0 and 1.0"
+            GENERIC_400_INVALID_ARGUMENT:
+              description: Invalid argument
+              value:
+                status: 400
+                code: INVALID_ARGUMENT
+                message: "Client specified an invalid argument"
+            GENERIC_400_{{SPECIFIC_CODE}}:
+              description: Specific bad request situation
+              value:
+                status: 400
+                code: { { SPECIFIC_CODE } }
+                message: { { SPECIFIC_CODE_MESSAGE } }
 
     Generic401:
       description: Authentication required
@@ -361,12 +387,30 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            value:
-              status: 401
-              code: UNAUTHENTICATED
-              message: Authentication credentials missing or invalid
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 401
+                  code:
+                    enum:
+                      - UNAUTHENTICATED
+                      - "{{SPECIFIC_CODE}}"
+          examples:
+            GENERIC_401_UNAUTHENTICATED:
+              description: Authentication credentials missing or invalid
+              value:
+                status: 401
+                code: UNAUTHENTICATED
+                message: Authentication credentials missing or invalid
+            GENERIC_401_{{SPECIFIC_CODE}}:
+              description: Specific authentication failure
+              value:
+                status: 401
+                code: { { SPECIFIC_CODE } }
+                message: { { SPECIFIC_CODE_MESSAGE } }
 
     Generic403:
       description: Insufficient permissions
@@ -376,12 +420,37 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            value:
-              status: 403
-              code: PERMISSION_DENIED
-              message: User lacks required permissions for this operation
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 403
+                  code:
+                    enum:
+                      - PERMISSION_DENIED
+                      - INVALID_TOKEN_CONTEXT
+                      - "{{SPECIFIC_CODE}}"
+          examples:
+            GENERIC_403_PERMISSION_DENIED:
+              description: User lacks required permissions
+              value:
+                status: 403
+                code: PERMISSION_DENIED
+                message: User lacks required permissions for this operation
+            GENERIC_403_INVALID_TOKEN_CONTEXT:
+              description: Token context inconsistency
+              value:
+                status: 403
+                code: INVALID_TOKEN_CONTEXT
+                message: "Assistant ID is not consistent with access token"
+            GENERIC_403_{{SPECIFIC_CODE}}:
+              description: Specific permission issue
+              value:
+                status: 403
+                code: { { SPECIFIC_CODE } }
+                message: { { SPECIFIC_CODE_MESSAGE } }
 
     Generic404:
       description: Resource not found
@@ -391,12 +460,44 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            value:
-              status: 404
-              code: ASSISTANT_NOT_FOUND
-              message: "Specified assistant ID does not exist"
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 404
+                  code:
+                    enum:
+                      - NOT_FOUND
+                      - ASSISTANT_NOT_FOUND
+                      - IDENTIFIER_NOT_FOUND
+                      - "{{SPECIFIC_CODE}}"
+          examples:
+            GENERIC_404_NOT_FOUND:
+              description: Resource is not found
+              value:
+                status: 404
+                code: NOT_FOUND
+                message: The specified resource is not found.
+            GENERIC_404_ASSISTANT_NOT_FOUND:
+              description: Assistant not found
+              value:
+                status: 404
+                code: ASSISTANT_NOT_FOUND
+                message: "Specified assistant ID does not exist"
+            GENERIC_404_IDENTIFIER_NOT_FOUND:
+              description: Identifier not found
+              value:
+                status: 404
+                code: IDENTIFIER_NOT_FOUND
+                message: Assistant identifier not found.
+            GENERIC_404_{{SPECIFIC_CODE}}:
+              description: Specific resource not found situation
+              value:
+                status: 404
+                code: { { SPECIFIC_CODE } }
+                message: { { SPECIFIC_CODE_MESSAGE } }
 
     Generic500:
       description: Internal server error
@@ -406,9 +507,34 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            value:
-              status: 500
-              code: INTERNAL_SERVER_ERROR
-              message: "Unexpected server error occurred"
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 500
+                  code:
+                    enum:
+                      - INTERNAL_SERVER_ERROR
+                      - INTERNAL
+                      - "{{SPECIFIC_CODE}}"
+          examples:
+            GENERIC_500_INTERNAL_SERVER_ERROR:
+              description: Unexpected server error
+              value:
+                status: 500
+                code: INTERNAL_SERVER_ERROR
+                message: "Unexpected server error occurred"
+            GENERIC_500_INTERNAL:
+              description: Internal server error
+              value:
+                status: 500
+                code: INTERNAL
+                message: Unknown server error
+            GENERIC_500_{{SPECIFIC_CODE}}:
+              description: Specific internal server error
+              value:
+                status: 500
+                code: { { SPECIFIC_CODE } }
+                message: { { SPECIFIC_CODE_MESSAGE } }
