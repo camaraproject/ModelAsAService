@@ -313,18 +313,37 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 400
+                  code:
+                    enum:
+                      - INVALID_DOCUMENT_FORMAT
+                      - MISSING_REQUIRED_PARAM
+                      - "{{SPECIFIC_CODE}}"
           examples:
-            InvalidFormat:
+            GENERIC_400_INVALID_DOCUMENT_FORMAT:
+              description: Invalid document format
               value:
                 status: 400
                 code: INVALID_DOCUMENT_FORMAT
                 message: "Invalid document format. Supported formats: doc/pdf/txt/csv"
-            MissingParameter:
+            GENERIC_400_MISSING_REQUIRED_PARAM:
+              description: Missing required parameter
               value:
                 status: 400
                 code: MISSING_REQUIRED_PARAM
                 message: "Required parameter 'name' is missing"
+            GENERIC_400_{{SPECIFIC_CODE}}:
+              description: Specific bad request situation
+              value:
+                status: 400
+                code: { { SPECIFIC_CODE } }
+                message: { { SPECIFIC_CODE_MESSAGE } }
 
     Generic401:
       description: Authentication required
@@ -334,12 +353,30 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            value:
-              status: 401
-              code: UNAUTHENTICATED
-              message: Authentication credentials missing or invalid
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 401
+                  code:
+                    enum:
+                      - UNAUTHENTICATED
+                      - "{{SPECIFIC_CODE}}"
+          examples:
+            GENERIC_401_UNAUTHENTICATED:
+              description: Authentication credentials missing or invalid
+              value:
+                status: 401
+                code: UNAUTHENTICATED
+                message: Authentication credentials missing or invalid
+            GENERIC_401_{{SPECIFIC_CODE}}:
+              description: Specific authentication failure
+              value:
+                status: 401
+                code: { { SPECIFIC_CODE } }
+                message: { { SPECIFIC_CODE_MESSAGE } }
 
     Generic403:
       description: Insufficient permissions
@@ -349,12 +386,30 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            value:
-              status: 403
-              code: PERMISSION_DENIED
-              message: User lacks required permissions for this operation
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 403
+                  code:
+                    enum:
+                      - PERMISSION_DENIED
+                      - "{{SPECIFIC_CODE}}"
+          examples:
+            GENERIC_403_PERMISSION_DENIED:
+              description: User lacks required permissions
+              value:
+                status: 403
+                code: PERMISSION_DENIED
+                message: User lacks required permissions for this operation
+            GENERIC_403_{{SPECIFIC_CODE}}:
+              description: Specific permission issue
+              value:
+                status: 403
+                code: { { SPECIFIC_CODE } }
+                message: { { SPECIFIC_CODE_MESSAGE } }
 
     Generic404:
       description: Resource not found
@@ -364,12 +419,37 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            value:
-              status: 404
-              code: KNOWLEDGE_BASE_NOT_FOUND
-              message: "Specified knowledge base ID does not exist"
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 404
+                  code:
+                    enum:
+                      - NOT_FOUND
+                      - KNOWLEDGE_BASE_NOT_FOUND
+                      - "{{SPECIFIC_CODE}}"
+          examples:
+            GENERIC_404_NOT_FOUND:
+              description: Resource is not found
+              value:
+                status: 404
+                code: NOT_FOUND
+                message: The specified resource is not found.
+            GENERIC_404_KNOWLEDGE_BASE_NOT_FOUND:
+              description: Knowledge base not found
+              value:
+                status: 404
+                code: KNOWLEDGE_BASE_NOT_FOUND
+                message: "Specified knowledge base ID does not exist"
+            GENERIC_404_{{SPECIFIC_CODE}}:
+              description: Specific resource not found situation
+              value:
+                status: 404
+                code: { { SPECIFIC_CODE } }
+                message: { { SPECIFIC_CODE_MESSAGE } }
 
     Generic415:
       description: Unsupported media type
@@ -379,12 +459,30 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            value:
-              status: 415
-              code: UNSUPPORTED_MEDIA_TYPE
-              message: "Unsupported document format. Supported formats: doc/pdf/txt/csv"
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 415
+                  code:
+                    enum:
+                      - UNSUPPORTED_MEDIA_TYPE
+                      - "{{SPECIFIC_CODE}}"
+          examples:
+            GENERIC_415_UNSUPPORTED_MEDIA_TYPE:
+              description: Unsupported document format
+              value:
+                status: 415
+                code: UNSUPPORTED_MEDIA_TYPE
+                message: "Unsupported document format. Supported formats: doc/pdf/txt/csv"
+            GENERIC_415_{{SPECIFIC_CODE}}:
+              description: Specific media type issue
+              value:
+                status: 415
+                code: { { SPECIFIC_CODE } }
+                message: { { SPECIFIC_CODE_MESSAGE } }
 
     Generic500:
       description: Internal server error
@@ -394,9 +492,27 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            value:
-              status: 500
-              code: INTERNAL_SERVER_ERROR
-              message: "Unexpected server error occurred"
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 500
+                  code:
+                    enum:
+                      - INTERNAL_SERVER_ERROR
+                      - "{{SPECIFIC_CODE}}"
+          examples:
+            GENERIC_500_INTERNAL_SERVER_ERROR:
+              description: Unexpected server error
+              value:
+                status: 500
+                code: INTERNAL_SERVER_ERROR
+                message: "Unexpected server error occurred"
+            GENERIC_500_{{SPECIFIC_CODE}}:
+              description: Specific internal server error
+              value:
+                status: 500
+                code: { { SPECIFIC_CODE } }
+                message: { { SPECIFIC_CODE_MESSAGE } }
