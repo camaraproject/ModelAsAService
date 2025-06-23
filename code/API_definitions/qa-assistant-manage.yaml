@@ -17,7 +17,7 @@ info:
   version: wip
 
 servers:
-  - url: '{apiRoot}/qa/vwip/v1'
+  - url: '{apiRoot}/qa/assistant_manage/vwip'
     variables:
       apiRoot:
         default: http://localhost:8080
