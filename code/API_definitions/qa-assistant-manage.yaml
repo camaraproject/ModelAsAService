@@ -65,6 +65,9 @@ paths:
       responses:
         '201':
           description: Assistant created successfully
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
           content:
             application/json:
               schema:
@@ -90,6 +93,9 @@ paths:
       responses:
         '200':
           description: List of assistants
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
           content:
             application/json:
               schema:
@@ -123,6 +129,9 @@ paths:
       responses:
         '200':
           description: Assistant details
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
           content:
             application/json:
               schema:
@@ -152,6 +161,9 @@ paths:
       responses:
         '200':
           description: Assistant updated successfully
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
           content:
             application/json:
               schema:
@@ -177,6 +189,9 @@ paths:
       responses:
         '204':
           description: Assistant deleted successfully
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
         '401':
           $ref: '#/components/responses/Generic401'
         '403':
