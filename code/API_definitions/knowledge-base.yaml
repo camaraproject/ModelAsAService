@@ -78,6 +78,9 @@ paths:
       responses:
         '201':
           description: Knowledge base created successfully
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
           content:
             application/json:
               schema:
@@ -103,6 +106,9 @@ paths:
       responses:
         '200':
           description: List of knowledge bases
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
           content:
             application/json:
               schema:
@@ -136,6 +142,9 @@ paths:
       responses:
         '200':
           description: Knowledge base details
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
           content:
             application/json:
               schema:
@@ -165,6 +174,9 @@ paths:
       responses:
         '200':
           description: Knowledge base updated successfully
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
           content:
             application/json:
               schema:
@@ -190,6 +202,9 @@ paths:
       responses:
         '204':
           description: Knowledge base deleted successfully
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
         '401':
           $ref: '#/components/responses/Generic401'
         '403':
@@ -229,6 +244,9 @@ paths:
       responses:
         '201':
           description: Document uploaded successfully
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
           content:
             application/json:
               schema:
