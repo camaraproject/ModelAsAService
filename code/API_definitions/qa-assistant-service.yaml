@@ -65,9 +65,6 @@ paths:
         '200':
           description: Successful answer retrieval
           headers:
-            x-correlator:
-              $ref: '#/components/parameters/x-correlator'
-          headers:
             x-correlator:
               $ref: '#/components/parameters/x-correlator'
           content:
