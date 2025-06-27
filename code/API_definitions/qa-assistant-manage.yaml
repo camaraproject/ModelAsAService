@@ -11,13 +11,36 @@ info:
     - assistants:update - Update existing assistants
     - assistants:delete - Delete assistants
 
+    # Authorization and authentication
+    
+    The "Camara Security and Interoperability Profile" provides details of how an API consumer requests an access token. Please refer to Identity and Consent Management (https://github.com/camaraproject/IdentityAndConsentManagement/) for the released version of the profile.
+    
+    The specific authorization flows to be used will be agreed upon during the onboarding process, happening between the API consumer and the API provider, taking into account the declared purpose for accessing the API, whilst also being subject to the prevailing legal framework dictated by local legislation.
+    
+    In cases where personal data is processed by the API and users can exercise their rights through mechanisms such as opt-in and/or opt-out, the use of three-legged access tokens is mandatory. This ensures that the API remains in compliance with privacy regulations, upholding the principles of transparency and user-centric privacy-by-design.
+    
+    # Additional CAMARA error responses
+    
+    The list of error codes in this API specification is not exhaustive. Therefore the API specification may not document some non-mandatory error statuses as indicated in `CAMARA API Design Guide`.
+    
+    Please refer to the `CAMARA_common.yaml` of the Commonalities Release associated to this API version for a complete list of error responses. The applicable Commonalities Release can be identified in the `API Readiness Checklist` document associated to this API version.
+    
+    As a specific rule, error `501 - NOT_IMPLEMENTED` can be only a possible error response if it is explicitly documented in the API.
+    
+    # Further info and support
+    (FAQs will be added in a later version of the documentation)
+
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   version: wip
 
+ externalDocs:
+    description: Product documentation at CAMARA
+    url: https://github.com/camaraproject/ModelAsAService
+
 servers:
-  - url: '{apiRoot}/qa/vwip/v1'
+  - url: '{apiRoot}/qa-assistant-manage/vwip'
     variables:
       apiRoot:
         default: http://localhost:8080
@@ -31,7 +54,8 @@ paths:
       parameters:
         - $ref: '#/components/parameters/x-correlator'  # Added correlator
       security:
-        - openId: ['assistants:create']  # Added security scope
+        - openId:
+          - assistant-manage:create
       requestBody:
         required: true
         content:
@@ -41,6 +65,9 @@ paths:
       responses:
         '201':
           description: Assistant created successfully
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
           content:
             application/json:
               schema:
@@ -61,10 +88,14 @@ paths:
       parameters:
         - $ref: '#/components/parameters/x-correlator'  # Added correlator
       security:
-        - openId: ['assistants:read']  # Added security scope
+        - openId:
+          - assistant-manage:read
       responses:
         '200':
           description: List of assistants
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
           content:
             application/json:
               schema:
@@ -93,10 +124,14 @@ paths:
       tags:
         - Assistants
       security:
-        - openId: ['assistants:read']  # Added security scope
+        - openId:
+          - assistant-manage:read
       responses:
         '200':
           description: Assistant details
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
           content:
             application/json:
               schema:
@@ -115,7 +150,8 @@ paths:
       tags:
         - Assistants
       security:
-        - openId: ['assistants:update']  # Added security scope
+        - openId:
+          - assistant-manage:update
       requestBody:
         required: true
         content:
@@ -125,6 +161,9 @@ paths:
       responses:
         '200':
           description: Assistant updated successfully
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
           content:
             application/json:
               schema:
@@ -145,10 +184,14 @@ paths:
       tags:
         - Assistants
       security:
-        - openId: ['assistants:delete']  # Added security scope
+        - openId:
+          - assistant-manage:delete
       responses:
         '204':
           description: Assistant deleted successfully
+          headers:
+            x-correlator:
+              $ref: '#/components/parameters/x-correlator'
         '401':
           $ref: '#/components/responses/Generic401'
         '403':
@@ -169,14 +212,21 @@ components:
     x-correlator:
       name: x-correlator
       in: header
-      description: Correlation ID for request tracing
-      required: true
+      description: Correlation id for the different services
       schema:
-        type: string
-        pattern: '^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$'
-        example: "b4333c46-49c0-4f62-80d7-f0ef930f1c46"
+        $ref: "#/components/schemas/XCorrelator"
+
+  headers:
+    x-correlator:
+      description: Correlation id for the different services
+      schema:
+        $ref: "#/components/schemas/XCorrelator"
 
   schemas:
+    XCorrelator:
+        type: string
+        pattern: ^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$
+        example: "b4333c46-49c0-4f62-80d7-f0ef930f1c46"
     AssistantCreateRequest:
       type: object
       required:
@@ -340,18 +390,37 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 400
+                  code:
+                    enum:
+                      - MISSING_REQUIRED_PARAM
+                      - INVALID_PARAMETER_VALUE
+                      - INVALID_ARGUMENT
           examples:
-            MissingParameter:
+            GENERIC_400_MISSING_REQUIRED_PARAM:
+              description: Missing required parameter
               value:
                 status: 400
                 code: MISSING_REQUIRED_PARAM
                 message: "Required parameter 'configurationPrompt' is missing"
-            InvalidParameter:
+            GENERIC_400_INVALID_PARAMETER_VALUE:
+              description: Invalid parameter value
               value:
                 status: 400
                 code: INVALID_PARAMETER_VALUE
                 message: "Temperature must be between 0.0 and 1.0"
+            GENERIC_400_INVALID_ARGUMENT:
+              description: Invalid argument
+              value:
+                status: 400
+                code: INVALID_ARGUMENT
+                message: "Client specified an invalid argument"
 
     Generic401:
       description: Authentication required
@@ -361,12 +430,23 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            value:
-              status: 401
-              code: UNAUTHENTICATED
-              message: Authentication credentials missing or invalid
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 401
+                  code:
+                    enum:
+                      - UNAUTHENTICATED
+          examples:
+            GENERIC_401_UNAUTHENTICATED:
+              description: Authentication credentials missing or invalid
+              value:
+                status: 401
+                code: UNAUTHENTICATED
+                message: Authentication credentials missing or invalid
 
     Generic403:
       description: Insufficient permissions
@@ -376,12 +456,30 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            value:
-              status: 403
-              code: PERMISSION_DENIED
-              message: User lacks required permissions for this operation
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 403
+                  code:
+                    enum:
+                      - PERMISSION_DENIED
+                      - INVALID_TOKEN_CONTEXT
+          examples:
+            GENERIC_403_PERMISSION_DENIED:
+              description: User lacks required permissions
+              value:
+                status: 403
+                code: PERMISSION_DENIED
+                message: User lacks required permissions for this operation
+            GENERIC_403_INVALID_TOKEN_CONTEXT:
+              description: Token context inconsistency
+              value:
+                status: 403
+                code: INVALID_TOKEN_CONTEXT
+                message: "Assistant ID is not consistent with access token"
 
     Generic404:
       description: Resource not found
@@ -391,12 +489,37 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            value:
-              status: 404
-              code: ASSISTANT_NOT_FOUND
-              message: "Specified assistant ID does not exist"
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 404
+                  code:
+                    enum:
+                      - NOT_FOUND
+                      - ASSISTANT_NOT_FOUND
+                      - IDENTIFIER_NOT_FOUND
+          examples:
+            GENERIC_404_NOT_FOUND:
+              description: Resource is not found
+              value:
+                status: 404
+                code: NOT_FOUND
+                message: The specified resource is not found.
+            GENERIC_404_ASSISTANT_NOT_FOUND:
+              description: Assistant not found
+              value:
+                status: 404
+                code: ASSISTANT_NOT_FOUND
+                message: "Specified assistant ID does not exist"
+            GENERIC_404_IDENTIFIER_NOT_FOUND:
+              description: Identifier not found
+              value:
+                status: 404
+                code: IDENTIFIER_NOT_FOUND
+                message: Assistant identifier not found.
 
     Generic500:
       description: Internal server error
@@ -406,9 +529,27 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorInfo'
-          example:
-            value:
-              status: 500
-              code: INTERNAL_SERVER_ERROR
-              message: "Unexpected server error occurred"
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 500
+                  code:
+                    enum:
+                      - INTERNAL_SERVER_ERROR
+                      - INTERNAL
+          examples:
+            GENERIC_500_INTERNAL_SERVER_ERROR:
+              description: Unexpected server error
+              value:
+                status: 500
+                code: INTERNAL_SERVER_ERROR
+                message: "Unexpected server error occurred"
+            GENERIC_500_INTERNAL:
+              description: Internal server error
+              value:
+                status: 500
+                code: INTERNAL
+                message: Unknown server error
