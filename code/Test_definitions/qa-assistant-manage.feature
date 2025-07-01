@@ -1,10 +1,20 @@
-Feature: QA Assistant Management API Testing
-  As a developer or QA engineer
-  I want to test the management endpoints for QA assistants
-  To ensure they handle CRUD operations and errors correctly
+Feature: CAMARA MaaS QA Assistant Management API, v0.1.0
+    # Input to be provided by the implementation to the tester
+    #
+    # Implementation indications:
+    # * apiRoot: API root of the server URL
+    #
+    # Testing assets:
+    # * As a developer or QA engineer, I want to test the management endpoints for QA assistants to ensure they handle CRUD operations and errors correctly.
+    #
+    # References to OAS spec schemas refer to schemas specified in knowledge-base.yaml
 
-  Background:
-    Given the QA Assistant Management API is running
+  Background: Common knowledge-base setup
+    Given an environment at "apiRoot" 
+    And the resource "/qa-assistant-manage/vwip"                                                              |
+    And the header "Content-Type" is set to "application/json"
+    And the header "Authorization" is set to a valid access token
+    And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
     And an existing assistant with ID "a1b2c3d4" exists (for update/delete tests)
 
   @positive
