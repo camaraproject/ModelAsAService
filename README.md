@@ -7,7 +7,10 @@
 <a href="https://github.com/camaraproject/ModelAsAService/releases/latest" title="Latest Release"><img src="https://img.shields.io/github/release/camaraproject/ModelAsAService?style=plastic"></a>
 
 # ModelAsAService
-API Repository to describe, develop, document, and test the service APIs of the [ModelAsAService](https://lf-camaraproject.atlassian.net/wiki/spaces/CAM/pages/52658427/ModelAsAService) family
+
+Sandbox API Repository to describe, develop, document, and test the ModelAsAService Service API(s). The repository does not yet belong to a CAMARA Sub Project.
+
+* API Repository [wiki page](https://lf-camaraproject.atlassian.net/wiki/x/_4AjAw)
 
 ## Scope
 
@@ -37,7 +40,7 @@ API Repository to describe, develop, document, and test the service APIs of the 
 ## Contributing
 * Meetings are held virtually <!-- for new API families request a meeting link from the LF admin team or replace the information with the existing meeting information (of the API family) -->
     * Schedule: Bi-weekly (odd weeks), Tuesday, 09:00 UTC (11:00 UTC+2, 17:00 UTC+8)
-    * [Join](https://wiki.camaraproject.org/x/TQAG)
+    * [Join](https://teams.live.com/meet/935822818385?p=a3q0Q86Qib478gzKSM)
     * Minutes: Access [meeting minutes](https://lf-camaraproject.atlassian.net/l/cp/GpKaVSqC)
 * Mailing List
     * Subscribe / Unsubscribe to the mailing list of this Sub Project <https://lists.camaraproject.org/g/sp-maas>.
