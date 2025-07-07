@@ -5,6 +5,7 @@
 <a href="https://github.com/camaraproject/ModelAsAService" title="Repo Size"><img src="https://img.shields.io/github/repo-size/camaraproject/ModelAsAService?style=plastic"></a>
 <a href="https://github.com/camaraproject/ModelAsAService/blob/main/LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg?style=plastic"></a>
 <a href="https://github.com/camaraproject/ModelAsAService/releases/latest" title="Latest Release"><img src="https://img.shields.io/github/release/camaraproject/ModelAsAService?style=plastic"></a>
+<a href="https://github.com/camaraproject/Governance/blob/main/ProjectStructureAndRoles.md" title="Sandbox API Repository"><img src="https://img.shields.io/badge/Sandbox%20API%20Repository-yellow?style=plastic"></a>
 
 # ModelAsAService
 
@@ -38,6 +39,7 @@ Sandbox API Repository to describe, develop, document, and test the ModelAsAServ
 * For changes see [CHANGELOG.md](https://github.com/camaraproject/ModelAsAService/blob/main/CHANGELOG.md)
 
 ## Contributing
+
 * Meetings are held virtually <!-- for new API families request a meeting link from the LF admin team or replace the information with the existing meeting information (of the API family) -->
     * Schedule: Bi-weekly (odd weeks), Tuesday, 09:00 UTC (11:00 UTC+2, 17:00 UTC+8)
     * [Join](https://teams.live.com/meet/935822818385?p=a3q0Q86Qib478gzKSM)
