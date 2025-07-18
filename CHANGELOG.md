@@ -30,7 +30,7 @@ The API definition(s) are based on
 
 ## knowledge-base v0.1.0
 
-knowledge-base v0.1.0 is the first pre-release version of the knowledge-base API.
+knowledge-base v0.1.0-rc.1 is the first release candidate of version 0.1.0 of the API
 
 - API definition **with inline documentation**:
   - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r1.1/code/API_definitions/knowledge-base.yaml&nocors)
