@@ -62,6 +62,7 @@ tags:
 paths:
   /knowledge_bases:
     post:
+      operationId: createKnowledgeBase
       summary: Create a new knowledge base
       tags:
         - Knowledge-base
@@ -88,14 +89,13 @@ paths:
                 $ref: '#/components/schemas/KnowledgeBase'
         '400':
           $ref: '#/components/responses/Generic400'
-        '401':
-          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '500':
           $ref: '#/components/responses/Generic500'
 
     get:
+      operationId: listKnowledgeBases
       summary: Get all knowledge bases
       tags:
         - Knowledge-base
@@ -116,8 +116,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/KnowledgeBase'
-        '401':
-          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '500':
@@ -134,6 +132,7 @@ paths:
       - $ref: '#/components/parameters/x-correlator'  # Added correlator
 
     get:
+      operationId: getKnowledgeBase
       summary: Get a specific knowledge base
       tags:
         - Knowledge-base
@@ -150,8 +149,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/KnowledgeBase'
-        '401':
-          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -160,6 +157,7 @@ paths:
           $ref: '#/components/responses/Generic500'
 
     put:
+      operationId: updateKnowledgeBase
       summary: Update a knowledge base
       tags:
         - Knowledge-base
@@ -184,8 +182,6 @@ paths:
                 $ref: '#/components/schemas/KnowledgeBase'
         '400':
           $ref: '#/components/responses/Generic400'
-        '401':
-          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -194,6 +190,7 @@ paths:
           $ref: '#/components/responses/Generic500'
 
     delete:
+      operationId: deleteKnowledgeBase
       summary: Delete a knowledge base
       tags:
         - Knowledge-bases
@@ -206,8 +203,6 @@ paths:
           headers:
             x-correlator:
               $ref: '#/components/parameters/x-correlator'
-        '401':
-          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -217,6 +212,7 @@ paths:
 
   /knowledge_bases/{knowledgeBaseID}/documents:
     post:
+      operationId: uploadDocument
       summary: Upload a document to a knowledge base
       tags:
         - Documents
@@ -258,8 +254,6 @@ paths:
                     example: "Document uploaded successfully"
         '400':
           $ref: '#/components/responses/Generic400'
-        '401':
-          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -397,33 +391,7 @@ components:
                 status: 400
                 code: MISSING_REQUIRED_PARAM
                 message: "Required parameter 'name' is missing"
-
-    Generic401:
-      description: Authentication required
-      headers:
-        x-correlator:
-          $ref: '#/components/parameters/x-correlator'
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/ErrorInfo'
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 401
-                  code:
-                    enum:
-                      - UNAUTHENTICATED
-          examples:
-            GENERIC_401_UNAUTHENTICATED:
-              description: Authentication credentials missing or invalid
-              value:
-                status: 401
-                code: UNAUTHENTICATED
-                message: Authentication credentials missing or invalid
-
+   
     Generic403:
       description: Insufficient permissions
       headers:
