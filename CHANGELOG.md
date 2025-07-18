@@ -76,7 +76,7 @@ Add API yaml files and API Test definitions by @lihaojie-CMCC in [#10](https://g
 
 ## qa-assistant-service v0.1.0
 
-qa-assistant-service v0.1.0 is the first pre-release version of the qa-assistant-service API.
+qa-assistant-service v0.1.0-rc.1 is the first release candidate of version 0.1.0 of the API
 
 - API definition **with inline documentation**:
   - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r1.1/code/API_definitions/qa-assistant-service.yaml&nocors)
