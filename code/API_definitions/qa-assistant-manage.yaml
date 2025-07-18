@@ -49,6 +49,7 @@ servers:
 paths:
   /assistants:
     post:
+      operationId: createAssistant
       summary: Create a new QA assistant
       tags:
         - Assistants
@@ -75,14 +76,13 @@ paths:
                 $ref: '#/components/schemas/AssistantResponse'
         '400':
           $ref: '#/components/responses/Generic400'
-        '401':
-          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '500':
           $ref: '#/components/responses/Generic500'
 
     get:
+      operationId: listAssistants
       summary: List all QA assistants
       tags:
         - Assistants
@@ -103,8 +103,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Assistant'
-        '401':
-          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '500':
@@ -121,6 +119,7 @@ paths:
       - $ref: '#/components/parameters/x-correlator'  # Added correlator
 
     get:
+      operationId: getAssistant
       summary: Get a specific QA assistant
       tags:
         - Assistants
@@ -137,8 +136,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Assistant'
-        '401':
-          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -147,6 +144,7 @@ paths:
           $ref: '#/components/responses/Generic500'
 
     put:
+      operationId: updateAssistant
       summary: Update a QA assistant
       tags:
         - Assistants
@@ -171,8 +169,6 @@ paths:
                 $ref: '#/components/schemas/AssistantResponse'
         '400':
           $ref: '#/components/responses/Generic400'
-        '401':
-          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -181,6 +177,7 @@ paths:
           $ref: '#/components/responses/Generic500'
 
     delete:
+      operationId: deleteAssistant
       summary: Delete a QA assistant
       tags:
         - Assistants
@@ -193,8 +190,6 @@ paths:
           headers:
             x-correlator:
               $ref: '#/components/parameters/x-correlator'
-        '401':
-          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -422,32 +417,6 @@ components:
                 status: 400
                 code: INVALID_ARGUMENT
                 message: "Client specified an invalid argument"
-
-    Generic401:
-      description: Authentication required
-      headers:
-        x-correlator:
-          $ref: '#/components/parameters/x-correlator'
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/ErrorInfo'
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 401
-                  code:
-                    enum:
-                      - UNAUTHENTICATED
-          examples:
-            GENERIC_401_UNAUTHENTICATED:
-              description: Authentication credentials missing or invalid
-              value:
-                status: 401
-                code: UNAUTHENTICATED
-                message: Authentication credentials missing or invalid
 
     Generic403:
       description: Insufficient permissions
