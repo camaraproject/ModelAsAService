@@ -46,15 +46,6 @@ Add API yaml files and API Test definitions by @lihaojie-CMCC in [#10](https://g
 ### Fixed
 
 ### Removed
-### Added
-Update for Fall25 by @lihaojie-CMCC in [#11](https://github.com/camaraproject/ModelAsAService/pull/11),[13](https://github.com/camaraproject/ModelAsAService/pull/13)
-Add API yaml files and API Test definitions by @lihaojie-CMCC in [#10](https://github.com/camaraproject/ModelAsAService/pull/10)
-
-### Changed
-
-### Fixed
-
-### Removed
 ## qa-assistant-manage v0.1.0
 
 qa-assistant-manage v0.1.0-rc.1 is the first release candidate of version 0.1.0 of the API
