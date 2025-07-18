@@ -41,7 +41,7 @@ externalDocs:
   url: https://github.com/camaraproject/ModelAsAService
 
 servers:
-  - url: '{apiRoot}/qa-assistant-manage/vwip'
+  - url: '{apiRoot}/qa-assistant-manage/v0.1rc1'
     variables:
       apiRoot:
         default: http://localhost:8080
