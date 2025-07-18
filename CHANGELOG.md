@@ -26,7 +26,7 @@ This release contains the definition and documentation of
 
 The API definition(s) are based on
 * Commonalities v0.6
-* Identity and Consent Management v0.3.0
+* Identity and Consent Management v0.4
 
 ## knowledge-base v0.1.0
 
