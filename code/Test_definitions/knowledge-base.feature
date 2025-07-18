@@ -12,7 +12,7 @@ Feature: CAMARA MaaS Knowledge base API, v0.1.0
 
   Background: Common knowledge-base setup
     Given an environment at "apiRoot" 
-    And the resource "/knowledge-base/vwip"                                                              |
+    And the resource "/knowledge-base/v0.1rc1"                                                              |
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
