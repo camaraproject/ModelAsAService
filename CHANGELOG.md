@@ -48,7 +48,7 @@ Add API yaml files and API Test definitions by @lihaojie-CMCC in [#10](https://g
 ### Removed
 ## qa-assistant-manage v0.1.0
 
-qa-assistant-manage v0.1.0 is the first pre-release version of the qa-assistant-manage API.
+qa-assistant-manage v0.1.0-rc.1 is the first release candidate of version 0.1.0 of the API
 
 - API definition **with inline documentation**:
   - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r1.1/code/API_definitions/qa-assistant-manage.yaml&nocors)
