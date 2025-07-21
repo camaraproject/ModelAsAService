@@ -50,6 +50,38 @@ paths:
     post:
       operationId: queryAssistant
       summary: Get an answer from a QA assistant
+      description: |
+        Queries a configured QA assistant to generate answers using knowledge bases and LLMs.
+
+        **Key Features:**
+        - Utilizes pre-configured assistant settings (prompts, model parameters)
+        - Leverages associated knowledge bases for contextual responses
+        - Provides termination status for answer generation
+
+        **Key Rules:**
+        - Requires valid UUID `assistantId`
+        - `prompt` must be 1-1000 characters
+        - Needs `assistant-service:query` scope
+        - Assistant must be properly configured and accessible
+
+        **Response Characteristics:**
+        - **200 OK**: Returns `QueryResponse` with answer text and termination status
+          - `finished` indicates generation completion reason (Stop/Length/Error/Filter)
+          - `reference` shows knowledge base source when available
+        - **400 Bad Request**: 
+          - Missing/invalid prompt
+          - Invalid assistantId format
+          - Prompt length exceeds limits
+        - **401 Unauthenticated**: Missing/invalid credentials
+        - **403 Forbidden**: 
+          - Missing required scope
+          - Token/assistantId mismatch
+        - **404 Not Found**: 
+          - Assistant doesn't exist
+          - Identifier not found
+        - **500 Internal Server Error**: 
+          - LLM processing failure
+          - Knowledge base access error
       tags:
         - Query
       parameters:
