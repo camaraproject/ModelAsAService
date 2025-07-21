@@ -1,4 +1,4 @@
-Feature: CAMARA MaaS QA Assistant Management API, v0.1.0
+Feature: CAMARA MaaS QA Assistant Management API, v0.1.0-rc.1
     # Input to be provided by the implementation to the tester
     #
     # Implementation indications:
