@@ -64,6 +64,24 @@ paths:
     post:
       operationId: createKnowledgeBase
       summary: Create a new knowledge base
+      description: |
+        Creates a new knowledge base with the provided metadata.
+
+        **Key Features:**
+        - Initializes a new knowledge base container
+        - Stores name and description metadata
+        - Generates unique knowledgeBaseID
+
+        **Key Rules:**
+        - Requires `name` field in request body
+        - Requires `knowledge-base:create` scope
+        - Name must be unique within the system
+
+        **Response Characteristics:**
+        - **201 Created**: Returns full `KnowledgeBase` object with generated ID
+        - **400 Bad Request**: Missing `name` or invalid parameters
+        - **403 Forbidden**: Missing required scope
+        - **500 Internal Server Error**: Backend processing failure
       tags:
         - Knowledge-base
       parameters:
@@ -97,6 +115,23 @@ paths:
     get:
       operationId: listKnowledgeBases
       summary: Get all knowledge bases
+      description: |
+        Retrieves all knowledge bases accessible to the authenticated user.
+
+        **Key Features:**
+        - Returns complete collection of knowledge bases
+        - Includes metadata and document lists
+        - Supports pagination (implied by array response)
+
+        **Key Rules:**
+        - Requires `knowledge-base:read` scope
+        - Returns empty array if no knowledge bases exist
+
+        **Response Characteristics:**
+        - **200 OK**: Array of `KnowledgeBase` objects
+        - **401 Unauthenticated**: Invalid/missing credentials
+        - **403 Forbidden**: Insufficient permissions
+        - **500 Internal Server Error**: Data retrieval failure      
       tags:
         - Knowledge-base
       parameters:
@@ -116,6 +151,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/KnowledgeBase'
+        '400':
+          $ref: '#/components/responses/Generic400'
         '403':
           $ref: '#/components/responses/Generic403'
         '500':
@@ -134,6 +171,23 @@ paths:
     get:
       operationId: getKnowledgeBase
       summary: Get a specific knowledge base
+      description: |
+        Retrieves metadata and document list for a specific knowledge base.
+
+        **Key Features:**
+        - Returns detailed metadata (name, description)
+        - Includes list of documents with filenames/formats
+        - Provides document upload timestamps
+
+        **Key Rules:**
+        - Requires valid `knowledgeBaseID` path parameter
+        - Requires `knowledge-base:read` scope
+
+        **Response Characteristics:**
+        - **200 OK**: Complete `KnowledgeBase` object
+        - **404 Not Found**: Invalid/non-existent knowledgeBaseID
+        - **403 Forbidden**: Missing required scope
+        - **500 Internal Server Error**: Data retrieval failure
       tags:
         - Knowledge-base
       security:
@@ -149,6 +203,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/KnowledgeBase'
+        '400':
+          $ref: '#/components/responses/Generic400'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -159,6 +215,25 @@ paths:
     put:
       operationId: updateKnowledgeBase
       summary: Update a knowledge base
+      description: |
+        Updates metadata of an existing knowledge base.
+
+        **Key Features:**
+        - Modifies name and/or description
+        - Preserves existing document associations
+        - Returns updated metadata
+
+        **Key Rules:**
+        - Requires at least one update field (name/description)
+        - Requires `knowledge-base:update` scope
+        - KnowledgeBaseID must exist
+
+        **Response Characteristics:**
+        - **200 OK**: Updated `KnowledgeBase` object
+        - **400 Bad Request**: No update fields provided
+        - **404 Not Found**: Invalid knowledgeBaseID
+        - **403 Forbidden**: Missing required scope
+        - **500 Internal Server Error**: Update processing failure
       tags:
         - Knowledge-base
       security:
@@ -192,6 +267,24 @@ paths:
     delete:
       operationId: deleteKnowledgeBase
       summary: Delete a knowledge base
+      description: |
+        Permanently deletes a knowledge base and its documents.
+
+        **Key Features:**
+        - Removes knowledge base metadata
+        - Deletes all associated documents
+        - Irreversible operation
+
+        **Key Rules:**
+        - Requires valid `knowledgeBaseID`
+        - Requires `knowledge-base:delete` scope
+        - No partial deletions
+
+        **Response Characteristics:**
+        - **204 No Content**: Successful deletion (no body)
+        - **404 Not Found**: Invalid knowledgeBaseID
+        - **403 Forbidden**: Missing required scope
+        - **500 Internal Server Error**: Deletion processing failure
       tags:
         - Knowledge-bases
       security:
@@ -203,6 +296,8 @@ paths:
           headers:
             x-correlator:
               $ref: '#/components/parameters/x-correlator'
+        '400':
+          $ref: '#/components/responses/Generic400'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -214,6 +309,27 @@ paths:
     post:
       operationId: uploadDocument
       summary: Upload a document to a knowledge base
+      description: |
+        Uploads a document to a knowledge base.
+
+        **Key Features:**
+        - Supports doc/pdf/txt/csv formats
+        - Stores filename and format metadata
+        - Records upload timestamp
+
+        **Key Rules:**
+        - Requires valid `knowledgeBaseID`
+        - Requires `documents:upload` scope
+        - File must be sent as multipart/form-data
+        - Maximum file size determined by implementation
+
+        **Response Characteristics:**
+        - **201 Created**: Success message with filename
+        - **400 Bad Request**: Invalid file format
+        - **415 Unsupported Media Type**: Unacceptable format
+        - **404 Not Found**: Invalid knowledgeBaseID
+        - **403 Forbidden**: Missing required scope
+        - **500 Internal Server Error**: Storage failure
       tags:
         - Documents
       parameters:
