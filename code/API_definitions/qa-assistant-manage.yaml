@@ -51,6 +51,24 @@ paths:
     post:
       operationId: createAssistant
       summary: Create a new QA assistant
+      description: |
+        Creates a new QA assistant configuration.
+
+        **Key Features:**
+        - Configures LLM parameters (model, temperature, max_tokens)
+        - Associates with knowledge bases
+        - Sets behavior-defining prompts
+
+        **Key Rules:**
+        - Requires `name`, `configurationPrompt`, and `largeModelParameters`
+        - `largeModelParameters` must include `model`, `temperature` (0.0-1.0), `max_tokens` (≥1)
+        - Needs `assistant-manage:create` scope
+
+        **Response Characteristics:**
+        - **201 Created**: Returns `AssistantResponse` with generated assistantId
+        - **400 Bad Request**: Missing parameters or invalid values (e.g., temperature out of range)
+        - **403 Forbidden**: Missing required scope
+        - **500 Internal Server Error**: Assistant creation failure
       tags:
         - Assistants
       parameters:
@@ -84,6 +102,23 @@ paths:
     get:
       operationId: listAssistants
       summary: List all QA assistants
+      description: |
+        Retrieves all configured QA assistants.
+
+        **Key Features:**
+        - Returns complete assistant configurations
+        - Includes metadata (createdAt, updatedAt)
+        - Shows associated knowledge bases
+
+        **Key Rules:**
+        - Requires `assistant-manage:read` scope
+        - Returns empty array if no assistants exist
+
+        **Response Characteristics:**
+        - **200 OK**: Array of `Assistant` objects
+        - **401 Unauthenticated**: Invalid credentials
+        - **403 Forbidden**: Insufficient permissions
+        - **500 Internal Server Error**: Data retrieval failure
       tags:
         - Assistants
       parameters:
@@ -103,6 +138,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Assistant'
+        '400':
+          $ref: '#/components/responses/Generic400'
         '403':
           $ref: '#/components/responses/Generic403'
         '500':
@@ -121,6 +158,23 @@ paths:
     get:
       operationId: getAssistant
       summary: Get a specific QA assistant
+      description: |
+        Retrieves detailed configuration for a specific assistant.
+
+        **Key Features:**
+        - Returns full LLM parameter configuration
+        - Includes knowledge base associations
+        - Shows prompt configurations
+
+        **Key Rules:**
+        - Requires valid UUID `assistantId`
+        - Needs `assistant-manage:read` scope
+
+        **Response Characteristics:**
+        - **200 OK**: Complete `Assistant` object
+        - **404 Not Found**: Invalid/non-existent assistantId
+        - **403 Forbidden**: Missing required scope
+        - **500 Internal Server Error**: Configuration retrieval failure
       tags:
         - Assistants
       security:
@@ -136,6 +190,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Assistant'
+        '400':
+          $ref: '#/components/responses/Generic400'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -146,6 +202,26 @@ paths:
     put:
       operationId: updateAssistant
       summary: Update a QA assistant
+      description: |
+        Modifies an existing QA assistant configuration.
+
+        **Key Features:**
+        - Updates LLM parameters dynamically
+        - Changes knowledge base associations
+        - Modifies behavior prompts
+
+        **Key Rules:**
+        - Requires valid UUID `assistantId`
+        - At least one update field must be provided
+        - Parameter values must meet constraints (e.g., temperature 0.0-1.0)
+        - Needs `assistant-manage:update` scope
+
+        **Response Characteristics:**
+        - **200 OK**: Returns updated `AssistantResponse`
+        - **400 Bad Request**: Invalid parameters or no update fields
+        - **404 Not Found**: Invalid assistantId
+        - **403 Forbidden**: Missing required scope
+        - **500 Internal Server Error**: Update processing failure
       tags:
         - Assistants
       security:
@@ -179,6 +255,24 @@ paths:
     delete:
       operationId: deleteAssistant
       summary: Delete a QA assistant
+      description: |
+        Permanently removes a QA assistant configuration.
+
+        **Key Features:**
+        - Irreversible deletion
+        - Cleans up associated resources
+        - Immediate deactivation
+
+        **Key Rules:**
+        - Requires valid UUID `assistantId`
+        - Needs `assistant-manage:delete` scope
+        - Cannot be undone
+
+        **Response Characteristics:**
+        - **204 No Content**: Successful deletion (no body)
+        - **404 Not Found**: Invalid assistantId
+        - **403 Forbidden**: Missing required scope
+        - **500 Internal Server Error**: Deletion processing failure
       tags:
         - Assistants
       security:
@@ -190,6 +284,8 @@ paths:
           headers:
             x-correlator:
               $ref: '#/components/parameters/x-correlator'
+        '400':
+          $ref: '#/components/responses/Generic400'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
