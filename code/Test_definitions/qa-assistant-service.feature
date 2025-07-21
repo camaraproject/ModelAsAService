@@ -1,4 +1,4 @@
-Feature: CAMARA MaaS Q&A Assistant Service API, v0.1.0-rc1
+Feature: CAMARA MaaS Q&A Assistant Service API, v0.1.0-rc.1
     # Input to be provided by the implementation to the tester
     #
     # Implementation indications:
