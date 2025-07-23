@@ -2,11 +2,12 @@ openapi: 3.0.3
 info:
   title: Q&A Assistant - Service
   description: >-
-    API for querying answers from a QA assistant using a specified knowledge base and model configuration.
+    This API provides service interfaces for the Question and Answer (Q&A) Assistant, enabling users to submit query requests to a configured Q&A assistant and obtain answers generated based on the knowledge base and Large Language Model (LLM).
+    It is suitable for scenarios such as building intelligent question-answering systems and customer service bots that require real-time responses to user inquiries.
 
     ## Security and Authentication
     This API uses OAuth 2.0 with OpenID Connect for authentication. The following scope is required:
-    - assistant:query - Permission to query assistants
+    - qa-assistant-service:answer:read - Permission to query assistants
 
     # Authorization and authentication
     
@@ -61,7 +62,7 @@ paths:
         **Key Rules:**
         - Requires valid UUID `assistantId`
         - `prompt` must be 1-1000 characters
-        - Needs `assistant-service:query` scope
+        - Needs `qa-assistant-service:answer:read` scope
         - Assistant must be properly configured and accessible
 
         **Response Characteristics:**
@@ -88,7 +89,7 @@ paths:
         - $ref: '#/components/parameters/x-correlator'  # Added correlator
       security:
         - openId:
-          - assistant-service:query
+          - qa-assistant-service:answer:read
       requestBody:
         required: true
         content:
