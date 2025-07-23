@@ -2,14 +2,16 @@ openapi: 3.0.3
 info:
   title: Q&A Assistant - Manage
   description: >-
-    The QA Knowledge Assistant Management system provides APIs to create, retrieve, update, and delete QA assistants. These assistants are configured to handle question-answering tasks using large language models (LLMs) and optional knowledge bases. Below is a detailed explanation of the request parameters and response parameters used in these operations.
+    This API provides CRUD (Create, Read, Update, Delete) management functions for the Question and Answer (Q&A) Assistant, aiming to equip developers with the capability to configure and manage intelligent question-answering systems based on Large Language Models (LLMs).
+    It supports model parameter tuning, knowledge base association, and prompt engineering configuration, making it suitable for building customizable intelligent customer service or question-answering services.
 
     ## Security and Authentication
+    
     This API uses OAuth 2.0 with OpenID Connect for authentication. The following scopes are required:
-    - assistants:create - Create new assistants
-    - assistants:read - Read assistant details
-    - assistants:update - Update existing assistants
-    - assistants:delete - Delete assistants
+    - qa-assistant-manage:assistants:create - Create new assistants
+    - qa-assistant-manage:assistants:read - Read assistant details
+    - qa-assistant-manage:assistants:update - Update existing assistants
+    - qa-assistant-manage:assistants:delete - Delete assistants
 
     # Authorization and authentication
     
@@ -62,7 +64,7 @@ paths:
         **Key Rules:**
         - Requires `name`, `configurationPrompt`, and `largeModelParameters`
         - `largeModelParameters` must include `model`, `temperature` (0.0-1.0), `max_tokens` (≥1)
-        - Needs `assistant-manage:create` scope
+        - Needs `qa-assistant-manage:assistants:create` scope
 
         **Response Characteristics:**
         - **201 Created**: Returns `AssistantResponse` with generated assistantId
@@ -75,7 +77,7 @@ paths:
         - $ref: '#/components/parameters/x-correlator'  # Added correlator
       security:
         - openId:
-          - assistant-manage:create
+          - qa-assistant-manage:assistants:create
       requestBody:
         required: true
         content:
@@ -111,7 +113,7 @@ paths:
         - Shows associated knowledge bases
 
         **Key Rules:**
-        - Requires `assistant-manage:read` scope
+        - Requires `qa-assistant-manage:assistants:read` scope
         - Returns empty array if no assistants exist
 
         **Response Characteristics:**
@@ -125,7 +127,7 @@ paths:
         - $ref: '#/components/parameters/x-correlator'  # Added correlator
       security:
         - openId:
-          - assistant-manage:read
+          - qa-assistant-manage:assistants:read
       responses:
         '200':
           description: List of assistants
@@ -168,7 +170,7 @@ paths:
 
         **Key Rules:**
         - Requires valid UUID `assistantId`
-        - Needs `assistant-manage:read` scope
+        - Needs ` knowledge-base:documents:update` scope
 
         **Response Characteristics:**
         - **200 OK**: Complete `Assistant` object
@@ -179,7 +181,7 @@ paths:
         - Assistants
       security:
         - openId:
-          - assistant-manage:read
+          -  knowledge-base:documents:update
       responses:
         '200':
           description: Assistant details
@@ -214,7 +216,7 @@ paths:
         - Requires valid UUID `assistantId`
         - At least one update field must be provided
         - Parameter values must meet constraints (e.g., temperature 0.0-1.0)
-        - Needs `assistant-manage:update` scope
+        - Needs `qa-assistant-manage:assistants:update` scope
 
         **Response Characteristics:**
         - **200 OK**: Returns updated `AssistantResponse`
@@ -226,7 +228,7 @@ paths:
         - Assistants
       security:
         - openId:
-          - assistant-manage:update
+          - qa-assistant-manage:assistants:update
       requestBody:
         required: true
         content:
@@ -265,7 +267,7 @@ paths:
 
         **Key Rules:**
         - Requires valid UUID `assistantId`
-        - Needs `assistant-manage:delete` scope
+        - Needs `qa-assistant-manage:assistants:delete` scope
         - Cannot be undone
 
         **Response Characteristics:**
@@ -277,7 +279,7 @@ paths:
         - Assistants
       security:
         - openId:
-          - assistant-manage:delete
+          - qa-assistant-manage:assistants:delete
       responses:
         '204':
           description: Assistant deleted successfully
