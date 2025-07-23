@@ -2,7 +2,9 @@ openapi: 3.0.3
 info:
   title: Knowledge Base
   description: >-
-    This API enables users to manage the knowledge base, including creating, reading, updating, and deleting entries within it.
+    This API offers comprehensive CRUD (Create, Read, Update, Delete) management capabilities for the knowledge base, along with document uploading functionality.
+    It is designed to provide applications with standardized capabilities for knowledge content storage and management, supporting multi-format document storage, fine-grained permission control, and end-to-end traceability.
+    It is suitable for building knowledge-intensive systems (such as intelligent customer service platforms and enterprise document platforms) while ensuring compliance.
 
 
     ## API Functionality
@@ -10,12 +12,13 @@ info:
      This API allows API clients to perform CRUD operations on the knowledge base hosted on the server.
      
     ## Security and Authentication
+    
     This API uses OAuth 2.0 with OpenID Connect for authentication. The following scopes are required:
-    - knowledge-base:create - Create new knowledge bases
-    - knowledge-base:read - Read knowledge base entries
-    - knowledge-base:update - Update existing knowledge bases
-    - knowledge-base:delete - Delete knowledge bases
-    - documents:upload - Upload documents to knowledge bases
+    - knowledge-base:knowledge-bases:create - Create new knowledge bases
+    - knowledge-base:knowledge-bases:read - Read knowledge base entries
+    - knowledge-base:knowledge-bases:update - Update existing knowledge bases
+    - knowledge-base:knowledge-bases:delete - Delete knowledge bases
+    - knowledge-base:documents:update - Upload documents to knowledge bases
 
     # Authorization and authentication
     
@@ -60,7 +63,7 @@ tags:
     description: Knowledge base management
 
 paths:
-  /knowledge_bases:
+  /knowledge-bases:
     post:
       operationId: createKnowledgeBase
       summary: Create a new knowledge base
@@ -70,11 +73,11 @@ paths:
         **Key Features:**
         - Initializes a new knowledge base container
         - Stores name and description metadata
-        - Generates unique knowledgeBaseID
+        - Generates unique knowledgeBaseId
 
         **Key Rules:**
         - Requires `name` field in request body
-        - Requires `knowledge-base:create` scope
+        - Requires `knowledge-base:knowledge-bases:create` scope
         - Name must be unique within the system
 
         **Response Characteristics:**
@@ -88,7 +91,7 @@ paths:
         - $ref: '#/components/parameters/x-correlator'  # Added correlator
       security:
         - openId:
-          - knowledge-base:create
+          - knowledge-base:knowledge-bases:create
       requestBody:
         required: true
         content:
@@ -124,7 +127,7 @@ paths:
         - Supports pagination (implied by array response)
 
         **Key Rules:**
-        - Requires `knowledge-base:read` scope
+        - Requires `knowledge-base:knowledge-bases:read` scope
         - Returns empty array if no knowledge bases exist
 
         **Response Characteristics:**
@@ -138,7 +141,7 @@ paths:
         - $ref: '#/components/parameters/x-correlator'  # Added correlator
       security:
         - openId:
-          - knowledge-base:read
+          - knowledge-base:knowledge-bases:read
       responses:
         '200':
           description: List of knowledge bases
@@ -158,9 +161,9 @@ paths:
         '500':
           $ref: '#/components/responses/Generic500'
 
-  /knowledge_bases/{knowledgeBaseID}:
+  /knowledge-bases/{knowledgeBaseId}:
     parameters:
-      - name: knowledgeBaseID
+      - name: knowledgeBaseId
         in: path
         required: true
         schema:
@@ -180,19 +183,19 @@ paths:
         - Provides document upload timestamps
 
         **Key Rules:**
-        - Requires valid `knowledgeBaseID` path parameter
-        - Requires `knowledge-base:read` scope
+        - Requires valid `knowledgeBaseId` path parameter
+        - Requires `knowledge-base:knowledge-bases:read` scope
 
         **Response Characteristics:**
         - **200 OK**: Complete `KnowledgeBase` object
-        - **404 Not Found**: Invalid/non-existent knowledgeBaseID
+        - **404 Not Found**: Invalid/non-existent knowledgeBaseId
         - **403 Forbidden**: Missing required scope
         - **500 Internal Server Error**: Data retrieval failure
       tags:
         - Knowledge-base
       security:
         - openId:
-          - knowledge-base:read
+          - knowledge-base:knowledge-bases:read
       responses:
         '200':
           description: Knowledge base details
@@ -225,20 +228,20 @@ paths:
 
         **Key Rules:**
         - Requires at least one update field (name/description)
-        - Requires `knowledge-base:update` scope
-        - KnowledgeBaseID must exist
+        - Requires `knowledge-base:knowledge-bases:update` scope
+        - knowledgeBaseId must exist
 
         **Response Characteristics:**
         - **200 OK**: Updated `KnowledgeBase` object
         - **400 Bad Request**: No update fields provided
-        - **404 Not Found**: Invalid knowledgeBaseID
+        - **404 Not Found**: Invalid knowledgeBaseId
         - **403 Forbidden**: Missing required scope
         - **500 Internal Server Error**: Update processing failure
       tags:
         - Knowledge-base
       security:
         - openId:
-          - knowledge-base:update
+          - knowledge-base:knowledge-bases:update
       requestBody:
         required: true
         content:
@@ -276,20 +279,20 @@ paths:
         - Irreversible operation
 
         **Key Rules:**
-        - Requires valid `knowledgeBaseID`
-        - Requires `knowledge-base:delete` scope
+        - Requires valid `knowledgeBaseId`
+        - Requires `knowledge-base:knowledge-bases:delete` scope
         - No partial deletions
 
         **Response Characteristics:**
         - **204 No Content**: Successful deletion (no body)
-        - **404 Not Found**: Invalid knowledgeBaseID
+        - **404 Not Found**: Invalid knowledgeBaseId
         - **403 Forbidden**: Missing required scope
         - **500 Internal Server Error**: Deletion processing failure
       tags:
         - Knowledge-bases
       security:
         - openId:
-          - knowledge-base:delete
+          - knowledge-base:knowledge-bases:delete
       responses:
         '204':
           description: Knowledge base deleted successfully
@@ -305,7 +308,7 @@ paths:
         '500':
           $ref: '#/components/responses/Generic500'
 
-  /knowledge_bases/{knowledgeBaseID}/documents:
+  /knowledge-bases/{knowledgeBaseId}/documents:
     post:
       operationId: uploadDocument
       summary: Upload a document to a knowledge base
@@ -318,8 +321,8 @@ paths:
         - Records upload timestamp
 
         **Key Rules:**
-        - Requires valid `knowledgeBaseID`
-        - Requires `documents:upload` scope
+        - Requires valid `knowledgeBaseId`
+        - Requires `knowledge-base:documents:update` scope
         - File must be sent as multipart/form-data
         - Maximum file size determined by implementation
 
@@ -327,13 +330,13 @@ paths:
         - **201 Created**: Success message with filename
         - **400 Bad Request**: Invalid file format
         - **415 Unsupported Media Type**: Unacceptable format
-        - **404 Not Found**: Invalid knowledgeBaseID
+        - **404 Not Found**: Invalid knowledgeBaseId
         - **403 Forbidden**: Missing required scope
         - **500 Internal Server Error**: Storage failure
       tags:
         - Documents
       parameters:
-        - name: knowledgeBaseID
+        - name: knowledgeBaseId
           in: path
           required: true
           schema:
@@ -341,7 +344,7 @@ paths:
         - $ref: '#/components/parameters/x-correlator'  # Added correlator
       security:
         - openId:
-          - knowledge-base:documents:upload
+          - knowledge-base:documents:update
       requestBody:
         content:
           multipart/form-data:
@@ -409,7 +412,7 @@ components:
     KnowledgeBase:
       type: object
       properties:
-        knowledgeBaseID:
+        knowledgeBaseId:
           type: string
           description: Unique identifier of the knowledge base
         name:
