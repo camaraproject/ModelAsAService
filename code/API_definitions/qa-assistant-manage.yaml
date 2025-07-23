@@ -43,10 +43,12 @@ externalDocs:
   url: https://github.com/camaraproject/ModelAsAService
 
 servers:
-  - url: '{apiRoot}/qa-assistant-manage/v0.1rc1'
+servers:
+   - url: {apiRoot}/qa-assistant-manage/v0.1rc1
     variables:
       apiRoot:
-        default: http://localhost:8080
+        default: http://localhost:9091
+        description: API root, defined by the service provider, e.g. `api.example.com` or `api.example.com/somepath`
 
 paths:
   /assistants:
