@@ -44,7 +44,8 @@ servers:
   - url: '{apiRoot}/qa-assistant-service/v0.1rc1'
     variables:
       apiRoot:
-        default: http://localhost:8080
+        default: http://localhost:9091
+        description: API root, defined by the service provider, e.g. `api.example.com` or `api.example.com/somepath`
 
 paths:
   /answer:
