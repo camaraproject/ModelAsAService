@@ -513,7 +513,7 @@ components:
                 message: "Required parameter 'name' is missing"
    
     Generic403:
-      description: Insufficient permissions
+      description: Forbidden
       headers:
         x-correlator:
           $ref: '#/components/parameters/x-correlator'
