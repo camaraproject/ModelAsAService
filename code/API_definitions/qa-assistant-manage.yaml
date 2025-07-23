@@ -519,7 +519,7 @@ components:
                 message: "Client specified an invalid argument"
 
     Generic403:
-      description: Insufficient permissions
+      description: Forbidden
       headers:
         x-correlator:
           $ref: '#/components/parameters/x-correlator'
