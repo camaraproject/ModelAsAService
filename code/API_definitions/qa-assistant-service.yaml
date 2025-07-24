@@ -2,11 +2,12 @@ openapi: 3.0.3
 info:
   title: Q&A Assistant - Service
   description: >-
-    API for querying answers from a QA assistant using a specified knowledge base and model configuration.
+    This API provides service interfaces for the Question and Answer (Q&A) Assistant, enabling users to submit query requests to a configured Q&A assistant and obtain answers generated based on the knowledge base and Large Language Model (LLM).
+    It is suitable for scenarios such as building intelligent question-answering systems and customer service bots that require real-time responses to user inquiries.
 
     ## Security and Authentication
     This API uses OAuth 2.0 with OpenID Connect for authentication. The following scope is required:
-    - assistant:query - Permission to query assistants
+    - qa-assistant-service:answer:read - Permission to query assistants
 
     # Authorization and authentication
     
@@ -32,29 +33,64 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: wip
+  version: 0.1.0-rc.1
+  x-camara-commonalities: 0.6
 
-  externalDocs:
-    description: Product documentation at CAMARA
-    url: https://github.com/camaraproject/ModelAsAService
+externalDocs:
+  description: Product documentation at CAMARA
+  url: https://github.com/camaraproject/ModelAsAService
 
 servers:
-  - url: '{apiRoot}/qa-assistant-service/vwip'
+  - url: '{apiRoot}/qa-assistant-service/v0.1rc1'
     variables:
       apiRoot:
-        default: http://localhost:8080
+        default: http://localhost:9091
+        description: API root, defined by the service provider, e.g. `api.example.com` or `api.example.com/somepath`
 
 paths:
   /answer:
     post:
+      operationId: queryAssistant
       summary: Get an answer from a QA assistant
+      description: |
+        Queries a configured QA assistant to generate answers using knowledge bases and LLMs.
+
+        **Key Features:**
+        - Utilizes pre-configured assistant settings (prompts, model parameters)
+        - Leverages associated knowledge bases for contextual responses
+        - Provides termination status for answer generation
+
+        **Key Rules:**
+        - Requires valid UUID `assistantId`
+        - `prompt` must be 1-1000 characters
+        - Needs `qa-assistant-service:answer:read` scope
+        - Assistant must be properly configured and accessible
+
+        **Response Characteristics:**
+        - **200 OK**: Returns `QueryResponse` with answer text and termination status
+          - `finished` indicates generation completion reason (Stop/Length/Error/Filter)
+          - `reference` shows knowledge base source when available
+        - **400 Bad Request**: 
+          - Missing/invalid prompt
+          - Invalid assistantId format
+          - Prompt length exceeds limits
+        - **401 Unauthenticated**: Missing/invalid credentials
+        - **403 Forbidden**: 
+          - Missing required scope
+          - Token/assistantId mismatch
+        - **404 Not Found**: 
+          - Assistant doesn't exist
+          - Identifier not found
+        - **500 Internal Server Error**: 
+          - LLM processing failure
+          - Knowledge base access error
       tags:
         - Query
       parameters:
         - $ref: '#/components/parameters/x-correlator'  # Added correlator
       security:
         - openId:
-          - assistant-service:query
+          - qa-assistant-service:answer:read
       requestBody:
         required: true
         content:
@@ -73,8 +109,6 @@ paths:
                 $ref: '#/components/schemas/QueryResponse'
         '400':
           $ref: '#/components/responses/Generic400'
-        '401':
-          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -219,34 +253,8 @@ components:
                 code: OUT_OF_RANGE
                 message: "Prompt length exceeds maximum allowed characters"
 
-    Generic401:
-      description: Authentication required
-      headers:
-        x-correlator:
-          $ref: '#/components/parameters/x-correlator'
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/ErrorInfo'
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 401
-                  code:
-                    enum:
-                      - UNAUTHENTICATED
-          examples:
-            GENERIC_401_UNAUTHENTICATED:
-              description: Authentication credentials missing or invalid
-              value:
-                status: 401
-                code: UNAUTHENTICATED
-                message: Authentication credentials missing or invalid
-
     Generic403:
-      description: Insufficient permissions
+      description: Forbidden
       headers:
         x-correlator:
           $ref: '#/components/parameters/x-correlator'
