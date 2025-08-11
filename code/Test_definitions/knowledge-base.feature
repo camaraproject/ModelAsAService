@@ -115,4 +115,3 @@ Feature: CAMARA MaaS Knowledge base API, v0.1.0-rc.1
     When performing any API operation (e.g., POST to /knowledge-bases)
     Then the response status code should be 500
     And the error response should contain server error details
-
