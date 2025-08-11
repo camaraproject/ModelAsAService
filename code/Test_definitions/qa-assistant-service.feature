@@ -10,7 +10,7 @@ Feature: CAMARA MaaS Q&A Assistant Service API, v0.1.0-rc.1
     # References to OAS spec schemas refer to schemas specified in knowledge-base.yaml
 
   Background: Common knowledge-base setup
-    Given an environment at "apiRoot" 
+    Given an environment at "apiRoot"
     And the resource "/qa-assistant-service/v0.1rc1"                                                              |
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
@@ -107,4 +107,3 @@ Feature: CAMARA MaaS Q&A Assistant Service API, v0.1.0-rc.1
     When receiving a successful response
     Then the response must contain: "success", "finished" and "answerText"
     And may optionally contain "reference" and "error" fields
-
