@@ -38,7 +38,7 @@ Sandbox API Repository to describe, develop, document, and test the ModelAsAServ
 
 ## Contributing
 
-* Meetings are held virtually <!-- for new API families request a meeting link from the LF admin team or replace the information with the existing meeting information (of the API family) -->
+* Meetings are held virtually
     * Schedule: Bi-weekly (odd weeks), Tuesday, 09:00 UTC (11:00 UTC+2, 17:00 UTC+8)
     * [Join](https://teams.live.com/meet/935822818385?p=a3q0Q86Qib478gzKSM)
     * Minutes: Access [meeting minutes](https://lf-camaraproject.atlassian.net/l/cp/GpKaVSqC)
