@@ -1,4 +1,4 @@
-Feature: CAMARA MaaS Knowledge base API, v0.1.0-rc.1
+Feature: CAMARA MaaS Knowledge base API, v0.1.0
     # Input to be provided by the implementation to the tester
     #
     # Implementation indications:
@@ -12,7 +12,7 @@ Feature: CAMARA MaaS Knowledge base API, v0.1.0-rc.1
 
   Background: Common knowledge-base setup
     Given an environment at "apiRoot" 
-    And the resource "/knowledge-base/v0.1rc1"                                                              |
+    And the resource "/knowledge-base/v0.1"                                                              |
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
@@ -116,3 +116,4 @@ Feature: CAMARA MaaS Knowledge base API, v0.1.0-rc.1
     When performing any API operation (e.g., POST to /knowledge-bases)
     Then the response status code should be 500
     And the error response should contain server error details
+
