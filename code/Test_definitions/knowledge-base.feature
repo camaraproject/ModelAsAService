@@ -10,7 +10,7 @@ Feature: CAMARA MaaS Knowledge base API, v0.1.0
     # References to OAS spec schemas refer to schemas specified in knowledge-base.yaml
 
   Background: Common knowledge-base setup
-    Given an environment at "apiRoot" 
+    Given an environment at "apiRoot"
     And the resource "/knowledge-base/v0.1"                                                              |
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
@@ -115,4 +115,3 @@ Feature: CAMARA MaaS Knowledge base API, v0.1.0
     When performing any API operation (e.g., POST to /knowledge-bases)
     Then the response status code should be 500
     And the error response should contain server error details
-
