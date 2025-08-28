@@ -29,7 +29,7 @@ Sandbox API Repository to describe, develop, document, and test the ModelAsAServ
 
 * Note: Please be aware that the project will have frequent updates to the main branch. There are no compatibility guarantees associated with code in any branch, including main, until a new release is created. For example, changes may be reverted before a release is created. For best results, use the latest public release.
 
-**NEW** Public release [r1.1](https://github.com/camaraproject/ModelAsAService/releases/tag/r1.1) is available, with knowledge-base v0.1.0, qa-assistant-manage v0.1.0 and qa-assistant-service v0.1.0.
+**NEW** Public release [r1.2](https://github.com/camaraproject/ModelAsAService/releases/tag/r1.2) is available, with knowledge-base v0.1.0, qa-assistant-manage v0.1.0 and qa-assistant-service v0.1.0.
 <!-- Optional: an explicit listing of the latest (pre-)release with additional information, e.g. links to the API definitions -->
 <!-- In addition use/uncomment one or multiple the following alternative options when becoming applicable -->
 <!--* Pre-releases of this sub project are available in https://github.com/camaraproject/ModelAsAService/releases -->
