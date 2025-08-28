@@ -8,11 +8,11 @@ info:
 
 
     ## API Functionality
-    
-     This API allows API clients to perform CRUD operations on the knowledge base hosted on the server.
-     
+
+    This API allows API clients to perform CRUD operations on the knowledge base hosted on the server.
+
     ## Security and Authentication
-    
+
     This API uses OAuth 2.0 with OpenID Connect for authentication. The following scopes are required:
     - knowledge-base:knowledge-bases:create - Create new knowledge bases
     - knowledge-base:knowledge-bases:read - Read knowledge base entries
@@ -21,14 +21,14 @@ info:
     - knowledge-base:documents:update - Upload documents to knowledge bases
 
     # Authorization and authentication
-    
+
     The "Camara Security and Interoperability Profile" provides details of how an API consumer requests an access token. Please refer to Identity and Consent Management (https://github.com/camaraproject/IdentityAndConsentManagement/) for the released version of the profile.
-    
+
     The specific authorization flows to be used will be agreed upon during the onboarding process, happening between the API consumer and the API provider, taking into account the declared purpose for accessing the API, whilst also being subject to the prevailing legal framework dictated by local legislation.
-    
+
     In cases where personal data is processed by the API and users can exercise their rights through mechanisms such as opt-in and/or opt-out, the use of three-legged access tokens is mandatory. This ensures that the API remains in compliance with privacy regulations, upholding the principles of transparency and user-centric privacy-by-design.
 
-    
+
     # Additional CAMARA error responses
 
     The list of error codes in this API specification is not exhaustive. Therefore the API specification may not document some non-mandatory error statuses as indicated in `CAMARA API Design Guide`.
@@ -37,7 +37,7 @@ info:
 
     As a specific rule, error `501 - NOT_IMPLEMENTED` can be only a possible error response if it is explicitly documented in the API.
 
-    
+
     # Further info and support
 
     (FAQs will be added in a later version of the documentation)
@@ -92,7 +92,7 @@ paths:
         - $ref: '#/components/parameters/x-correlator'  # Added correlator
       security:
         - openId:
-          - knowledge-base:knowledge-bases:create
+            - knowledge-base:knowledge-bases:create
       requestBody:
         required: true
         content:
@@ -135,14 +135,14 @@ paths:
         - **200 OK**: Array of `KnowledgeBase` objects
         - **401 Unauthenticated**: Invalid/missing credentials
         - **403 Forbidden**: Insufficient permissions
-        - **500 Internal Server Error**: Data retrieval failure      
+        - **500 Internal Server Error**: Data retrieval failure
       tags:
         - Knowledge-base
       parameters:
         - $ref: '#/components/parameters/x-correlator'  # Added correlator
       security:
         - openId:
-          - knowledge-base:knowledge-bases:read
+            - knowledge-base:knowledge-bases:read
       responses:
         '200':
           description: List of knowledge bases
@@ -196,7 +196,7 @@ paths:
         - Knowledge-base
       security:
         - openId:
-          - knowledge-base:knowledge-bases:read
+            - knowledge-base:knowledge-bases:read
       responses:
         '200':
           description: Knowledge base details
@@ -242,7 +242,7 @@ paths:
         - Knowledge-base
       security:
         - openId:
-          - knowledge-base:knowledge-bases:update
+            - knowledge-base:knowledge-bases:update
       requestBody:
         required: true
         content:
@@ -293,7 +293,7 @@ paths:
         - Knowledge-bases
       security:
         - openId:
-          - knowledge-base:knowledge-bases:delete
+            - knowledge-base:knowledge-bases:delete
       responses:
         '204':
           description: Knowledge base deleted successfully
@@ -345,7 +345,7 @@ paths:
         - $ref: '#/components/parameters/x-correlator'  # Added correlator
       security:
         - openId:
-          - knowledge-base:documents:update
+            - knowledge-base:documents:update
       requestBody:
         content:
           multipart/form-data:
@@ -397,19 +397,19 @@ components:
       description: Correlation ID for request tracing
       schema:
         $ref: "#/components/schemas/XCorrelator"
-  
+
   headers:
     x-correlator:
       description: Correlation id for the different services
       schema:
         $ref: "#/components/schemas/XCorrelator"
-        
+
   schemas:
     XCorrelator:
       type: string
       pattern: ^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$
       example: "b4333c46-49c0-4f62-80d7-f0ef930f1c46"
-      
+
     KnowledgeBase:
       type: object
       properties:
@@ -511,7 +511,7 @@ components:
                 status: 400
                 code: MISSING_REQUIRED_PARAM
                 message: "Required parameter 'name' is missing"
-   
+
     Generic403:
       description: Forbidden
       headers:
