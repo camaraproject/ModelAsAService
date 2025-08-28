@@ -2,6 +2,7 @@
 
 ## Table of contents
 
+- **[r1.2](#r12) Fall25**
 - **[r1.1](#r11)**
 
 **Please be aware that the project will have frequent updates to the main branch. There are no compatibility guarantees associated with code in any branch, including main, until it has been released. For example, changes may be reverted before a release is published. For the best results, use the latest published release.**
@@ -15,7 +16,7 @@ The below sections record the changes for each API version in each release as fo
 
 <!--Repeat the below release section (header 1 and subsections) at the top of this file for each new (pre-)release-->
 
-# r1.1
+# r1.2
 
 ## Release Notes
 
@@ -25,10 +26,95 @@ This release contains the definition and documentation of
 *  qa-assistant-service v0.1.0
 
 The API definition(s) are based on
-* Commonalities v0.6
-* Identity and Consent Management v0.4
+* Commonalities v0.6.0 (r3.3)
+* Identity and Consent Management v0.4 (r3.3)
 
 ## knowledge-base v0.1.0
+
+knowledge-base v0.1.0 is the public release of version 0.1.0 of the API
+
+- API definition **with inline documentation**:
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r1.2/code/API_definitions/knowledge-base.yaml&nocors)
+  - [View it on Swagger Editor](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r1.2/code/API_definitions/knowledge-base.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/ModelAsAService/blob/r1.2/code/API_definitions/knowledge-base.yaml)
+
+### Added
+- Add API User Story by @lihaojie-CMCC in [#18](https://github.com/camaraproject/ModelAsAService/pull/18)
+
+### Changed
+- Revise formatting issues based on the automated detection tool by @lihaojie-CMCC in [#16](https://github.com/camaraproject/ModelAsAService/pull/16), [#17](https://github.com/camaraproject/ModelAsAService/pull/17)
+- Update for the Fall25 public release by @lihaojie-CMCC in [#18](https://github.com/camaraproject/ModelAsAService/pull/18)
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+## qa-assistant-manage v0.1.0
+
+qa-assistant-manage v0.1.0 is the public release of version 0.1.0 of the API
+
+- API definition **with inline documentation**:
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r1.2/code/API_definitions/qa-assistant-manage.yaml&nocors)
+  - [View it on Swagger Editor](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r1.2/code/API_definitions/qa-assistant-manage.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/ModelAsAService/blob/r1.2/code/API_definitions/qa-assistant-manage.yaml)
+
+### Added
+- Add API User Story by @lihaojie-CMCC in [#18](https://github.com/camaraproject/ModelAsAService/pull/18)
+
+### Changed
+- Revise formatting issues based on the automated detection tool by @lihaojie-CMCC in [#16](https://github.com/camaraproject/ModelAsAService/pull/16), [#17](https://github.com/camaraproject/ModelAsAService/pull/17)
+- Update for the Fall25 public release by @lihaojie-CMCC in [#18](https://github.com/camaraproject/ModelAsAService/pull/18)
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+## qa-assistant-service v0.1.0
+
+qa-assistant-service v0.1.0 is the public release of version 0.1.0 of the API
+
+- API definition **with inline documentation**:
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r1.2/code/API_definitions/qa-assistant-service.yaml&nocors)
+  - [View it on Swagger Editor](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r1.2/code/API_definitions/qa-assistant-service.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/ModelAsAService/blob/r1.2/code/API_definitions/qa-assistant-service.yaml)
+
+### Added
+- Add API User Story by @lihaojie-CMCC in [#18](https://github.com/camaraproject/ModelAsAService/pull/18)
+
+### Changed
+- Revise formatting issues based on the automated detection tool by @lihaojie-CMCC in [#16](https://github.com/camaraproject/ModelAsAService/pull/16), [#17](https://github.com/camaraproject/ModelAsAService/pull/17)
+- Update for the Fall25 public release by @lihaojie-CMCC in [#18](https://github.com/camaraproject/ModelAsAService/pull/18)
+
+### Fixed
+- N/A
+
+### Removed
+- N/A
+
+## New Contributors
+- N/A
+
+**Full Changelog**: [https://github.com/camaraproject/ModelAsAService/commits/r1.2/](https://github.com/camaraproject/ModelAsAService/commits/r1.2/)
+
+
+# r1.1
+
+## Release Notes
+
+This release contains the definition and documentation of
+*  knowledge-base v0.1.0-rc.1
+*  qa-assistant-manage v0.1.0-rc.1
+*  qa-assistant-service v0.1.0-rc.1
+
+The API definition(s) are based on
+* Commonalities v0.6.0 (r3.2)
+* Identity and Consent Management v0.4 (r3.2)
+
+## knowledge-base v0.1.0-rc.1
 
 knowledge-base v0.1.0-rc.1 is the first release candidate of version 0.1.0 of the API
 
@@ -38,15 +124,22 @@ knowledge-base v0.1.0-rc.1 is the first release candidate of version 0.1.0 of th
   - OpenAPI [YAML spec file](https://github.com/camaraproject/ModelAsAService/blob/r1.1/code/API_definitions/knowledge-base.yaml)
 
 ### Added
-Update for Fall25 by @lihaojie-CMCC in [#11](https://github.com/camaraproject/ModelAsAService/pull/11),[13](https://github.com/camaraproject/ModelAsAService/pull/13)
-Add API yaml files and API Test definitions by @lihaojie-CMCC in [#10](https://github.com/camaraproject/ModelAsAService/pull/10)
+- Update for Fall25 by @lihaojie-CMCC in [#11](https://github.com/camaraproject/ModelAsAService/pull/11),[13](https://github.com/camaraproject/ModelAsAService/pull/13)
+- Add API yaml files and API Test definitions by @lihaojie-CMCC in [#10](https://github.com/camaraproject/ModelAsAService/pull/10)
 
 ### Changed
 
+- N/A
+
 ### Fixed
 
+- N/A
+
 ### Removed
-## qa-assistant-manage v0.1.0
+
+- N/A
+
+## qa-assistant-manage v0.1.0-rc.1
 
 qa-assistant-manage v0.1.0-rc.1 is the first release candidate of version 0.1.0 of the API
 
@@ -56,16 +149,22 @@ qa-assistant-manage v0.1.0-rc.1 is the first release candidate of version 0.1.0 
   - OpenAPI [YAML spec file](https://github.com/camaraproject/ModelAsAService/blob/r1.1/code/API_definitions/qa-assistant-manage.yaml)
 
 ### Added
-Update for Fall25 by @lihaojie-CMCC in [#11](https://github.com/camaraproject/ModelAsAService/pull/11),[13](https://github.com/camaraproject/ModelAsAService/pull/13)
-Add API yaml files and API Test definitions by @lihaojie-CMCC in [#10](https://github.com/camaraproject/ModelAsAService/pull/10)
+- Update for Fall25 by @lihaojie-CMCC in [#11](https://github.com/camaraproject/ModelAsAService/pull/11),[13](https://github.com/camaraproject/ModelAsAService/pull/13)
+- Add API yaml files and API Test definitions by @lihaojie-CMCC in [#10](https://github.com/camaraproject/ModelAsAService/pull/10)
 
 ### Changed
 
+- N/A
+
 ### Fixed
+
+- N/A
 
 ### Removed
 
-## qa-assistant-service v0.1.0
+- N/A
+
+## qa-assistant-service v0.1.0-rc.1
 
 qa-assistant-service v0.1.0-rc.1 is the first release candidate of version 0.1.0 of the API
 
@@ -75,14 +174,20 @@ qa-assistant-service v0.1.0-rc.1 is the first release candidate of version 0.1.0
   - OpenAPI [YAML spec file](https://github.com/camaraproject/ModelAsAService/blob/r1.1/code/API_definitions/qa-assistant-service.yaml)
 
 ### Added
-Update for Fall25 by @lihaojie-CMCC in [#11](https://github.com/camaraproject/ModelAsAService/pull/11),[13](https://github.com/camaraproject/ModelAsAService/pull/13)
-Add API yaml files and API Test definitions by @lihaojie-CMCC in [#10](https://github.com/camaraproject/ModelAsAService/pull/10)
+- Update for Fall25 by @lihaojie-CMCC in [#11](https://github.com/camaraproject/ModelAsAService/pull/11),[13](https://github.com/camaraproject/ModelAsAService/pull/13)
+- Add API yaml files and API Test definitions by @lihaojie-CMCC in [#10](https://github.com/camaraproject/ModelAsAService/pull/10)
 
 ### Changed
 
+- N/A
+
 ### Fixed
 
+- N/A
+
 ### Removed
+
+- N/A
 
 ## New Contributors
 

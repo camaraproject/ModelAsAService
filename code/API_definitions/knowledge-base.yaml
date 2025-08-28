@@ -45,7 +45,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.1.0-rc.1
+  version: 0.1.0
   x-camara-commonalities: 0.6
 
 externalDocs:
@@ -53,7 +53,7 @@ externalDocs:
   url: https://github.com/camaraproject/ModelAsAService
 
 servers:
-  - url: '{apiRoot}/knowledge-base/v0.1rc1'
+  - url: '{apiRoot}/knowledge-base/v0.1'
     variables:
       apiRoot:
         default: http://localhost:9091
