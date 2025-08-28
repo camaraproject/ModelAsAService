@@ -10,7 +10,7 @@ Feature: CAMARA MaaS QA Assistant Management API, v0.1.0
     # References to OAS spec schemas refer to schemas specified in knowledge-base.yaml
 
   Background: Common knowledge-base setup
-    Given an environment at "apiRoot" 
+    Given an environment at "apiRoot"
     And the resource "/qa-assistant-manage/v0.1"                                                              |
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
@@ -82,4 +82,3 @@ Feature: CAMARA MaaS QA Assistant Management API, v0.1.0
     When the user sends a DELETE request to "/assistants/nonexistent"
     Then the response status code should be 404
     And the error message is "Assistant not found"
-
