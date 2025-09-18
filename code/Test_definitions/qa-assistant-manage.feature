@@ -11,7 +11,8 @@ Feature: CAMARA MaaS QA Assistant Management API, v0.1.0
 
   Background: Common knowledge-base setup
     Given an environment at "apiRoot"
-    And the resource "/qa-assistant-manage/v0.1"                                                              |
+    And the resource "/qa-assistant-manage/v0.1/assistants"                                                              |
+
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
