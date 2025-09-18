@@ -4,8 +4,10 @@ info:
   description: >-
     This API provides service interfaces for the Question and Answer (Q&A) Assistant, enabling users to submit query requests to a configured Q&A assistant and obtain answers generated based on the knowledge base and Large Language Model (LLM).
     It is suitable for scenarios such as building intelligent question-answering systems and customer service bots that require real-time responses to user inquiries.
+    It must follow RFC 3339 and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ.
 
     ## Security and Authentication
+    
     This API uses OAuth 2.0 with OpenID Connect for authentication. The following scope is required:
     - qa-assistant-service:answer:read - Permission to query assistants
 
@@ -28,6 +30,7 @@ info:
 
 
     # Further info and support
+    
     (FAQs will be added in a later version of the documentation)
 
   license:
