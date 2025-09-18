@@ -17,7 +17,7 @@ Sandbox API Repository to describe, develop, document, and test the ModelAsAServ
 
 * Service APIs “ModelAsAService” (see APIBacklog.md)
 * MaaS (Model as a Services) refers to the packaging of AI models and their associated capabilities into reusable services, enabling users to quickly and efficiently build, deploy, monitor, and invoke models without the need to develop and maintain underlying foundational capabilities.
-* The API provides the API customer with the ability to:  
+* The API provides the API consumer with the ability to:  
   * build and manage personalized Knowledge Bases (knowledge-base)
   * quickly construct unique Q&A Assistant applications (qa-assistant-manage)
   * provide Q&A services to the users of the application (qa-assistant-service)
