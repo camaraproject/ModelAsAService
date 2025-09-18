@@ -5,11 +5,11 @@ info:
     This API offers comprehensive CRUD (Create, Read, Update, Delete) management capabilities for the knowledge base, along with document uploading functionality.
     It is designed to provide applications with standardized capabilities for knowledge content storage and management, supporting multi-format document storage, fine-grained permission control, and end-to-end traceability.
     It is suitable for building knowledge-intensive systems (such as intelligent customer service platforms and enterprise document platforms) while ensuring compliance.
-
+    It must follow RFC 3339 and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ.
 
     ## API Functionality
 
-    This API allows API clients to perform CRUD operations on the knowledge base hosted on the server.
+    This API allows the API consumer to perform CRUD operations on the knowledge base hosted on the server.
 
     ## Security and Authentication
 
@@ -45,7 +45,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.1.0-rc.1
+  version: 0.1.0
   x-camara-commonalities: 0.6
 
 externalDocs:
@@ -53,14 +53,14 @@ externalDocs:
   url: https://github.com/camaraproject/ModelAsAService
 
 servers:
-  - url: '{apiRoot}/knowledge-base/v0.1rc1'
+  - url: '{apiRoot}/knowledge-base/v0.1'
     variables:
       apiRoot:
         default: http://localhost:9091
         description: API root, defined by the service provider, e.g. `api.example.com` or `api.example.com/somepath`
 
 tags:
-  - name: knowledge-base
+  - name: Knowledge Base
     description: Knowledge base management
 
 paths:
@@ -87,7 +87,7 @@ paths:
         - **403 Forbidden**: Missing required scope
         - **500 Internal Server Error**: Backend processing failure
       tags:
-        - Knowledge-base
+        - Knowledge Base
       parameters:
         - $ref: '#/components/parameters/x-correlator'  # Added correlator
       security:
@@ -137,7 +137,7 @@ paths:
         - **403 Forbidden**: Insufficient permissions
         - **500 Internal Server Error**: Data retrieval failure
       tags:
-        - Knowledge-base
+        - Knowledge Base
       parameters:
         - $ref: '#/components/parameters/x-correlator'  # Added correlator
       security:
@@ -193,7 +193,7 @@ paths:
         - **403 Forbidden**: Missing required scope
         - **500 Internal Server Error**: Data retrieval failure
       tags:
-        - Knowledge-base
+        - Knowledge Base
       security:
         - openId:
             - knowledge-base:knowledge-bases:read
@@ -239,7 +239,7 @@ paths:
         - **403 Forbidden**: Missing required scope
         - **500 Internal Server Error**: Update processing failure
       tags:
-        - Knowledge-base
+        - Knowledge Base
       security:
         - openId:
             - knowledge-base:knowledge-bases:update
@@ -290,7 +290,7 @@ paths:
         - **403 Forbidden**: Missing required scope
         - **500 Internal Server Error**: Deletion processing failure
       tags:
-        - Knowledge-bases
+        - Knowledge Base
       security:
         - openId:
             - knowledge-base:knowledge-bases:delete

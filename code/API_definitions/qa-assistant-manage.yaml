@@ -4,6 +4,7 @@ info:
   description: >-
     This API provides CRUD (Create, Read, Update, Delete) management functions for the Question and Answer (Q&A) Assistant, aiming to equip developers with the capability to configure and manage intelligent question-answering systems based on Large Language Models (LLMs).
     It supports model parameter tuning, knowledge base association, and prompt engineering configuration, making it suitable for building customizable intelligent customer service or question-answering services.
+    It must follow RFC 3339 and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ.
 
     ## Security and Authentication
 
@@ -30,12 +31,13 @@ info:
     As a specific rule, error `501 - NOT_IMPLEMENTED` can be only a possible error response if it is explicitly documented in the API.
 
     # Further info and support
+
     (FAQs will be added in a later version of the documentation)
 
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.1.0-rc.1
+  version: 0.1.0
   x-camara-commonalities: 0.6
 
 externalDocs:
@@ -43,7 +45,7 @@ externalDocs:
   url: https://github.com/camaraproject/ModelAsAService
 
 servers:
-  - url: '{apiRoot}/qa-assistant-manage/v0.1rc1'
+  - url: '{apiRoot}/qa-assistant-manage/v0.1'
     variables:
       apiRoot:
         default: http://localhost:9091
