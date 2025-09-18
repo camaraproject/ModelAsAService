@@ -6,7 +6,7 @@ Checklist for qa-assistant-service v0.1.0 in r1.2.
 |----|----------------------------------------------|:-----:|:-----------------:|:-------:|:------:|:----:|:----:|
 |  1 | API definition                               |   M   |         M         |    M    |    M   |   Y   | [/code/API_definitions/qa-assistant-service.yaml](/code/API_definitions/qa-assistant-service.yaml) |
 |  2 | Design guidelines from Commonalities applied |   O   |         M         |    M    |    M   |   Y   | [r3.2](https://github.com/camaraproject/Commonalities/releases/tag/r3.2)  |
-|  3 | Guidelines from ICM applied                  |   O   |         M         |    M    |    M   |   Y   | [r3.2](https://github.com/camaraproject/IdentityAndConsentManagement/releases/tag/r3.2)   |
+|  3 | Guidelines from ICM applied                  |   O   |         M         |    M    |    M   |   Y   | [r3.3](https://github.com/camaraproject/IdentityAndConsentManagement/releases/tag/r3.3)   |
 |  4 | API versioning convention applied            |   M   |         M         |    M    |    M   |   Y   |                  |
 |  5 | API documentation                            |   M   |         M         |    M    |    M   |   Y   | in yaml |
 |  6 | User stories                                 |   O   |         O         |    O    |    M   |   Y   | [for a single API](/documentation/API_documentation/ModelAsAService_qa_assistant_service_User_Story.md),  [leveraging multiple APIs](/documentation/API_documentation/ModelAsAService_knowledge_base_and_qa_assistant_User_Story.md) |
