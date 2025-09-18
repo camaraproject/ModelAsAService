@@ -11,7 +11,7 @@ Checklist for qa-assistant-service v0.1.0 in r1.2.
 |  5 | API documentation                            |   M   |         M         |    M    |    M   |   Y   | in yaml |
 |  6 | User stories                                 |   O   |         O         |    O    |    M   |   Y   | [for a single API](/documentation/API_documentation/ModelAsAService_qa_assistant_service_User_Story.md),  [leveraging multiple APIs](/documentation/API_documentation/ModelAsAService_knowledge_base_and_qa_assistant_User_Story.md) |
 |  7 | Basic API test cases & documentation         |   O   |         M         |    M    |    M   |   Y   | [/code/Test_definitions](/code/Test_definitions) |
-|  8 | Enhanced API test cases & documentation      |   O   |         O         |    O    |    M   |   Y   | [relative link](/code/Test_definitions) |
+|  8 | Enhanced API test cases & documentation      |   O   |         O         |    O    |    M   |   Y   | [/code/Test_definitions](/code/Test_definitions) |
 |  9 | Test result statement                        |   O   |         O         |    O    |    M   |   N   |        |
 | 10 | API release numbering convention applied     |   M   |         M         |    M    |    M   |   Y   |                  |
 | 11 | Change log updated                           |   M   |         M         |    M    |    M   |   Y   | [/CHANGELOG.md](/CHANGELOG.md) |
