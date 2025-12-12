@@ -26,7 +26,7 @@ Sandbox API Repository to describe, develop, document, and test the ModelAsAServ
 * Started: November 2024
 
 <!-- CAMARA:RELEASE-INFO:START -->
-<!-- This section is automatically maintained by the CAMARA project-administration tooling: https://github.com/camaraproject/project-administration -->
+<!-- The following section is automatically maintained by the CAMARA project-administration tooling: https://github.com/camaraproject/project-administration -->
 
 ## Release Information
 
