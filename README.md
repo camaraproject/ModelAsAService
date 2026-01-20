@@ -44,7 +44,7 @@ Sandbox API Repository to describe, develop, document, and test the ModelAsAServ
 
 * Meetings are held virtually
     * Schedule: Bi-weekly (odd weeks), Tuesday, 09:00 UTC (11:00 UTC+2, 17:00 UTC+8)
-    * [Join](https://teams.live.com/meet/935822818385?p=a3q0Q86Qib478gzKSM)
+    * [Join](https://teams.live.com/meet/9374614741908?p=QFhUf7b0SHZRdXSfA6)
     * Minutes: Access [meeting minutes](https://lf-camaraproject.atlassian.net/l/cp/GpKaVSqC)
 * Mailing List
     * Subscribe / Unsubscribe to the mailing list of this Sub Project <https://lists.camaraproject.org/g/sp-maas>.
