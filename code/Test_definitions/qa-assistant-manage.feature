@@ -1,4 +1,4 @@
-Feature: CAMARA MaaS QA Assistant Management API, v0.1.0
+Feature: CAMARA MaaS QA Assistant Management API, vwip
     # Input to be provided by the implementation to the tester
     #
     # Implementation indications:
@@ -11,7 +11,7 @@ Feature: CAMARA MaaS QA Assistant Management API, v0.1.0
 
   Background: Common knowledge-base setup
     Given an environment at "apiRoot"
-    And the resource "/qa-assistant-manage/v0.1/assistants"                                                              |
+    And the resource "/qa-assistant-manage/vwip/assistants"                                                              |
 
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
