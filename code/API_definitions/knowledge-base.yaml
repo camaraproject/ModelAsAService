@@ -725,7 +725,8 @@ paths:
         **Key Features:**
         - Passes arguments to the tool's external endpoint
         - Returns the tool's execution result
-        - Reports HTTP status code from the tool invocation
+        - Reports HTTP status code from the tool invocation via the `statusCode` field; the callTool endpoint itself always responds with HTTP 200 per the business-outcome modelling in CAMARA API Design Guide §3.1
+        - Surfaces failure context through `contextCode` / `contextMessage`
 
         **Key Rules:**
         - Requires valid `knowledgeBaseId` and `toolId`
@@ -733,10 +734,12 @@ paths:
         - Tool must be properly defined and accessible
 
         **Response Characteristics:**
-        - **200 OK**: Returns `ToolCallResponse` with execution result
-        - **400 Bad Request**: Invalid arguments
-        - **404 Not Found**: Invalid toolId or knowledgeBaseId
+        - **200 OK**: Returns `ToolCallResponse` with execution result (regardless of upstream outcome)
+        - **400 Bad Request**: Arguments do not match tool's `inputSchema` 
         - **403 Forbidden**: Missing required scope
+        - **404 Not Found**: Invalid toolId or knowledgeBaseId
+        - **422 Unprocessable**: Tool is disabled or arguments are semantically invalid
+        - **429 Too Many Requests**: Upstream tool rate limit reached
         - **500 Internal Server Error**: Tool execution failure
       tags:
         - Tools
@@ -785,6 +788,10 @@ paths:
           $ref: '#/components/responses/Generic403'
         '404':
           $ref: '#/components/responses/Generic404'
+        '422':
+          $ref: '#/components/responses/ToolInvalidInput422'
+        '429':
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic429'
         '500':
           $ref: '#/components/responses/Generic500'
 
@@ -868,19 +875,30 @@ components:
           type: string
           maxLength: 4096
           description: New description of the knowledge base
+    
+    HeaderValue:
+      type: string
+      maxLength: 4096
+      description: |
+        HTTP header value. String only, no structured values.
+        Header names are validated against RFC 7230 token syntax at runtime.
 
-    Tool:
+    JSONSchema:
       type: object
+      description: |
+        A JSON Schema document (https://json-schema.org/) describing the expected shape of tool arguments (`inputSchema`) or return values (`outputSchema`).
+        The document is opaque to the API platform and passed through to the tool runtime; the tool provider is responsible for validation.
+      additionalProperties: true
+    
+    ToolCommon:
+      type: object
+      description: |
+        Common properties of a tool shared across the create, update and response schemas. Not used directly in requests or responses.
       properties:
-        toolId:
-          type: string
-          format: uuid
-          maxLength: 36
-          description: Unique identifier of the tool
         name:
           type: string
           maxLength: 255
-          description: Name of the tool
+          description: Name of the tool. Must be unique within a knowledge base.
         description:
           type: string
           maxLength: 4096
@@ -892,124 +910,134 @@ components:
           description: Endpoint URL for invoking the tool
         method:
           type: string
-          enum: [GET, POST, PUT, DELETE]
+          enum: [GET, POST, PUT, PATCH, DELETE]
           maxLength: 10
           default: POST
           description: HTTP method used to invoke the tool
         headers:
           type: object
-          description: Custom headers to include in the tool invocation request
+          description: |
+            Custom HTTP headers to include when invoking the tool.
+            Each value is a string with a maximum length of 4096 characters.
+            Up to 50 headers may be specified.
+            The following reserved headers MUST NOT be included (the server will reject such requests with `400 INVALID_ARGUMENT`): `Host`, `Content-Length`, `Content-Type`, `Authorization`, `Cookie`, and any header beginning with `X-CAMARA-` or `X-Correlator-`.
+          maxProperties: 50
+          additionalProperties:
+            $ref: "#/components/schemas/HeaderValue"
           example:
             Authorization: "Bearer {{token}}"
         inputSchema:
-          type: object
-          description: JSON Schema describing the expected input arguments
+          $ref: "#/components/schemas/JSONSchema"
         outputSchema:
-          type: object
-          description: JSON Schema describing the expected output result
+          $ref: "#/components/schemas/JSONSchema"
+        
         createdAt:
           $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
         updatedAt:
           $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
 
+    Tool:
+      allOf:
+        - $ref: "#/components/schemas/ToolCommon"
+        - type: object
+          required:
+            - toolId
+            - name
+            - url
+            - createdAt
+            - updatedAt
+          properties:
+            toolId:
+              type: string
+              format: uuid
+              maxLength: 36
+              readOnly: true
+              description: Unique identifier of the tool (server-generated)
+            createdAt:
+              allOf:
+                - $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
+                - readOnly: true
+              description: Creation timestamp (server-generated)
+            updatedAt:
+              allOf:
+                - $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
+                - readOnly: true
+              description: Last update timestamp (server-generated)
+
     ToolCreateRequest:
-      type: object
-      required:
-        - name
-        - url
-      additionalProperties: false
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          description: Name of the tool
-        description:
-          type: string
-          maxLength: 4096
-          description: Detailed description of the tool
-        url:
-          type: string
-          format: uri
-          maxLength: 2048
-          description: Endpoint URL for invoking the tool
-        method:
-          type: string
-          enum: [GET, POST, PUT, DELETE]
-          maxLength: 10
-          default: POST
-          description: HTTP method used to invoke the tool
-        headers:
-          type: object
-          description: Custom headers to include in the tool invocation request
-        inputSchema:
-          type: object
-          description: JSON Schema describing the expected input arguments
-        outputSchema:
-          type: object
-          description: JSON Schema describing the expected output result
+      allOf:
+        - $ref: "#/components/schemas/ToolCommon"
+        - type: object
+          required:
+            - name
+            - url
+          additionalProperties: false
 
     ToolUpdateRequest:
-      type: object
-      additionalProperties: false
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          description: New name of the tool
-        description:
-          type: string
-          maxLength: 4096
-          description: New description of the tool
-        url:
-          type: string
-          format: uri
-          maxLength: 2048
-          description: New endpoint URL for the tool
-        method:
-          type: string
-          enum: [GET, POST, PUT, DELETE]
-          maxLength: 10
-          description: New HTTP method for the tool
-        headers:
-          type: object
-          description: Custom headers to include in the tool invocation request
-        inputSchema:
-          type: object
-          description: JSON Schema describing the expected input arguments
-        outputSchema:
-          type: object
-          description: JSON Schema describing the expected output result
+      allOf:
+        - $ref: "#/components/schemas/ToolCommon"
+        - type: object
+          additionalProperties: false
+          description: |
+            All fields are optional for update. At least one field MUST be provided; an empty object is rejected with `400 INVALID_ARGUMENT`.
 
     ToolCallRequest:
       type: object
       additionalProperties: false
+      required:
+        - arguments
       properties:
         arguments:
           type: object
-          description: Arguments to pass to the tool for execution
+          description: |
+            Arguments to pass to the tool for execution.
+            The structure of this object SHOULD be compatible with the tool's `inputSchema`. 
+            The server validates syntactic conformance against `inputSchema` and returns `400 INVALID_ARGUMENT` for schema-level mismatches, or `422 TOOL.INVALID_INPUT` for semantic mismatches.
+          additionalProperties: true
           example:
             query: "What is the weather?"
             maxResults: 5
 
     ToolCallResponse:
       type: object
+      required:
+        - success
+        - statusCode
       properties:
         success:
           type: boolean
-          description: Indicates whether the tool was executed successfully
+          description: |
+            Whether the upstream tool invocation succeeded.
+            - `true`: the upstream tool returned 2xx and `result` is populated.
+            - `false`: the upstream tool returned non-2xx; see `error`, `contextCode` and the `statusCode` mirror.
         statusCode:
           type: integer
           format: int32
           minimum: 100
           maximum: 599
-          description: HTTP status code returned by the tool invocation
+          description: |
+            HTTP status code returned by the upstream tool.
+            Preserved for caller visibility. The callTool API itself responds with HTTP 200 regardless of this value, per the business-outcome modelling in CAMARA API Design Guide §3.1.
         result:
           type: object
-          description: Result data returned by the tool
+          description: Response body returned by the upstream tool on success.
+          additionalProperties: true
         error:
           type: string
           maxLength: 2048
-          description: Error message if the tool execution failed
+          description: Error message returned by the upstream tool when `success` is `false`.
+        contextCode:
+          type: string
+          maxLength: 96
+          description: |
+            Optional machine-readable business context code, per CAMARA API Design Guide §3.1. Values follow the `TOOL.SCREAMING_SNAKE_CASE` convention when API-specific.
+          example: "TOOL.EXECUTION_FAILED"
+        contextMessage:
+          type: string
+          maxLength: 512
+          description: |
+            Optional human-readable business context message, per CAMARA API Design Guide §3.1.
+          example: "The upstream tool returned a non-2xx status code."
     
     ErrorInfo:
       $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
@@ -1027,3 +1055,36 @@ components:
       $ref: "../common/CAMARA_common.yaml#/components/responses/Generic415"
     Generic500:
       $ref: "../common/CAMARA_common.yaml#/components/responses/Generic500"
+    ToolInvalidInput422:
+      description: |
+        The tool arguments are semantically invalid (e.g. the tool is disabled, or arguments fail business-rule validation even though they are syntactically valid against the `inputSchema`).
+      headers:
+        x-correlator:
+          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 422
+                  code:
+                    enum:
+                      - TOOL.INVALID_INPUT
+                      - TOOL.DISABLED
+          examples:
+            TOOL_422_INVALID_INPUT:
+              description: Tool arguments failed semantic validation
+              value:
+                status: 422
+                code: TOOL.INVALID_INPUT
+                message: The provided arguments failed the tool's business-rule validation.
+            TOOL_422_DISABLED:
+              description: Tool is currently disabled
+              value:
+                status: 422
+                code: TOOL.DISABLED
+                message: The requested tool is currently disabled and cannot be invoked.
