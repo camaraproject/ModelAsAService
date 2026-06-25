@@ -47,7 +47,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.2.0-rc.1
+  version: wip
   x-camara-commonalities: 0.8.0
 
 externalDocs:
@@ -55,7 +55,7 @@ externalDocs:
   url: https://github.com/camaraproject/ModelAsAService
 
 servers:
-  - url: '{apiRoot}/knowledge-base/v0.2rc1'
+  - url: '{apiRoot}/knowledge-base/vwip'
     variables:
       apiRoot:
         default: http://localhost:9091
@@ -735,7 +735,7 @@ paths:
 
         **Response Characteristics:**
         - **200 OK**: Returns `ToolCallResponse` with execution result (regardless of upstream outcome)
-        - **400 Bad Request**: Arguments do not match tool's `inputSchema` 
+        - **400 Bad Request**: Arguments do not match tool's `inputSchema`
         - **403 Forbidden**: Missing required scope
         - **404 Not Found**: Invalid toolId or knowledgeBaseId
         - **422 Unprocessable**: Tool is disabled or arguments are semantically invalid
@@ -875,7 +875,7 @@ components:
           type: string
           maxLength: 4096
           description: New description of the knowledge base
-    
+
     HeaderValue:
       type: string
       maxLength: 4096
@@ -883,13 +883,13 @@ components:
         HTTP header value. String only, no structured values.
         Header names are validated against RFC 7230 token syntax at runtime.
 
-    JSONSchema:
+    JsonSchema:
       type: object
       description: |
         A JSON Schema document (https://json-schema.org/) describing the expected shape of tool arguments (`inputSchema`) or return values (`outputSchema`).
         The document is opaque to the API platform and passed through to the tool runtime; the tool provider is responsible for validation.
       additionalProperties: true
-    
+
     ToolCommon:
       type: object
       description: |
@@ -927,10 +927,10 @@ components:
           example:
             Authorization: "Bearer {{token}}"
         inputSchema:
-          $ref: "#/components/schemas/JSONSchema"
+          $ref: "#/components/schemas/JsonSchema"
         outputSchema:
-          $ref: "#/components/schemas/JSONSchema"
-        
+          $ref: "#/components/schemas/JsonSchema"
+
         createdAt:
           $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
         updatedAt:
@@ -991,7 +991,7 @@ components:
           type: object
           description: |
             Arguments to pass to the tool for execution.
-            The structure of this object SHOULD be compatible with the tool's `inputSchema`. 
+            The structure of this object SHOULD be compatible with the tool's `inputSchema`.
             The server validates syntactic conformance against `inputSchema` and returns `400 INVALID_ARGUMENT` for schema-level mismatches, or `422 TOOL.INVALID_INPUT` for semantic mismatches.
           additionalProperties: true
           example:
@@ -1038,7 +1038,7 @@ components:
           description: |
             Optional human-readable business context message, per CAMARA API Design Guide §3.1.
           example: "The upstream tool returned a non-2xx status code."
-    
+
     ErrorInfo:
       $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
 
