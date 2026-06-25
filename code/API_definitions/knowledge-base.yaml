@@ -1,25 +1,24 @@
 openapi: 3.0.3
 info:
   title: Knowledge Base
-  description: >-
+  description: |
     This API offers comprehensive CRUD (Create, Read, Update, Delete) management capabilities for the knowledge base, along with document uploading functionality.
     It is designed to provide applications with standardized capabilities for knowledge content storage and management, supporting multi-format document storage, fine-grained permission control, and end-to-end traceability.
     It is suitable for building knowledge-intensive systems (such as intelligent customer service platforms and enterprise document platforms) while ensuring compliance.
-    It must follow RFC 3339 and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ.
-
-    ## API Functionality
-
     This API allows the API consumer to perform CRUD operations on the knowledge base hosted on the server.
-
-    ## Security and Authentication
-
-    This API uses OAuth 2.0 with OpenID Connect for authentication. The following scopes are required:
+    The following scopes are required:
     - knowledge-base:knowledge-bases:create - Create new knowledge bases
     - knowledge-base:knowledge-bases:read - Read knowledge base entries
     - knowledge-base:knowledge-bases:update - Update existing knowledge bases
     - knowledge-base:knowledge-bases:delete - Delete knowledge bases
-    - knowledge-base:documents:update - Upload documents to knowledge bases
+    - knowledge-base:documents:create - Upload documents to knowledge bases
+    - knowledge-base:tools:create - Create new tools
+    - knowledge-base:tools:read - Read tool entries
+    - knowledge-base:tools:update - Update existing tools
+    - knowledge-base:tools:delete - Delete tools
+    - knowledge-base:tools:call - Invoke tools
 
+    <!-- CAMARA:MANDATORY:authorization-and-authentication:BEGIN -->
     # Authorization and authentication
 
     The "Camara Security and Interoperability Profile" provides details of how an API consumer requests an access token. Please refer to Identity and Consent Management (https://github.com/camaraproject/IdentityAndConsentManagement/) for the released version of the profile.
@@ -27,26 +26,29 @@ info:
     The specific authorization flows to be used will be agreed upon during the onboarding process, happening between the API consumer and the API provider, taking into account the declared purpose for accessing the API, whilst also being subject to the prevailing legal framework dictated by local legislation.
 
     In cases where personal data is processed by the API and users can exercise their rights through mechanisms such as opt-in and/or opt-out, the use of three-legged access tokens is mandatory. This ensures that the API remains in compliance with privacy regulations, upholding the principles of transparency and user-centric privacy-by-design.
+    <!-- CAMARA:MANDATORY:authorization-and-authentication:END -->
 
-
+    <!-- CAMARA:MANDATORY:additional-error-responses:BEGIN -->
     # Additional CAMARA error responses
 
-    The list of error codes in this API specification is not exhaustive. Therefore the API specification may not document some non-mandatory error statuses as indicated in `CAMARA API Design Guide`.
+    The list of error codes in this API specification is not exhaustive. Therefore the API specification MAY not document some non-mandatory error statuses as indicated in `CAMARA API Design Guide`.
 
     Please refer to the `CAMARA_common.yaml` of the Commonalities Release associated to this API version for a complete list of error responses. The applicable Commonalities Release can be identified in the `API Readiness Checklist` document associated to this API version.
 
     As a specific rule, error `501 - NOT_IMPLEMENTED` can be only a possible error response if it is explicitly documented in the API.
+    <!-- CAMARA:MANDATORY:additional-error-responses:END -->
 
+    <!-- CAMARA:MANDATORY:request-body-strictness:BEGIN -->
+    # Request body strictness
 
-    # Further info and support
-
-    (FAQs will be added in a later version of the documentation)
+    This API rejects requests with JSON request bodies that contain properties not declared in this specification, at any nesting level. Unknown properties result in a `400 INVALID_ARGUMENT` response.
+    <!-- CAMARA:MANDATORY:request-body-strictness:END -->
 
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   version: wip
-  x-camara-commonalities: 0.6
+  x-camara-commonalities: 0.8.0
 
 externalDocs:
   description: Product documentation at CAMARA
@@ -62,6 +64,10 @@ servers:
 tags:
   - name: Knowledge Base
     description: Knowledge base management
+  - name: Documents
+    description: Document upload operations
+  - name: Tools
+    description: Tool definition and execution operations
 
 paths:
   /knowledge-bases:
@@ -104,13 +110,15 @@ paths:
           description: Knowledge base created successfully
           headers:
             x-correlator:
-              $ref: '#/components/parameters/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/KnowledgeBase'
         '400':
           $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '500':
@@ -139,7 +147,9 @@ paths:
       tags:
         - Knowledge Base
       parameters:
-        - $ref: '#/components/parameters/x-correlator'  # Added correlator
+        - $ref: '#/components/parameters/x-correlator'
+        - $ref: '../common/CAMARA_common.yaml#/components/parameters/page'
+        - $ref: '../common/CAMARA_common.yaml#/components/parameters/perPage'
       security:
         - openId:
             - knowledge-base:knowledge-bases:read
@@ -148,15 +158,24 @@ paths:
           description: List of knowledge bases
           headers:
             x-correlator:
-              $ref: '#/components/parameters/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/KnowledgeBase'
+                type: object
+                properties:
+                  items:
+                    type: array
+                    minItems: 0
+                    maxItems: 1000
+                    items:
+                      $ref: '#/components/schemas/KnowledgeBase'
+                  pagination:
+                    $ref: '../common/CAMARA_common.yaml#/components/schemas/Pagination'
         '400':
           $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '500':
@@ -169,6 +188,8 @@ paths:
         required: true
         schema:
           type: string
+          format: uuid
+          maxLength: 36
         description: ID of the knowledge base
       - $ref: '#/components/parameters/x-correlator'  # Added correlator
 
@@ -202,13 +223,15 @@ paths:
           description: Knowledge base details
           headers:
             x-correlator:
-              $ref: '#/components/parameters/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/KnowledgeBase'
         '400':
           $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -254,13 +277,15 @@ paths:
           description: Knowledge base updated successfully
           headers:
             x-correlator:
-              $ref: '#/components/parameters/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/KnowledgeBase'
         '400':
           $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -299,9 +324,11 @@ paths:
           description: Knowledge base deleted successfully
           headers:
             x-correlator:
-              $ref: '#/components/parameters/x-correlator'
+              $ref: '#/components/headers/x-correlator'
         '400':
           $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -323,7 +350,7 @@ paths:
 
         **Key Rules:**
         - Requires valid `knowledgeBaseId`
-        - Requires `knowledge-base:documents:update` scope
+        - Requires `knowledge-base:documents:create` scope
         - File must be sent as multipart/form-data
         - Maximum file size determined by implementation
 
@@ -342,10 +369,13 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
+            maxLength: 36
+          description: ID of the knowledge base
         - $ref: '#/components/parameters/x-correlator'  # Added correlator
       security:
         - openId:
-            - knowledge-base:documents:update
+            - knowledge-base:documents:create
       requestBody:
         content:
           multipart/form-data:
@@ -363,7 +393,7 @@ paths:
           description: Document uploaded successfully
           headers:
             x-correlator:
-              $ref: '#/components/parameters/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
@@ -371,9 +401,13 @@ paths:
                 properties:
                   message:
                     type: string
+                    maxLength: 256
+                    description: Confirmation message for the uploaded document
                     example: "Document uploaded successfully"
         '400':
           $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -383,242 +417,674 @@ paths:
         '500':
           $ref: '#/components/responses/Generic500'
 
+  /knowledge-bases/{knowledgeBaseId}/tools:
+    post:
+      operationId: createTool
+      summary: Register a new tool
+      description: |
+        Registers a new tool in the knowledge base. A tool defines an external
+        callable capability with a URL, HTTP method, and optional input/output schemas
+        — similar to MCP (Model Context Protocol) tool definitions.
+
+        **Key Features:**
+        - Defines tool name, description, and endpoint URL
+        - Supports multiple HTTP methods (GET, POST, PUT, DELETE)
+        - Optionally describes input and output schemas
+
+        **Key Rules:**
+        - Requires valid `knowledgeBaseId`
+        - `name` and `url` are required
+        - Requires `knowledge-base:tools:create` scope
+
+        **Response Characteristics:**
+        - **201 Created**: Returns full `Tool` object with generated toolId
+        - **400 Bad Request**: Missing required fields or invalid parameters
+        - **403 Forbidden**: Missing required scope
+        - **404 Not Found**: Invalid knowledgeBaseId
+        - **500 Internal Server Error**: Tool creation failure
+      tags:
+        - Tools
+      parameters:
+        - name: knowledgeBaseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            maxLength: 36
+          description: ID of the knowledge base
+        - $ref: '#/components/parameters/x-correlator'
+      security:
+        - openId:
+            - knowledge-base:tools:create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToolCreateRequest'
+      responses:
+        '201':
+          description: Tool created successfully
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tool'
+        '400':
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '404':
+          $ref: '#/components/responses/Generic404'
+        '500':
+          $ref: '#/components/responses/Generic500'
+
+    get:
+      operationId: listTools
+      summary: List all tools in a knowledge base
+      description: |
+        Retrieves all registered tools in the specified knowledge base.
+
+        **Key Features:**
+        - Returns complete collection of tools
+        - Includes tool metadata (name, URL, method, schemas)
+        - Supports pagination
+
+        **Key Rules:**
+        - Requires valid `knowledgeBaseId`
+        - Requires `knowledge-base:tools:read` scope
+        - Returns empty array if no tools exist
+
+        **Response Characteristics:**
+        - **200 OK**: Array of `Tool` objects with pagination
+        - **401 Unauthenticated**: Invalid/missing credentials
+        - **403 Forbidden**: Insufficient permissions
+        - **404 Not Found**: Invalid knowledgeBaseId
+        - **500 Internal Server Error**: Data retrieval failure
+      tags:
+        - Tools
+      parameters:
+        - name: knowledgeBaseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            maxLength: 36
+          description: ID of the knowledge base
+        - $ref: '#/components/parameters/x-correlator'
+        - $ref: '../common/CAMARA_common.yaml#/components/parameters/page'
+        - $ref: '../common/CAMARA_common.yaml#/components/parameters/perPage'
+      security:
+        - openId:
+            - knowledge-base:tools:read
+      responses:
+        '200':
+          description: List of tools
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    minItems: 0
+                    maxItems: 1000
+                    items:
+                      $ref: '#/components/schemas/Tool'
+                  pagination:
+                    $ref: '../common/CAMARA_common.yaml#/components/schemas/Pagination'
+        '400':
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '404':
+          $ref: '#/components/responses/Generic404'
+        '500':
+          $ref: '#/components/responses/Generic500'
+
+  /knowledge-bases/{knowledgeBaseId}/tools/{toolId}:
+    parameters:
+      - name: knowledgeBaseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          maxLength: 36
+        description: ID of the knowledge base
+      - name: toolId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          maxLength: 36
+        description: ID of the tool
+      - $ref: '#/components/parameters/x-correlator'
+
+    get:
+      operationId: getTool
+      summary: Get a specific tool
+      description: |
+        Retrieves details of a specific tool registered in the knowledge base.
+
+        **Key Features:**
+        - Returns full tool definition including URL, method, and schemas
+        - Provides creation and update timestamps
+
+        **Key Rules:**
+        - Requires valid `knowledgeBaseId` and `toolId`
+        - Requires `knowledge-base:tools:read` scope
+
+        **Response Characteristics:**
+        - **200 OK**: Complete `Tool` object
+        - **404 Not Found**: Invalid toolId or knowledgeBaseId
+        - **403 Forbidden**: Missing required scope
+        - **500 Internal Server Error**: Data retrieval failure
+      tags:
+        - Tools
+      security:
+        - openId:
+            - knowledge-base:tools:read
+      responses:
+        '200':
+          description: Tool details
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tool'
+        '400':
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '404':
+          $ref: '#/components/responses/Generic404'
+        '500':
+          $ref: '#/components/responses/Generic500'
+
+    put:
+      operationId: updateTool
+      summary: Update a tool
+      description: |
+        Updates the definition of an existing tool.
+
+        **Key Features:**
+        - Modifies tool name, URL, method, headers, or schemas
+        - Returns updated tool definition
+
+        **Key Rules:**
+        - Requires valid `knowledgeBaseId` and `toolId`
+        - At least one update field must be provided
+        - Requires `knowledge-base:tools:update` scope
+
+        **Response Characteristics:**
+        - **200 OK**: Updated `Tool` object
+        - **400 Bad Request**: No update fields provided
+        - **404 Not Found**: Invalid toolId
+        - **403 Forbidden**: Missing required scope
+        - **500 Internal Server Error**: Update processing failure
+      tags:
+        - Tools
+      security:
+        - openId:
+            - knowledge-base:tools:update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToolUpdateRequest'
+      responses:
+        '200':
+          description: Tool updated successfully
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tool'
+        '400':
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '404':
+          $ref: '#/components/responses/Generic404'
+        '500':
+          $ref: '#/components/responses/Generic500'
+
+    delete:
+      operationId: deleteTool
+      summary: Delete a tool
+      description: |
+        Permanently removes a tool definition from the knowledge base.
+
+        **Key Features:**
+        - Irreversible deletion
+        - Removes tool metadata
+
+        **Key Rules:**
+        - Requires valid `knowledgeBaseId` and `toolId`
+        - Requires `knowledge-base:tools:delete` scope
+        - Cannot be undone
+
+        **Response Characteristics:**
+        - **204 No Content**: Successful deletion (no body)
+        - **404 Not Found**: Invalid toolId
+        - **403 Forbidden**: Missing required scope
+        - **500 Internal Server Error**: Deletion processing failure
+      tags:
+        - Tools
+      security:
+        - openId:
+            - knowledge-base:tools:delete
+      responses:
+        '204':
+          description: Tool deleted successfully
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
+        '400':
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '404':
+          $ref: '#/components/responses/Generic404'
+        '500':
+          $ref: '#/components/responses/Generic500'
+
+  /knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call:
+    post:
+      operationId: callTool
+      summary: Invoke a tool
+      description: |
+        Invokes a registered tool with the provided arguments. The tool will be
+        executed according to its definition (URL, method, headers) and the
+        result will be returned.
+
+        **Key Features:**
+        - Passes arguments to the tool's external endpoint
+        - Returns the tool's execution result
+        - Reports HTTP status code from the tool invocation via the `statusCode` field; the callTool endpoint itself always responds with HTTP 200 per the business-outcome modelling in CAMARA API Design Guide §3.1
+        - Surfaces failure context through `contextCode` / `contextMessage`
+
+        **Key Rules:**
+        - Requires valid `knowledgeBaseId` and `toolId`
+        - Requires `knowledge-base:tools:call` scope
+        - Tool must be properly defined and accessible
+
+        **Response Characteristics:**
+        - **200 OK**: Returns `ToolCallResponse` with execution result (regardless of upstream outcome)
+        - **400 Bad Request**: Arguments do not match tool's `inputSchema`
+        - **403 Forbidden**: Missing required scope
+        - **404 Not Found**: Invalid toolId or knowledgeBaseId
+        - **422 Unprocessable**: Tool is disabled or arguments are semantically invalid
+        - **429 Too Many Requests**: Upstream tool rate limit reached
+        - **500 Internal Server Error**: Tool execution failure
+      tags:
+        - Tools
+      parameters:
+        - name: knowledgeBaseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            maxLength: 36
+          description: ID of the knowledge base
+        - name: toolId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            maxLength: 36
+          description: ID of the tool
+        - $ref: '#/components/parameters/x-correlator'
+      security:
+        - openId:
+            - knowledge-base:tools:call
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToolCallRequest'
+      responses:
+        '200':
+          description: Tool executed successfully
+          headers:
+            x-correlator:
+              $ref: '#/components/headers/x-correlator'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolCallResponse'
+        '400':
+          $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
+        '403':
+          $ref: '#/components/responses/Generic403'
+        '404':
+          $ref: '#/components/responses/Generic404'
+        '422':
+          $ref: '#/components/responses/ToolInvalidInput422'
+        '429':
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic429'
+        '500':
+          $ref: '#/components/responses/Generic500'
+
 components:
   securitySchemes:
     openId:
-      type: openIdConnect
-      openIdConnectUrl: https://example.com/.well-known/openid-configuration
-      description: OpenID Connect authentication
+      $ref: "../common/CAMARA_common.yaml#/components/securitySchemes/openId"
 
   parameters:
     x-correlator:
-      name: x-correlator
-      in: header
-      description: Correlation ID for request tracing
-      schema:
-        $ref: "#/components/schemas/XCorrelator"
+      $ref: "../common/CAMARA_common.yaml#/components/parameters/x-correlator"
 
   headers:
     x-correlator:
-      description: Correlation id for the different services
-      schema:
-        $ref: "#/components/schemas/XCorrelator"
+      $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
 
   schemas:
-    XCorrelator:
-      type: string
-      pattern: ^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$
-      example: "b4333c46-49c0-4f62-80d7-f0ef930f1c46"
-
     KnowledgeBase:
       type: object
       properties:
         knowledgeBaseId:
           type: string
+          format: uuid
+          maxLength: 36
           description: Unique identifier of the knowledge base
         name:
           type: string
+          maxLength: 255
           description: Name of the knowledge base
         description:
           type: string
+          maxLength: 4096
           description: Detailed description of the knowledge base
         documents:
           type: array
+          maxItems: 1000
           items:
             type: object
+            required:
+              - filename
+              - format
+              - uploadDate
             properties:
               filename:
                 type: string
+                maxLength: 255
+                description: Name of the document file
               format:
                 type: string
-                enum: [doc, pdf, txt, csv]
+                enum: [DOC, PDF, TXT, CSV]
+                maxLength: 10
                 description: File format
               uploadDate:
-                type: string
-                format: date-time
-                description: "Upload timestamp. It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
           description: List of documents in the knowledge base
 
     KnowledgeBaseCreateRequest:
       type: object
       required:
         - name
+      additionalProperties: false
       properties:
         name:
           type: string
+          maxLength: 255
           description: Name of the knowledge base
         description:
           type: string
+          maxLength: 4096
           description: Detailed description of the knowledge base
 
     KnowledgeBaseUpdateRequest:
       type: object
+      additionalProperties: false
       properties:
         name:
           type: string
+          maxLength: 255
           description: New name of the knowledge base
         description:
           type: string
+          maxLength: 4096
           description: New description of the knowledge base
 
-    ErrorInfo:
+    HeaderValue:
+      type: string
+      maxLength: 4096
+      description: |
+        HTTP header value. String only, no structured values.
+        Header names are validated against RFC 7230 token syntax at runtime.
+
+    JsonSchema:
+      type: object
+      description: |
+        A JSON Schema document (https://json-schema.org/) describing the expected shape of tool arguments (`inputSchema`) or return values (`outputSchema`).
+        The document is opaque to the API platform and passed through to the tool runtime; the tool provider is responsible for validation.
+      additionalProperties: true
+
+    ToolCommon:
+      type: object
+      description: |
+        Common properties of a tool shared across the create, update and response schemas. Not used directly in requests or responses.
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          description: Name of the tool. Must be unique within a knowledge base.
+        description:
+          type: string
+          maxLength: 4096
+          description: Detailed description of the tool
+        url:
+          type: string
+          format: uri
+          maxLength: 2048
+          description: Endpoint URL for invoking the tool
+        method:
+          type: string
+          enum: [GET, POST, PUT, PATCH, DELETE]
+          maxLength: 10
+          default: POST
+          description: HTTP method used to invoke the tool
+        headers:
+          type: object
+          description: |
+            Custom HTTP headers to include when invoking the tool.
+            Each value is a string with a maximum length of 4096 characters.
+            Up to 50 headers may be specified.
+            The following reserved headers MUST NOT be included (the server will reject such requests with `400 INVALID_ARGUMENT`): `Host`, `Content-Length`, `Content-Type`, `Authorization`, `Cookie`, and any header beginning with `X-CAMARA-` or `X-Correlator-`.
+          maxProperties: 50
+          additionalProperties:
+            $ref: "#/components/schemas/HeaderValue"
+          example:
+            Authorization: "Bearer {{token}}"
+        inputSchema:
+          $ref: "#/components/schemas/JsonSchema"
+        outputSchema:
+          $ref: "#/components/schemas/JsonSchema"
+
+        createdAt:
+          $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
+        updatedAt:
+          $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
+
+    Tool:
+      allOf:
+        - $ref: "#/components/schemas/ToolCommon"
+        - type: object
+          required:
+            - toolId
+            - name
+            - url
+            - createdAt
+            - updatedAt
+          properties:
+            toolId:
+              type: string
+              format: uuid
+              maxLength: 36
+              readOnly: true
+              description: Unique identifier of the tool (server-generated)
+            createdAt:
+              allOf:
+                - $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
+                - readOnly: true
+              description: Creation timestamp (server-generated)
+            updatedAt:
+              allOf:
+                - $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
+                - readOnly: true
+              description: Last update timestamp (server-generated)
+
+    ToolCreateRequest:
+      allOf:
+        - $ref: "#/components/schemas/ToolCommon"
+        - type: object
+          required:
+            - name
+            - url
+          additionalProperties: false
+
+    ToolUpdateRequest:
+      allOf:
+        - $ref: "#/components/schemas/ToolCommon"
+        - type: object
+          additionalProperties: false
+          description: |
+            All fields are optional for update. At least one field MUST be provided; an empty object is rejected with `400 INVALID_ARGUMENT`.
+
+    ToolCallRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - arguments
+      properties:
+        arguments:
+          type: object
+          description: |
+            Arguments to pass to the tool for execution.
+            The structure of this object SHOULD be compatible with the tool's `inputSchema`.
+            The server validates syntactic conformance against `inputSchema` and returns `400 INVALID_ARGUMENT` for schema-level mismatches, or `422 TOOL.INVALID_INPUT` for semantic mismatches.
+          additionalProperties: true
+          example:
+            query: "What is the weather?"
+            maxResults: 5
+
+    ToolCallResponse:
       type: object
       required:
-        - status
-        - code
-        - message
+        - success
+        - statusCode
       properties:
-        status:
+        success:
+          type: boolean
+          description: |
+            Whether the upstream tool invocation succeeded.
+            - `true`: the upstream tool returned 2xx and `result` is populated.
+            - `false`: the upstream tool returned non-2xx; see `error`, `contextCode` and the `statusCode` mirror.
+        statusCode:
           type: integer
-          description: HTTP status code
-        code:
+          format: int32
+          minimum: 100
+          maximum: 599
+          description: |
+            HTTP status code returned by the upstream tool.
+            Preserved for caller visibility. The callTool API itself responds with HTTP 200 regardless of this value, per the business-outcome modelling in CAMARA API Design Guide §3.1.
+        result:
+          type: object
+          description: Response body returned by the upstream tool on success.
+          additionalProperties: true
+        error:
           type: string
-          description: Error code identifier
-        message:
+          maxLength: 2048
+          description: Error message returned by the upstream tool when `success` is `false`.
+        contextCode:
           type: string
-          description: Human-readable error message
+          maxLength: 96
+          description: |
+            Optional machine-readable business context code, per CAMARA API Design Guide §3.1. Values follow the `TOOL.SCREAMING_SNAKE_CASE` convention when API-specific.
+          example: "TOOL.EXECUTION_FAILED"
+        contextMessage:
+          type: string
+          maxLength: 512
+          description: |
+            Optional human-readable business context message, per CAMARA API Design Guide §3.1.
+          example: "The upstream tool returned a non-2xx status code."
+
+    ErrorInfo:
+      $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
 
   responses:
     Generic400:
-      description: Bad request due to invalid input
-      headers:
-        x-correlator:
-          $ref: '#/components/parameters/x-correlator'
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/ErrorInfo'
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 400
-                  code:
-                    enum:
-                      - INVALID_DOCUMENT_FORMAT
-                      - MISSING_REQUIRED_PARAM
-          examples:
-            GENERIC_400_INVALID_DOCUMENT_FORMAT:
-              description: Invalid document format
-              value:
-                status: 400
-                code: INVALID_DOCUMENT_FORMAT
-                message: "Invalid document format. Supported formats: doc/pdf/txt/csv"
-            GENERIC_400_MISSING_REQUIRED_PARAM:
-              description: Missing required parameter
-              value:
-                status: 400
-                code: MISSING_REQUIRED_PARAM
-                message: "Required parameter 'name' is missing"
-
+      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic400"
+    Generic401:
+      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic401"
     Generic403:
-      description: Forbidden
-      headers:
-        x-correlator:
-          $ref: '#/components/parameters/x-correlator'
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/ErrorInfo'
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 403
-                  code:
-                    enum:
-                      - PERMISSION_DENIED
-          examples:
-            GENERIC_403_PERMISSION_DENIED:
-              description: User lacks required permissions
-              value:
-                status: 403
-                code: PERMISSION_DENIED
-                message: User lacks required permissions for this operation
-
+      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic403"
     Generic404:
-      description: Resource not found
-      headers:
-        x-correlator:
-          $ref: '#/components/parameters/x-correlator'
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/ErrorInfo'
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 404
-                  code:
-                    enum:
-                      - NOT_FOUND
-                      - KNOWLEDGE_BASE_NOT_FOUND
-          examples:
-            GENERIC_404_NOT_FOUND:
-              description: Resource is not found
-              value:
-                status: 404
-                code: NOT_FOUND
-                message: The specified resource is not found.
-            GENERIC_404_KNOWLEDGE_BASE_NOT_FOUND:
-              description: Knowledge base not found
-              value:
-                status: 404
-                code: KNOWLEDGE_BASE_NOT_FOUND
-                message: "Specified knowledge base ID does not exist"
-
+      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic404"
     Generic415:
-      description: Unsupported media type
-      headers:
-        x-correlator:
-          $ref: '#/components/parameters/x-correlator'
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/ErrorInfo'
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 415
-                  code:
-                    enum:
-                      - UNSUPPORTED_MEDIA_TYPE
-          examples:
-            GENERIC_415_UNSUPPORTED_MEDIA_TYPE:
-              description: Unsupported document format
-              value:
-                status: 415
-                code: UNSUPPORTED_MEDIA_TYPE
-                message: "Unsupported document format. Supported formats: doc/pdf/txt/csv"
-
+      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic415"
     Generic500:
-      description: Internal server error
+      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic500"
+    ToolInvalidInput422:
+      description: |
+        The tool arguments are semantically invalid (e.g. the tool is disabled, or arguments fail business-rule validation even though they are syntactically valid against the `inputSchema`).
       headers:
         x-correlator:
-          $ref: '#/components/parameters/x-correlator'
+          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
       content:
         application/json:
           schema:
             allOf:
-              - $ref: '#/components/schemas/ErrorInfo'
+              - $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
               - type: object
                 properties:
                   status:
                     enum:
-                      - 500
+                      - 422
                   code:
                     enum:
-                      - INTERNAL_SERVER_ERROR
+                      - TOOL.INVALID_INPUT
+                      - TOOL.DISABLED
           examples:
-            GENERIC_500_INTERNAL_SERVER_ERROR:
-              description: Unexpected server error
+            TOOL_422_INVALID_INPUT:
+              description: Tool arguments failed semantic validation
               value:
-                status: 500
-                code: INTERNAL_SERVER_ERROR
-                message: "Unexpected server error occurred"
+                status: 422
+                code: TOOL.INVALID_INPUT
+                message: The provided arguments failed the tool's business-rule validation.
+            TOOL_422_DISABLED:
+              description: Tool is currently disabled
+              value:
+                status: 422
+                code: TOOL.DISABLED
+                message: The requested tool is currently disabled and cannot be invoked.
