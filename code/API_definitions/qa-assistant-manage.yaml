@@ -4,7 +4,7 @@ info:
   description: |
     This API provides CRUD (Create, Read, Update, Delete) management functions for the Question and Answer (Q&A) Assistant, aiming to equip developers with the capability to configure and manage intelligent question-answering systems based on Large Language Models (LLMs).
     It supports model parameter tuning, knowledge base association, and prompt engineering configuration, making it suitable for building customizable intelligent customer service or question-answering services.
-    
+
     The following scopes are required:
     - qa-assistant-manage:assistants:create - Create new assistants
     - qa-assistant-manage:assistants:read - Read assistant details
@@ -30,7 +30,7 @@ info:
 
     As a specific rule, error `501 - NOT_IMPLEMENTED` can be only a possible error response if it is explicitly documented in the API.
     <!-- CAMARA:MANDATORY:additional-error-responses:END -->
-    
+
     <!-- CAMARA:MANDATORY:request-body-strictness:BEGIN -->
     # Request body strictness
 
@@ -272,7 +272,7 @@ paths:
                 $ref: '#/components/schemas/AssistantResponse'
         '400':
           $ref: '#/components/responses/Generic400'
-         '401':
+        '401':
           $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
