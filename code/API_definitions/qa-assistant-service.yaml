@@ -1,16 +1,14 @@
 openapi: 3.0.3
 info:
   title: Q&A Assistant - Service
-  description: >-
+  description: |
     This API provides service interfaces for the Question and Answer (Q&A) Assistant, enabling users to submit query requests to a configured Q&A assistant and obtain answers generated based on the knowledge base and Large Language Model (LLM).
     It is suitable for scenarios such as building intelligent question-answering systems and customer service bots that require real-time responses to user inquiries.
-    It must follow RFC 3339 and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ.
 
-    ## Security and Authentication
-
-    This API uses OAuth 2.0 with OpenID Connect for authentication. The following scope is required:
+    The following scope is required:
     - qa-assistant-service:answer:read - Permission to query assistants
 
+    <!-- CAMARA:MANDATORY:authorization-and-authentication:BEGIN -->
     # Authorization and authentication
 
     The "Camara Security and Interoperability Profile" provides details of how an API consumer requests an access token. Please refer to Identity and Consent Management (https://github.com/camaraproject/IdentityAndConsentManagement/) for the released version of the profile.
@@ -18,26 +16,29 @@ info:
     The specific authorization flows to be used will be agreed upon during the onboarding process, happening between the API consumer and the API provider, taking into account the declared purpose for accessing the API, whilst also being subject to the prevailing legal framework dictated by local legislation.
 
     In cases where personal data is processed by the API and users can exercise their rights through mechanisms such as opt-in and/or opt-out, the use of three-legged access tokens is mandatory. This ensures that the API remains in compliance with privacy regulations, upholding the principles of transparency and user-centric privacy-by-design.
+    <!-- CAMARA:MANDATORY:authorization-and-authentication:END -->
 
-
+    <!-- CAMARA:MANDATORY:additional-error-responses:BEGIN -->
     # Additional CAMARA error responses
 
-    The list of error codes in this API specification is not exhaustive. Therefore the API specification may not document some non-mandatory error statuses as indicated in `CAMARA API Design Guide`.
+    The list of error codes in this API specification is not exhaustive. Therefore the API specification MAY not document some non-mandatory error statuses as indicated in `CAMARA API Design Guide`.
 
     Please refer to the `CAMARA_common.yaml` of the Commonalities Release associated to this API version for a complete list of error responses. The applicable Commonalities Release can be identified in the `API Readiness Checklist` document associated to this API version.
 
     As a specific rule, error `501 - NOT_IMPLEMENTED` can be only a possible error response if it is explicitly documented in the API.
+    <!-- CAMARA:MANDATORY:additional-error-responses:END -->
 
+    <!-- CAMARA:MANDATORY:request-body-strictness:BEGIN -->
+    # Request body strictness
 
-    # Further info and support
-
-    (FAQs will be added in a later version of the documentation)
+    This API rejects requests with JSON request bodies that contain properties not declared in this specification, at any nesting level. Unknown properties result in a `400 INVALID_ARGUMENT` response.
+    <!-- CAMARA:MANDATORY:request-body-strictness:END -->
 
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   version: wip
-  x-camara-commonalities: 0.6
+  x-camara-commonalities: 0.8.0
 
 externalDocs:
   description: Product documentation at CAMARA
@@ -49,6 +50,10 @@ servers:
       apiRoot:
         default: http://localhost:9091
         description: API root, defined by the service provider, e.g. `api.example.com` or `api.example.com/somepath`
+
+tags:
+  - name: Query
+    description: Q&A assistant query operations
 
 paths:
   /answer:
@@ -71,7 +76,7 @@ paths:
 
         **Response Characteristics:**
         - **200 OK**: Returns `QueryResponse` with answer text and termination status
-          - `finished` indicates generation completion reason (Stop/Length/Error/Filter)
+          - `finished` indicates generation completion reason (STOP / LENGTH / ERROR / FILTER)
           - `reference` shows knowledge base source when available
         - **400 Bad Request**:
           - Missing/invalid prompt
@@ -105,13 +110,15 @@ paths:
           description: Successful answer retrieval
           headers:
             x-correlator:
-              $ref: '#/components/parameters/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/QueryResponse'
         '400':
           $ref: '#/components/responses/Generic400'
+        '401':
+          $ref: '#/components/responses/Generic401'
         '403':
           $ref: '#/components/responses/Generic403'
         '404':
@@ -122,49 +129,41 @@ paths:
 components:
   securitySchemes:
     openId:
-      type: openIdConnect
-      openIdConnectUrl: https://example.com/.well-known/openid-configuration
-      description: OpenID Connect authentication
+      $ref: "../common/CAMARA_common.yaml#/components/securitySchemes/openId"
 
   parameters:
     x-correlator:
-      name: x-correlator
-      in: header
-      description: Correlation ID for request tracing
-      schema:
-        $ref: "#/components/schemas/XCorrelator"
+      $ref: "../common/CAMARA_common.yaml#/components/parameters/x-correlator"
 
   headers:
     x-correlator:
-      description: Correlation id for the different services
-      schema:
-        $ref: "#/components/schemas/XCorrelator"
+      $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
 
   schemas:
-    XCorrelator:
-      type: string
-      pattern: ^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$
-      example: "b4333c46-49c0-4f62-80d7-f0ef930f1c46"
     QueryRequest:
       type: object
+      description: Request payload for querying a QA assistant
       required:
         - assistantId
         - prompt
+      additionalProperties: false
       properties:
         assistantId:
           type: string
           format: uuid
-          description: Unique identifier of the QA assistant
+          maxLength: 36
+          description: Unique identifier of the QA assistant to query
           example: "a1b2c3d4-5678-90ab-cdef-1234567890ab"
         prompt:
           type: string
           minLength: 1
           maxLength: 1000
-          description: The user's question or query
+          description: The user's question or query to send to the assistant
           example: "How do I reset my password?"
 
     QueryResponse:
       type: object
+      description: Response payload containing the assistant's generated answer
       required:
         - success
         - finished
@@ -172,192 +171,36 @@ components:
       properties:
         success:
           type: boolean
-          description: Indicates whether the query was processed successfully
+          description: Indicates whether the query was processed successfully by the assistant
         finished:
           type: string
-          description: Termination status of the response generation
+          maxLength: 32
+          description: Termination status of the response generation (STOP = normal completion, LENGTH = truncated, ERROR = generation error, FILTER = content filtered)
           enum:
-            - Stop
-            - Length
-            - Error
-            - Filter
-          example: "Stop"
+            - STOP
+            - LENGTH
+            - ERROR
+            - FILTER
+          example: "STOP"
         answerText:
           type: string
-          description: The assistant's generated answer
+          maxLength: 65535
+          description: The assistant's generated answer text
           example: "To reset your password, go to settings > security..."
         reference:
           type: string
-          description: Optional reference to the knowledge base source
+          maxLength: 255
+          description: Optional reference identifier to the knowledge base source used for the answer
           example: "kb123_section5"
-
-    ErrorInfo:
-      type: object
-      required:
-        - status
-        - code
-        - message
-      properties:
-        status:
-          type: integer
-          description: HTTP status code
-        code:
-          type: string
-          description: Error code identifier
-        message:
-          type: string
-          description: Human-readable error message
 
   responses:
     Generic400:
-      description: Bad request due to invalid input
-      headers:
-        x-correlator:
-          $ref: '#/components/parameters/x-correlator'
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/ErrorInfo'
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 400
-                  code:
-                    enum:
-                      - MISSING_PROMPT
-                      - INVALID_ASSISTANT_ID
-                      - INVALID_ARGUMENT
-                      - OUT_OF_RANGE
-          examples:
-            GENERIC_400_MISSING_PROMPT:
-              description: Missing required prompt parameter
-              value:
-                status: 400
-                code: MISSING_PROMPT
-                message: "Required parameter 'prompt' is missing"
-            GENERIC_400_INVALID_ASSISTANT_ID:
-              description: Invalid assistant ID format
-              value:
-                status: 400
-                code: INVALID_ASSISTANT_ID
-                message: "Assistant ID must be a valid UUID"
-            GENERIC_400_INVALID_ARGUMENT:
-              description: Invalid argument
-              value:
-                status: 400
-                code: INVALID_ARGUMENT
-                message: "Client specified an invalid argument"
-            GENERIC_400_OUT_OF_RANGE:
-              description: Parameter value out of range
-              value:
-                status: 400
-                code: OUT_OF_RANGE
-                message: "Prompt length exceeds maximum allowed characters"
-
+      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic400"
+    Generic401:
+      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic401"
     Generic403:
-      description: Forbidden
-      headers:
-        x-correlator:
-          $ref: '#/components/parameters/x-correlator'
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/ErrorInfo'
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 403
-                  code:
-                    enum:
-                      - PERMISSION_DENIED
-                      - INVALID_TOKEN_CONTEXT
-          examples:
-            GENERIC_403_PERMISSION_DENIED:
-              description: User lacks required permissions
-              value:
-                status: 403
-                code: PERMISSION_DENIED
-                message: User lacks required permissions to query this assistant
-            GENERIC_403_INVALID_TOKEN_CONTEXT:
-              description: Token context inconsistency
-              value:
-                status: 403
-                code: INVALID_TOKEN_CONTEXT
-                message: "Assistant ID is not consistent with access token"
-
+      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic403"
     Generic404:
-      description: Resource not found
-      headers:
-        x-correlator:
-          $ref: '#/components/parameters/x-correlator'
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/ErrorInfo'
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 404
-                  code:
-                    enum:
-                      - NOT_FOUND
-                      - ASSISTANT_NOT_FOUND
-                      - IDENTIFIER_NOT_FOUND
-          examples:
-            GENERIC_404_NOT_FOUND:
-              description: Resource is not found
-              value:
-                status: 404
-                code: NOT_FOUND
-                message: The specified resource is not found.
-            GENERIC_404_ASSISTANT_NOT_FOUND:
-              description: Assistant not found
-              value:
-                status: 404
-                code: ASSISTANT_NOT_FOUND
-                message: "Specified assistant ID does not exist"
-            GENERIC_404_IDENTIFIER_NOT_FOUND:
-              description: Identifier not found
-              value:
-                status: 404
-                code: IDENTIFIER_NOT_FOUND
-                message: Assistant identifier not found.
-
+      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic404"
     Generic500:
-      description: Internal server error
-      headers:
-        x-correlator:
-          $ref: '#/components/parameters/x-correlator'
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/ErrorInfo'
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 500
-                  code:
-                    enum:
-                      - INTERNAL_SERVER_ERROR
-                      - INTERNAL
-          examples:
-            GENERIC_500_INTERNAL_SERVER_ERROR:
-              description: Unexpected server error
-              value:
-                status: 500
-                code: INTERNAL_SERVER_ERROR
-                message: "Unexpected server error occurred while processing query"
-            GENERIC_500_INTERNAL:
-              description: Internal server error
-              value:
-                status: 500
-                code: INTERNAL
-                message: Unknown server error
+      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic500"
