@@ -1,4 +1,4 @@
-Feature: CAMARA MaaS QA Assistant Management API, vwip
+Feature: CAMARA MaaS QA Assistant Management API, v0.2.0-rc.1
 
     CAMARA Commonalities: 0.8.0
 
@@ -15,7 +15,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
 
   Background: Common QA assistant management setup
     Given an environment at "apiRoot"
-    And the resource "/qa-assistant-manage/vwip/assistants"
+    And the resource "/qa-assistant-manage/v0.2rc1/assistants"
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
@@ -306,7 +306,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
   Scenario: Update assistant with a malformed toolId
     Given an existing assistant created by operation "createAssistant"
     And the path parameter "assistantId" is set to the value of the identifier for that assistant
-    And the resource "/qa-assistant-manage/vwip/assistants/{assistantId}"
+    And the resource "/qa-assistant-manage/v0.2rc1/assistants/{assistantId}"
     And the request body property "$.toolIds[0]" is set to "not-a-uuid"
     And the request body is compliant with the schema at "#/components/schemas/AssistantUpdateRequest"
     When the request "updateAssistant" is sent
@@ -319,7 +319,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
   Scenario: Update assistant with toolIds that do not exist
     Given an existing assistant created by operation "createAssistant"
     And the path parameter "assistantId" is set to the value of the identifier for that assistant
-    And the resource "/qa-assistant-manage/vwip/assistants/{assistantId}"
+    And the resource "/qa-assistant-manage/v0.2rc1/assistants/{assistantId}"
     And the request body property "$.toolIds" is set to [a random UUID that does not exist]
     And the request body is compliant with the schema at "#/components/schemas/AssistantUpdateRequest"
     When the request "updateAssistant" is sent

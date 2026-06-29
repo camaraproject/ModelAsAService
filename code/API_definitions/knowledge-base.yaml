@@ -43,24 +43,17 @@ info:
 
     This API rejects requests with JSON request bodies that contain properties not declared in this specification, at any nesting level. Unknown properties result in a `400 INVALID_ARGUMENT` response.
     <!-- CAMARA:MANDATORY:request-body-strictness:END -->
-
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: wip
+  version: 0.2.0-rc.1
   x-camara-commonalities: 0.8.0
-
-externalDocs:
-  description: Product documentation at CAMARA
-  url: https://github.com/camaraproject/ModelAsAService
-
 servers:
-  - url: '{apiRoot}/knowledge-base/vwip'
+  - url: '{apiRoot}/knowledge-base/v0.2rc1'
     variables:
       apiRoot:
         default: http://localhost:9091
         description: API root, defined by the service provider, e.g. `api.example.com` or `api.example.com/somepath`
-
 tags:
   - name: Knowledge Base
     description: Knowledge base management operations
@@ -68,7 +61,9 @@ tags:
     description: Document upload operations
   - name: Tools
     description: Tool definition and execution operations
-
+externalDocs:
+  description: Product documentation at CAMARA
+  url: https://github.com/camaraproject/ModelAsAService
 paths:
   /knowledge-bases:
     post:
@@ -95,7 +90,7 @@ paths:
       tags:
         - Knowledge Base
       parameters:
-        - $ref: '#/components/parameters/x-correlator'  # Added correlator
+        - $ref: '#/components/parameters/x-correlator'
       security:
         - openId:
             - knowledge-base:knowledge-bases:create
@@ -123,7 +118,6 @@ paths:
           $ref: '#/components/responses/Generic403'
         '500':
           $ref: '#/components/responses/Generic500'
-
     get:
       operationId: listKnowledgeBases
       summary: Get all knowledge bases
@@ -148,8 +142,8 @@ paths:
         - Knowledge Base
       parameters:
         - $ref: '#/components/parameters/x-correlator'
-        - $ref: '../common/CAMARA_common.yaml#/components/parameters/page'
-        - $ref: '../common/CAMARA_common.yaml#/components/parameters/perPage'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
       security:
         - openId:
             - knowledge-base:knowledge-bases:read
@@ -172,7 +166,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/KnowledgeBase'
                   pagination:
-                    $ref: '../common/CAMARA_common.yaml#/components/schemas/Pagination'
+                    $ref: '#/components/schemas/Pagination'
         '400':
           $ref: '#/components/responses/Generic400'
         '401':
@@ -181,7 +175,6 @@ paths:
           $ref: '#/components/responses/Generic403'
         '500':
           $ref: '#/components/responses/Generic500'
-
   /knowledge-bases/{knowledgeBaseId}:
     parameters:
       - name: knowledgeBaseId
@@ -192,8 +185,7 @@ paths:
           format: uuid
           maxLength: 36
         description: ID of the knowledge base
-      - $ref: '#/components/parameters/x-correlator'  # Added correlator
-
+      - $ref: '#/components/parameters/x-correlator'
     get:
       operationId: getKnowledgeBase
       summary: Get a specific knowledge base
@@ -239,7 +231,6 @@ paths:
           $ref: '#/components/responses/Generic404'
         '500':
           $ref: '#/components/responses/Generic500'
-
     put:
       operationId: updateKnowledgeBase
       summary: Update a knowledge base
@@ -293,7 +284,6 @@ paths:
           $ref: '#/components/responses/Generic404'
         '500':
           $ref: '#/components/responses/Generic500'
-
     delete:
       operationId: deleteKnowledgeBase
       summary: Delete a knowledge base
@@ -336,7 +326,6 @@ paths:
           $ref: '#/components/responses/Generic404'
         '500':
           $ref: '#/components/responses/Generic500'
-
   /knowledge-bases/{knowledgeBaseId}/documents:
     post:
       operationId: uploadDocument
@@ -373,7 +362,7 @@ paths:
             format: uuid
             maxLength: 36
           description: ID of the knowledge base
-        - $ref: '#/components/parameters/x-correlator'  # Added correlator
+        - $ref: '#/components/parameters/x-correlator'
       security:
         - openId:
             - knowledge-base:documents:create
@@ -389,7 +378,7 @@ paths:
                   type: string
                   format: binary
                   maxLength: 10485760
-                  description: "The document file to upload (supported formats: DOC, PDF, TXT, CSV)"
+                  description: 'The document file to upload (supported formats: DOC, PDF, TXT, CSV)'
               required:
                 - document
         required: true
@@ -408,7 +397,7 @@ paths:
                     type: string
                     maxLength: 256
                     description: Confirmation message for the uploaded document
-                    example: "Document uploaded successfully"
+                    example: Document uploaded successfully
         '400':
           $ref: '#/components/responses/Generic400'
         '401':
@@ -421,7 +410,6 @@ paths:
           $ref: '#/components/responses/Generic415'
         '500':
           $ref: '#/components/responses/Generic500'
-
   /knowledge-bases/{knowledgeBaseId}/tools:
     post:
       operationId: createTool
@@ -488,7 +476,6 @@ paths:
           $ref: '#/components/responses/Generic404'
         '500':
           $ref: '#/components/responses/Generic500'
-
     get:
       operationId: listTools
       summary: List all tools in a knowledge base
@@ -523,8 +510,8 @@ paths:
             maxLength: 36
           description: ID of the knowledge base
         - $ref: '#/components/parameters/x-correlator'
-        - $ref: '../common/CAMARA_common.yaml#/components/parameters/page'
-        - $ref: '../common/CAMARA_common.yaml#/components/parameters/perPage'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
       security:
         - openId:
             - knowledge-base:tools:read
@@ -547,7 +534,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/Tool'
                   pagination:
-                    $ref: '../common/CAMARA_common.yaml#/components/schemas/Pagination'
+                    $ref: '#/components/schemas/Pagination'
         '400':
           $ref: '#/components/responses/Generic400'
         '401':
@@ -558,7 +545,6 @@ paths:
           $ref: '#/components/responses/Generic404'
         '500':
           $ref: '#/components/responses/Generic500'
-
   /knowledge-bases/{knowledgeBaseId}/tools/{toolId}:
     parameters:
       - name: knowledgeBaseId
@@ -578,7 +564,6 @@ paths:
           maxLength: 36
         description: ID of the tool
       - $ref: '#/components/parameters/x-correlator'
-
     get:
       operationId: getTool
       summary: Get a specific tool
@@ -623,7 +608,6 @@ paths:
           $ref: '#/components/responses/Generic404'
         '500':
           $ref: '#/components/responses/Generic500'
-
     put:
       operationId: updateTool
       summary: Update a tool
@@ -676,7 +660,6 @@ paths:
           $ref: '#/components/responses/Generic404'
         '500':
           $ref: '#/components/responses/Generic500'
-
     delete:
       operationId: deleteTool
       summary: Delete a tool
@@ -718,7 +701,6 @@ paths:
           $ref: '#/components/responses/Generic404'
         '500':
           $ref: '#/components/responses/Generic500'
-
   /knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call:
     post:
       operationId: callTool
@@ -797,23 +779,43 @@ paths:
         '422':
           $ref: '#/components/responses/ToolInvalidInput422'
         '429':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic429'
+          $ref: '#/components/responses/Generic429'
         '500':
           $ref: '#/components/responses/Generic500'
-
 components:
   securitySchemes:
     openId:
-      $ref: "../common/CAMARA_common.yaml#/components/securitySchemes/openId"
-
+      type: openIdConnect
+      openIdConnectUrl: https://example.com/.well-known/openid-configuration
+      description: OpenID Connect authentication via discovery metadata.
   parameters:
     x-correlator:
-      $ref: "../common/CAMARA_common.yaml#/components/parameters/x-correlator"
-
+      name: x-correlator
+      in: header
+      description: Correlation id for the different services
+      schema:
+        $ref: '#/components/schemas/XCorrelator'
+    page:
+      name: page
+      in: query
+      description: |
+        Requested page number. Pages are 1-indexed. Values below 1 are rejected with `400 INVALID_ARGUMENT`.
+      required: false
+      schema:
+        $ref: '#/components/schemas/Page'
+    perPage:
+      name: perPage
+      in: query
+      description: |
+        Number of subscriptions to return per page. Values outside the allowed range are rejected with `400 INVALID_ARGUMENT`.
+      required: false
+      schema:
+        $ref: '#/components/schemas/PerPage'
   headers:
     x-correlator:
-      $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
-
+      description: Correlation id for the different services
+      schema:
+        $ref: '#/components/schemas/XCorrelator'
   schemas:
     KnowledgeBase:
       description: A knowledge base with its metadata and associated documents
@@ -851,12 +853,15 @@ components:
                 description: Name of the document file
               format:
                 type: string
-                enum: [DOC, PDF, TXT, CSV]
+                enum:
+                  - DOC
+                  - PDF
+                  - TXT
+                  - CSV
                 maxLength: 10
                 description: File format
               uploadDate:
-                $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
-
+                $ref: '#/components/schemas/DateTime'
     KnowledgeBaseCreateRequest:
       description: Request body for creating a new knowledge base
       type: object
@@ -873,7 +878,6 @@ components:
           maxLength: 4096
           description: Detailed description of the knowledge base
           x-DisplayName: description
-
     KnowledgeBaseUpdateRequest:
       description: Request body for updating an existing knowledge base
       type: object
@@ -888,14 +892,12 @@ components:
           maxLength: 4096
           description: New description of the knowledge base
           x-DisplayName: description
-
     HeaderValue:
       type: string
       maxLength: 4096
       description: |
         HTTP header value. String only, no structured values.
         Header names are validated against RFC 7230 token syntax at runtime.
-
     JsonSchema:
       type: object
       description: |
@@ -907,7 +909,6 @@ components:
         properties:
           query:
             type: string
-
     ToolCommon:
       type: object
       description: |
@@ -929,7 +930,12 @@ components:
           description: Endpoint URL for invoking the tool
         method:
           type: string
-          enum: [GET, POST, PUT, PATCH, DELETE]
+          enum:
+            - GET
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
           maxLength: 10
           default: POST
           description: HTTP method used to invoke the tool
@@ -942,23 +948,21 @@ components:
             The following reserved headers MUST NOT be included (the server will reject such requests with `400 INVALID_ARGUMENT`): `Host`, `Content-Length`, `Content-Type`, `Authorization`, `Cookie`, and any header beginning with `X-CAMARA-` or `X-Correlator-`.
           maxProperties: 50
           additionalProperties:
-            $ref: "#/components/schemas/HeaderValue"
+            $ref: '#/components/schemas/HeaderValue'
           example:
-            Authorization: "Bearer {{token}}"
+            Authorization: Bearer {{token}}
         inputSchema:
-          $ref: "#/components/schemas/JsonSchema"
+          $ref: '#/components/schemas/JsonSchema'
         outputSchema:
-          $ref: "#/components/schemas/JsonSchema"
-
+          $ref: '#/components/schemas/JsonSchema'
         createdAt:
-          $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
+          $ref: '#/components/schemas/DateTime'
         updatedAt:
-          $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
-
+          $ref: '#/components/schemas/DateTime'
     Tool:
       description: A tool registered in a knowledge base, including its definition and server-generated metadata
       allOf:
-        - $ref: "#/components/schemas/ToolCommon"
+        - $ref: '#/components/schemas/ToolCommon'
         - type: object
           required:
             - toolId
@@ -972,33 +976,30 @@ components:
             createdAt:
               description: Creation timestamp in RFC 3339 format (server-generated)
               allOf:
-                - $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
+                - $ref: '#/components/schemas/DateTime'
                 - readOnly: true
             updatedAt:
               description: Last update timestamp in RFC 3339 format (server-generated)
               allOf:
-                - $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
+                - $ref: '#/components/schemas/DateTime'
                 - readOnly: true
-
     ToolCreateRequest:
       description: Request body for registering a new tool in a knowledge base
       allOf:
-        - $ref: "#/components/schemas/ToolCommon"
+        - $ref: '#/components/schemas/ToolCommon'
         - type: object
           required:
             - name
             - url
           additionalProperties: false
-
     ToolUpdateRequest:
       description: Request body for updating an existing tool definition
       allOf:
-        - $ref: "#/components/schemas/ToolCommon"
+        - $ref: '#/components/schemas/ToolCommon'
         - type: object
           additionalProperties: false
           description: |
             All fields are optional for update. At least one field MUST be provided; an empty object is rejected with `400 INVALID_ARGUMENT`.
-
     ToolCallRequest:
       description: Request body for invoking a registered tool
       type: object
@@ -1014,9 +1015,8 @@ components:
             The server validates syntactic conformance against `inputSchema` and returns `400 INVALID_ARGUMENT` for schema-level mismatches, or `422 TOOL.INVALID_INPUT` for semantic mismatches.
           additionalProperties: true
           example:
-            query: "What is the weather?"
+            query: What is the weather?
             maxResults: 5
-
     ToolCallResponse:
       description: Response payload from a tool invocation, containing the execution result or error details
       type: object
@@ -1061,38 +1061,272 @@ components:
             - TOOL.DISABLED
             - TOOL.EXECUTION_FAILED
             - TOOL.TIMEOUT
-          example: "TOOL.EXECUTION_FAILED"
+          example: TOOL.EXECUTION_FAILED
         contextMessage:
           type: string
           maxLength: 512
           description: |
             Optional human-readable business context message, per CAMARA API Design Guide §3.1.
-          example: "The upstream tool returned a non-2xx status code."
-
+          example: The upstream tool returned a non-2xx status code.
+    XCorrelator:
+      type: string
+      description: Correlator string, UUID format recommended but any string matching the pattern can be used
+      pattern: ^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$
+      maxLength: 256
+      example: b4333c46-49c0-4f62-80d7-f0ef930f1c46
+    Page:
+      type: integer
+      format: int32
+      minimum: 1
+      maximum: 2147483647
+      default: 1
+      description: Current page number (1-indexed).
+      example: 1
+    PerPage:
+      type: integer
+      format: int32
+      minimum: 1
+      maximum: 100
+      default: 20
+      description: Number of items per page.
+      example: 20
+    DateTime:
+      type: string
+      format: date-time
+      maxLength: 64
+      description: Timestamp. It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
+      example: '2018-04-05T17:31:00Z'
+    TotalCount:
+      type: integer
+      format: int32
+      minimum: 0
+      maximum: 2147483647
+      description: Total number of items matching the query, after filters applied. MAY be omitted where a full count query is prohibitively expensive.
+      example: 87
+    TotalPages:
+      type: integer
+      format: int32
+      minimum: 0
+      maximum: 2147483647
+      description: Total number of pages. Equals ceil(totalCount / perPage). MAY be omitted where totalCount is omitted.
+      example: 5
+    Pagination:
+      description: Pagination details helping to navigate through paged results efficiently.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/Page'
+        perPage:
+          $ref: '#/components/schemas/PerPage'
+        totalCount:
+          $ref: '#/components/schemas/TotalCount'
+        totalPages:
+          $ref: '#/components/schemas/TotalPages'
+    ErrorInfo:
+      type: object
+      description: A structured error response providing details about a failed request, including the HTTP status code, an error code, and a human-readable message
+      required:
+        - status
+        - code
+        - message
+      properties:
+        status:
+          type: integer
+          format: int32
+          minimum: 100
+          maximum: 599
+          description: HTTP response status code
+        code:
+          type: string
+          maxLength: 96
+          description: A human-readable code to describe the error
+        message:
+          type: string
+          maxLength: 512
+          description: A human-readable description of what the event represents
   responses:
     Generic400:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic400"
+      description: Bad Request
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 400
+                  code:
+                    enum:
+                      - INVALID_ARGUMENT
+                      - OUT_OF_RANGE
+          examples:
+            GENERIC_400_INVALID_ARGUMENT:
+              description: Invalid Argument. Generic Syntax Exception
+              value:
+                status: 400
+                code: INVALID_ARGUMENT
+                message: Client specified an invalid argument, request body or query param.
+            GENERIC_400_OUT_OF_RANGE:
+              description: Out of Range. Specific Syntax Exception used when a given field has a pre-defined range or a invalid filter criteria combination is requested
+              value:
+                status: 400
+                code: OUT_OF_RANGE
+                message: Client specified an invalid range.
     Generic401:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic401"
+      description: Unauthorized
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 401
+                  code:
+                    enum:
+                      - UNAUTHENTICATED
+          examples:
+            GENERIC_401_UNAUTHENTICATED:
+              description: Request cannot be authenticated and a new authentication is required
+              value:
+                status: 401
+                code: UNAUTHENTICATED
+                message: Request not authenticated due to missing, invalid, or expired credentials. A new authentication is required.
     Generic403:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic403"
+      description: Forbidden
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 403
+                  code:
+                    enum:
+                      - PERMISSION_DENIED
+                      - INVALID_TOKEN_CONTEXT
+          examples:
+            GENERIC_403_PERMISSION_DENIED:
+              description: Permission denied. OAuth2 token access does not have the required scope or when the user fails operational security
+              value:
+                status: 403
+                code: PERMISSION_DENIED
+                message: Client does not have sufficient permissions to perform this action.
+            GENERIC_403_INVALID_TOKEN_CONTEXT:
+              description: Reflect some inconsistency between information in some field of the API and the related OAuth2 Token
+              value:
+                status: 403
+                code: INVALID_TOKEN_CONTEXT
+                message: Request body is not consistent with access token.
     Generic404:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic404"
+      description: Not found
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 404
+                  code:
+                    enum:
+                      - NOT_FOUND
+                      - IDENTIFIER_NOT_FOUND
+          examples:
+            GENERIC_404_NOT_FOUND:
+              description: Resource is not found
+              value:
+                status: 404
+                code: NOT_FOUND
+                message: The specified resource is not found.
+            GENERIC_404_IDENTIFIER_NOT_FOUND:
+              description: Some identifier cannot be matched to a device
+              value:
+                status: 404
+                code: IDENTIFIER_NOT_FOUND
+                message: Device identifier not found.
     Generic415:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic415"
+      description: Unsupported Media Type
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 415
+                  code:
+                    enum:
+                      - UNSUPPORTED_MEDIA_TYPE
+          examples:
+            GENERIC_415_UNSUPPORTED_MEDIA_TYPE:
+              description: Payload format of the request is in an unsupported format by the Server. Should not happen
+              value:
+                status: 415
+                code: UNSUPPORTED_MEDIA_TYPE
+                message: The server refuses to accept the request because the payload format is in an unsupported format.
     Generic500:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic500"
+      description: Internal Server Error
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 500
+                  code:
+                    enum:
+                      - INTERNAL
+          examples:
+            GENERIC_500_INTERNAL:
+              description: Problem in Server side. Regular Server Exception
+              value:
+                status: 500
+                code: INTERNAL
+                message: Unknown server error. Typically a server bug.
     ToolInvalidInput422:
       description: |
         The tool arguments are semantically invalid (e.g. the tool is disabled, or arguments fail business-rule validation even though they are syntactically valid against the `inputSchema`).
       headers:
         x-correlator:
-          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
             allOf:
-              - $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
+              - $ref: '#/components/schemas/ErrorInfo'
               - type: object
                 properties:
                   status:
@@ -1115,3 +1349,35 @@ components:
                 status: 422
                 code: TOOL.DISABLED
                 message: The requested tool is currently disabled and cannot be invoked.
+    Generic429:
+      description: Too Many Requests
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 429
+                  code:
+                    enum:
+                      - QUOTA_EXCEEDED
+                      - TOO_MANY_REQUESTS
+          examples:
+            GENERIC_429_QUOTA_EXCEEDED:
+              description: Request is rejected due to exceeding a business quota limit
+              value:
+                status: 429
+                code: QUOTA_EXCEEDED
+                message: Out of resource quota.
+            GENERIC_429_TOO_MANY_REQUESTS:
+              description: Access to the API has been temporarily blocked due to rate or spike arrest limits being reached
+              value:
+                status: 429
+                code: TOO_MANY_REQUESTS
+                message: Rate limit reached.
