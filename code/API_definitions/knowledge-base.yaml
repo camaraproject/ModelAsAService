@@ -172,7 +172,6 @@ paths:
                     items:
                       $ref: '#/components/schemas/KnowledgeBase'
                   pagination:
-                    description: Pagination metadata for navigating through results
                     $ref: '../common/CAMARA_common.yaml#/components/schemas/Pagination'
         '400':
           $ref: '#/components/responses/Generic400'
@@ -548,7 +547,6 @@ paths:
                     items:
                       $ref: '#/components/schemas/Tool'
                   pagination:
-                    description: Pagination metadata for navigating through results
                     $ref: '../common/CAMARA_common.yaml#/components/schemas/Pagination'
         '400':
           $ref: '#/components/responses/Generic400'
@@ -857,7 +855,6 @@ components:
                 maxLength: 10
                 description: File format
               uploadDate:
-                description: Timestamp when the document was uploaded, following RFC 3339
                 $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
 
     KnowledgeBaseCreateRequest:
@@ -954,10 +951,8 @@ components:
           $ref: "#/components/schemas/JsonSchema"
 
         createdAt:
-          description: Creation timestamp in RFC 3339 format
           $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
         updatedAt:
-          description: Last update timestamp in RFC 3339 format
           $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
 
     Tool:
