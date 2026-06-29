@@ -63,7 +63,7 @@ servers:
 
 tags:
   - name: Knowledge Base
-    description: Knowledge base management
+    description: Knowledge base management operations
   - name: Documents
     description: Document upload operations
   - name: Tools
@@ -168,9 +168,11 @@ paths:
                     type: array
                     minItems: 0
                     maxItems: 1000
+                    description: List of knowledge bases accessible to the authenticated user
                     items:
                       $ref: '#/components/schemas/KnowledgeBase'
                   pagination:
+                    description: Pagination metadata for navigating through results
                     $ref: '../common/CAMARA_common.yaml#/components/schemas/Pagination'
         '400':
           $ref: '#/components/responses/Generic400'
@@ -381,10 +383,14 @@ paths:
           multipart/form-data:
             schema:
               type: object
+              description: Multipart form data containing the document file to upload
+              additionalProperties: false
               properties:
                 document:
                   type: string
                   format: binary
+                  maxLength: 10485760
+                  description: "The document file to upload (supported formats: DOC, PDF, TXT, CSV)"
               required:
                 - document
         required: true
@@ -538,9 +544,11 @@ paths:
                     type: array
                     minItems: 0
                     maxItems: 1000
+                    description: List of tools registered in the knowledge base
                     items:
                       $ref: '#/components/schemas/Tool'
                   pagination:
+                    description: Pagination metadata for navigating through results
                     $ref: '../common/CAMARA_common.yaml#/components/schemas/Pagination'
         '400':
           $ref: '#/components/responses/Generic400'
@@ -810,6 +818,7 @@ components:
 
   schemas:
     KnowledgeBase:
+      description: A knowledge base with its metadata and associated documents
       type: object
       properties:
         knowledgeBaseId:
@@ -825,11 +834,14 @@ components:
           type: string
           maxLength: 4096
           description: Detailed description of the knowledge base
+          x-DisplayName: description
         documents:
           type: array
           maxItems: 1000
+          description: List of documents in the knowledge base
           items:
             type: object
+            description: Document metadata including filename, format and upload timestamp
             required:
               - filename
               - format
@@ -845,10 +857,11 @@ components:
                 maxLength: 10
                 description: File format
               uploadDate:
+                description: Timestamp when the document was uploaded, following RFC 3339
                 $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
-          description: List of documents in the knowledge base
 
     KnowledgeBaseCreateRequest:
+      description: Request body for creating a new knowledge base
       type: object
       required:
         - name
@@ -862,8 +875,10 @@ components:
           type: string
           maxLength: 4096
           description: Detailed description of the knowledge base
+          x-DisplayName: description
 
     KnowledgeBaseUpdateRequest:
+      description: Request body for updating an existing knowledge base
       type: object
       additionalProperties: false
       properties:
@@ -875,6 +890,7 @@ components:
           type: string
           maxLength: 4096
           description: New description of the knowledge base
+          x-DisplayName: description
 
     HeaderValue:
       type: string
@@ -889,6 +905,11 @@ components:
         A JSON Schema document (https://json-schema.org/) describing the expected shape of tool arguments (`inputSchema`) or return values (`outputSchema`).
         The document is opaque to the API platform and passed through to the tool runtime; the tool provider is responsible for validation.
       additionalProperties: true
+      example:
+        type: object
+        properties:
+          query:
+            type: string
 
     ToolCommon:
       type: object
@@ -903,6 +924,7 @@ components:
           type: string
           maxLength: 4096
           description: Detailed description of the tool
+          x-DisplayName: description
         url:
           type: string
           format: uri
@@ -932,39 +954,39 @@ components:
           $ref: "#/components/schemas/JsonSchema"
 
         createdAt:
+          description: Creation timestamp in RFC 3339 format
           $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
         updatedAt:
+          description: Last update timestamp in RFC 3339 format
           $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
 
     Tool:
+      description: A tool registered in a knowledge base, including its definition and server-generated metadata
       allOf:
         - $ref: "#/components/schemas/ToolCommon"
         - type: object
           required:
             - toolId
-            - name
-            - url
-            - createdAt
-            - updatedAt
           properties:
             toolId:
               type: string
               format: uuid
               maxLength: 36
               readOnly: true
-              description: Unique identifier of the tool (server-generated)
+              description: Unique identifier of the tool, generated by the server
             createdAt:
+              description: Creation timestamp in RFC 3339 format (server-generated)
               allOf:
                 - $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
                 - readOnly: true
-              description: Creation timestamp (server-generated)
             updatedAt:
+              description: Last update timestamp in RFC 3339 format (server-generated)
               allOf:
                 - $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
                 - readOnly: true
-              description: Last update timestamp (server-generated)
 
     ToolCreateRequest:
+      description: Request body for registering a new tool in a knowledge base
       allOf:
         - $ref: "#/components/schemas/ToolCommon"
         - type: object
@@ -974,6 +996,7 @@ components:
           additionalProperties: false
 
     ToolUpdateRequest:
+      description: Request body for updating an existing tool definition
       allOf:
         - $ref: "#/components/schemas/ToolCommon"
         - type: object
@@ -982,6 +1005,7 @@ components:
             All fields are optional for update. At least one field MUST be provided; an empty object is rejected with `400 INVALID_ARGUMENT`.
 
     ToolCallRequest:
+      description: Request body for invoking a registered tool
       type: object
       additionalProperties: false
       required:
@@ -999,6 +1023,7 @@ components:
             maxResults: 5
 
     ToolCallResponse:
+      description: Response payload from a tool invocation, containing the execution result or error details
       type: object
       required:
         - success
@@ -1020,8 +1045,13 @@ components:
             Preserved for caller visibility. The callTool API itself responds with HTTP 200 regardless of this value, per the business-outcome modelling in CAMARA API Design Guide §3.1.
         result:
           type: object
-          description: Response body returned by the upstream tool on success.
+          description: Response body returned by the upstream tool on success (empty object if no result)
           additionalProperties: true
+          example: {}
+          properties:
+            data:
+              type: object
+              description: Opaque result payload from the upstream tool
         error:
           type: string
           maxLength: 2048
@@ -1031,6 +1061,11 @@ components:
           maxLength: 96
           description: |
             Optional machine-readable business context code, per CAMARA API Design Guide §3.1. Values follow the `TOOL.SCREAMING_SNAKE_CASE` convention when API-specific.
+          enum:
+            - TOOL.INVALID_INPUT
+            - TOOL.DISABLED
+            - TOOL.EXECUTION_FAILED
+            - TOOL.TIMEOUT
           example: "TOOL.EXECUTION_FAILED"
         contextMessage:
           type: string
@@ -1038,9 +1073,6 @@ components:
           description: |
             Optional human-readable business context message, per CAMARA API Design Guide §3.1.
           example: "The upstream tool returned a non-2xx status code."
-
-    ErrorInfo:
-      $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
 
   responses:
     Generic400:
