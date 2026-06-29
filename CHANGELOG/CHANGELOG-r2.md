@@ -71,11 +71,11 @@ Changes documented below are compared to version 0.1.0.
 
 ### Added
 
-* N/A
+* Add tool usage function by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/33
 
 ### Changed
 
-* N/A
+* Update the API definition file based on the latest version of Commonalities and ICM by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/33
 
 ### Fixed
 
@@ -102,11 +102,11 @@ Changes documented below are compared to version 0.1.0.
 
 ### Added
 
-* N/A
+* Add tool usage function by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/33
 
 ### Changed
 
-* N/A
+* Update the API definition file based on the latest version of Commonalities and ICM by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/33
 
 ### Fixed
 
@@ -133,11 +133,11 @@ Changes documented below are compared to version 0.1.0.
 
 ### Added
 
-* N/A
+* Add tool usage function by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/33
 
 ### Changed
 
-* N/A
+* Update the API definition file based on the latest version of Commonalities and ICM by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/33
 
 ### Fixed
 
