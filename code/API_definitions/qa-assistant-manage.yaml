@@ -163,7 +163,6 @@ paths:
                     items:
                       $ref: '#/components/schemas/Assistant'
                   pagination:
-                    description: Pagination metadata for navigating through results
                     $ref: '../common/CAMARA_common.yaml#/components/schemas/Pagination'
         '400':
           $ref: '#/components/responses/Generic400'
@@ -345,7 +344,7 @@ components:
 
   schemas:
     AssistantCreateRequest:
-    description: Request body for creating a new QA assistant configuration
+      description: Request body for creating a new QA assistant configuration
       type: object
       required:
         - name
@@ -583,10 +582,8 @@ components:
           maxLength: 4096
           description: Opening remarks for the assistant
         createdAt:
-          description: Creation timestamp in RFC 3339 format
           $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
         updatedAt:
-          description: Last update timestamp in RFC 3339 format
           $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
 
     AssistantResponse:
