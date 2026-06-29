@@ -106,7 +106,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
-    Given at least an existing tool created by operation "createTool"
+    And at least an existing tool created by operation "createTool"
     When the request "listTools" is sent
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
@@ -317,7 +317,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
   @knowledge_base_update_404_01_not_found
   Scenario: Update non-existing knowledgeBaseId
     Given the path parameter "knowledgeBaseId" is set to a random UUID
-    Given the request body is compliant with the schema at "#/components/schemas/KnowledgeBaseUpdateRequest"
+    And the request body is compliant with the schema at "#/components/schemas/KnowledgeBaseUpdateRequest"
     When the request "updateKnowledgeBase" is sent
     Then the response status code is 404
     And the response header "x-correlator" has the same value as the request header "x-correlator"
@@ -366,7 +366,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
-    Given the request body property "$.name" is not included
+    And the request body property "$.name" is not included
     When the request "createTool" is sent
     Then the response status code is 400
     And the response header "x-correlator" has the same value as the request header "x-correlator"
@@ -382,7 +382,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
-    Given the query parameter "page" is set to -1
+    And the query parameter "page" is set to -1
     When the request "listTools" is sent
     Then the response status code is 400
     And the response header "x-correlator" has the same value as the request header "x-correlator"
@@ -394,7 +394,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
-    Given the query parameter "perPage" is set to 999
+    And the query parameter "perPage" is set to 999
     When the request "listTools" is sent
     Then the response status code is 400
     And the response header "x-correlator" has the same value as the request header "x-correlator"
@@ -406,7 +406,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
-    Given the request body property "$.url" is not included
+    And the request body property "$.url" is not included
     When the request "createTool" is sent
     Then the response status code is 400
     And the response header "x-correlator" has the same value as the request header "x-correlator"
@@ -422,7 +422,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
-    Given the header "Authorization" is not sent
+    And the header "Authorization" is not sent
     When the request "listTools" is sent
     Then the response status code is 401
     And the response header "x-correlator" has the same value as the request header "x-correlator"
@@ -436,7 +436,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
-    Given the header "Authorization" is set to an access token that does not include scope "knowledge-base:tools:create"
+    And the header "Authorization" is set to an access token that does not include scope "knowledge-base:tools:create"
     When the request "createTool" is sent
     Then the response status code is 403
     And the response header "x-correlator" has the same value as the request header "x-correlator"
@@ -483,7 +483,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
-    Given the system is in a faulty state
+    And the system is in a faulty state
     When the request "createTool" is sent
     Then the response status code is 500
     And the response header "x-correlator" has the same value as the request header "x-correlator"
