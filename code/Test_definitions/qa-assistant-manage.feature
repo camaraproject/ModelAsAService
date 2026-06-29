@@ -344,7 +344,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
   @qa_assistant_manage_update_404_01_not_found
   Scenario: Update non-existing assistantId
     Given the path parameter "assistantId" is set to a random UUID
-    Given the request body is compliant with the schema at "#/components/schemas/AssistantUpdateRequest"
+    And the request body is compliant with the schema at "#/components/schemas/AssistantUpdateRequest"
     When the request "updateAssistant" is sent
     Then the response status code is 404
     And the response header "x-correlator" has the same value as the request header "x-correlator"
