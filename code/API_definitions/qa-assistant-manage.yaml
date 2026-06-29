@@ -54,6 +54,10 @@ servers:
         default: http://localhost:9091
         description: API root, defined by the service provider, e.g. `api.example.com` or `api.example.com/somepath`
 
+tags:
+  - name: Assistants
+    description: QA assistant management operations
+
 paths:
   /assistants:
     post:
@@ -155,9 +159,11 @@ paths:
                     type: array
                     minItems: 0
                     maxItems: 1000
+                    description: List of configured QA assistants
                     items:
                       $ref: '#/components/schemas/Assistant'
                   pagination:
+                    description: Pagination metadata for navigating through results
                     $ref: '../common/CAMARA_common.yaml#/components/schemas/Pagination'
         '400':
           $ref: '#/components/responses/Generic400'
@@ -339,6 +345,7 @@ components:
 
   schemas:
     AssistantCreateRequest:
+    description: Request body for creating a new QA assistant configuration
       type: object
       required:
         - name
@@ -354,6 +361,7 @@ components:
           type: string
           maxLength: 4096
           description: Description of the assistant
+          x-DisplayName: description
         knowledgeBaseId:
           type: string
           format: uuid
@@ -369,6 +377,7 @@ components:
             type: string
             format: uuid
             maxLength: 36
+            description: UUID of a tool registered in the associated knowledge base
           description: |
             Optional IDs of tools from the knowledge base to associate with this assistant. Duplicates are rejected with `400 INVALID_ARGUMENT`.
             **Cross-API contract (CAMARA ModelAsAService):** every tool ID MUST reference an existing tool owned by the `knowledge-base` API. If `knowledgeBaseId` is also provided, every tool listed here MUST belong to that knowledge base.
@@ -392,7 +401,7 @@ components:
               example: "gpt-4"
             parameters:
               type: object
-              description: Model-specific parameters
+              description: Model-specific parameters controlling generation behaviour
               required:
                 - temperature
                 - maxTokens
@@ -403,18 +412,21 @@ components:
                   format: float
                   minimum: 0.0
                   maximum: 1.0
+                  description: Sampling temperature for generation (0.0 = deterministic, 1.0 = maximally creative)
                   example: 0.7
                 maxTokens:
                   type: integer
                   format: int32
                   minimum: 1
-                  maximum: 2147483647
+                  maximum: 128000
+                  description: Maximum number of tokens to generate
                   example: 200
                 topP:
                   type: number
                   format: float
                   minimum: 0.0
                   maximum: 1.0
+                  description: Nucleus sampling parameter (top-p)
                   example: 0.8
         openingRemarks:
           type: string
@@ -422,6 +434,7 @@ components:
           description: Optional opening remarks for the assistant
 
     AssistantUpdateRequest:
+      description: Request body for updating an existing QA assistant configuration
       type: object
       additionalProperties: false
       properties:
@@ -433,6 +446,7 @@ components:
           type: string
           maxLength: 4096
           description: New description of the assistant
+          x-DisplayName: description
         knowledgeBaseId:
           type: string
           format: uuid
@@ -448,6 +462,7 @@ components:
             type: string
             format: uuid
             maxLength: 36
+            description: UUID of a tool registered in the associated knowledge base
           description: |
             Optional new set of tool IDs to associate with this assistant.
             Duplicates are rejected with `400 INVALID_ARGUMENT`. Same cross-API contract as on create.
@@ -466,7 +481,7 @@ components:
               description: Name of the large language model
             parameters:
               type: object
-              description: Model-specific parameters
+              description: Model-specific parameters controlling generation behaviour
               additionalProperties: false
               properties:
                 temperature:
@@ -474,22 +489,26 @@ components:
                   format: float
                   minimum: 0.0
                   maximum: 1.0
+                  description: Sampling temperature for generation (0.0 = deterministic, 1.0 = maximally creative)
                 maxTokens:
                   type: integer
                   format: int32
                   minimum: 1
-                  maximum: 2147483647
+                  maximum: 128000
+                  description: Maximum number of tokens to generate
                 topP:
                   type: number
                   format: float
                   minimum: 0.0
                   maximum: 1.0
+                  description: Nucleus sampling parameter (top-p)
         openingRemarks:
           type: string
           maxLength: 4096
           description: Updated opening remarks
 
     Assistant:
+      description: A QA assistant configuration including LLM parameters, knowledge base associations, and prompts
       type: object
       properties:
         assistantId:
@@ -506,6 +525,7 @@ components:
           type: string
           maxLength: 4096
           description: Description of the assistant
+          x-DisplayName: description
         knowledgeBaseId:
           type: string
           format: uuid
@@ -520,6 +540,7 @@ components:
             type: string
             format: uuid
             maxLength: 36
+            description: UUID of a tool registered in the associated knowledge base
           description: |
             IDs of tools from the knowledge base associated with this assistant.
             Tools may be pruned by the server if they have been deleted from the knowledge base after the assistant was last updated.
@@ -538,17 +559,39 @@ components:
             parameters:
               type: object
               description: Model-specific parameters
+              properties:
+                temperature:
+                  type: number
+                  format: float
+                  minimum: 0.0
+                  maximum: 1.0
+                  description: Sampling temperature for generation (0.0 = deterministic, 1.0 = maximally creative)
+                maxTokens:
+                  type: integer
+                  format: int32
+                  minimum: 1
+                  maximum: 128000
+                  description: Maximum number of tokens to generate
+                topP:
+                  type: number
+                  format: float
+                  minimum: 0.0
+                  maximum: 1.0
+                  description: Nucleus sampling parameter (top-p)
         openingRemarks:
           type: string
           maxLength: 4096
           description: Opening remarks for the assistant
         createdAt:
+          description: Creation timestamp in RFC 3339 format
           $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
         updatedAt:
+          description: Last update timestamp in RFC 3339 format
           $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
 
     AssistantResponse:
       type: object
+      description: Response payload returned after creating or updating an assistant
       properties:
         success:
           type: boolean
@@ -561,10 +604,7 @@ components:
         message:
           type: string
           maxLength: 512
-          description: Success/failure message
-
-    ErrorInfo:
-      $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
+          description: Success or failure message describing the result of the operation
 
   responses:
     Generic400:
@@ -575,8 +615,6 @@ components:
       $ref: "../common/CAMARA_common.yaml#/components/responses/Generic403"
     Generic404:
       $ref: "../common/CAMARA_common.yaml#/components/responses/Generic404"
-    Generic422:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic422"
     Generic500:
       $ref: "../common/CAMARA_common.yaml#/components/responses/Generic500"
     InvalidToolIds422:
