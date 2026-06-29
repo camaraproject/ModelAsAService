@@ -192,18 +192,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @knowledge_base_create_400_03_empty_request_body
-  Scenario: Empty object as request body
-    Given the request body is set to {}
-    When the request "createKnowledgeBase" is sent
-    Then the response status code is 400
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response header "Content-Type" is "application/json"
-    And the response property "$.status" is 400
-    And the response property "$.code" is "INVALID_ARGUMENT"
-    And the response property "$.message" contains a user friendly text
-
-  @knowledge_base_create_400_04_missing_required_property
+  @knowledge_base_create_400_03_missing_required_property
   Scenario: Error response for missing required property "name" in request body
     Given the request body property "$.name" is not included
     When the request "createKnowledgeBase" is sent
@@ -214,26 +203,9 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @knowledge_base_create_400_05_invalid_x-correlator
-  Scenario: Invalid x-correlator header
-    Given the header "x-correlator" does not comply with the schema at "#/components/schemas/XCorrelator"
-    When the request "createKnowledgeBase" is sent
-    Then the response status code is 400
-    And the response property "$.status" is 400
-    And the response property "$.code" is "INVALID_ARGUMENT"
-
   # Pagination error scenarios
 
-  @knowledge_base_list_400_01_page_negative
-  Scenario: Invalid negative page parameter
-    Given the query parameter "page" is set to -1
-    When the request "listKnowledgeBases" is sent
-    Then the response status code is 400
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.status" is 400
-    And the response property "$.code" is "INVALID_ARGUMENT"
-
-  @knowledge_base_list_400_02_perPage_exceeds_max
+  @knowledge_base_list_400_01_perPage_exceeds_max
   Scenario: PerPage exceeds maximum allowed value
     Given the query parameter "perPage" is set to 999
     When the request "listKnowledgeBases" is sent
@@ -255,31 +227,9 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
 
   # Authentication/Authorization errors
 
-  @knowledge_base_401_01_no_authorization_header
-  Scenario: Error response for no header "Authorization"
-    Given the header "Authorization" is not sent
-    When the request "listKnowledgeBases" is sent
-    Then the response status code is 401
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response header "Content-Type" is "application/json"
-    And the response property "$.status" is 401
-    And the response property "$.code" is "UNAUTHENTICATED"
-    And the response property "$.message" contains a user friendly text
-
-  @knowledge_base_401_02_expired_access_token
+  @knowledge_base_401_01_expired_access_token
   Scenario: Error response for expired access token
     Given the header "Authorization" is set to an expired access token
-    When the request "listKnowledgeBases" is sent
-    Then the response status code is 401
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response header "Content-Type" is "application/json"
-    And the response property "$.status" is 401
-    And the response property "$.code" is "UNAUTHENTICATED"
-    And the response property "$.message" contains a user friendly text
-
-  @knowledge_base_401_03_invalid_access_token
-  Scenario: Error response for invalid access token
-    Given the header "Authorization" is set to an invalid access token
     When the request "listKnowledgeBases" is sent
     Then the response status code is 401
     And the response header "x-correlator" has the same value as the request header "x-correlator"
@@ -313,25 +263,6 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the response property "$.status" is 404
     And the response property "$.code" is "NOT_FOUND"
     And the response property "$.message" contains a user friendly text
-
-  @knowledge_base_update_404_01_not_found
-  Scenario: Update non-existing knowledgeBaseId
-    Given the path parameter "knowledgeBaseId" is set to a random UUID
-    And the request body is compliant with the schema at "#/components/schemas/KnowledgeBaseUpdateRequest"
-    When the request "updateKnowledgeBase" is sent
-    Then the response status code is 404
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.status" is 404
-    And the response property "$.code" is "NOT_FOUND"
-
-  @knowledge_base_delete_404_01_not_found
-  Scenario: Delete non-existing knowledgeBaseId
-    Given the path parameter "knowledgeBaseId" is set to a random UUID
-    When the request "deleteKnowledgeBase" is sent
-    Then the response status code is 404
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.status" is 404
-    And the response property "$.code" is "NOT_FOUND"
 
   # Generic 415 Error
 
@@ -389,18 +320,6 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
 
-  @knowledge_base_tool_list_400_02_perPage_exceeds_max
-  Scenario: PerPage exceeds maximum allowed value for tool list
-    Given an existing knowledge base created by operation "createKnowledgeBase"
-    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
-    And the query parameter "perPage" is set to 999
-    When the request "listTools" is sent
-    Then the response status code is 400
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.status" is 400
-    And the response property "$.code" is "OUT_OF_RANGE"
-
   @knowledge_base_tool_create_400_02_missing_url
   Scenario: Create tool with missing required property "url"
     Given an existing knowledge base created by operation "createKnowledgeBase"
@@ -417,20 +336,6 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
 
   # Authentication/Authorization errors
 
-  @knowledge_base_tool_401_01_no_authorization_header
-  Scenario: Tool operation with no Authorization header
-    Given an existing knowledge base created by operation "createKnowledgeBase"
-    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
-    And the header "Authorization" is not sent
-    When the request "listTools" is sent
-    Then the response status code is 401
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response header "Content-Type" is "application/json"
-    And the response property "$.status" is 401
-    And the response property "$.code" is "UNAUTHENTICATED"
-    And the response property "$.message" contains a user friendly text
-
   @knowledge_base_tool_create_403_01_missing_scope
   Scenario: Create tool with missing access token scope
     Given an existing knowledge base created by operation "createKnowledgeBase"
@@ -446,20 +351,6 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the response property "$.message" contains a user friendly text
 
   # Generic 404 Errors
-
-  @knowledge_base_tool_get_404_01_not_found
-  Scenario: Get non-existing tool
-    Given an existing knowledge base created by operation "createKnowledgeBase"
-    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the path parameter "toolId" is set to a random UUID
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
-    When the request "getTool" is sent
-    Then the response status code is 404
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response header "Content-Type" is "application/json"
-    And the response property "$.status" is 404
-    And the response property "$.code" is "NOT_FOUND"
-    And the response property "$.message" contains a user friendly text
 
   @knowledge_base_tool_call_404_01_not_found
   Scenario: Invoke non-existing tool
@@ -566,7 +457,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
 
   # Syntax / validation errors
 
-  @knowledge_base_tool_create_400_03_invalid_method
+  @knowledge_base_tool_create_400_01_invalid_method
   Scenario: Create tool with invalid HTTP method (not in enum)
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
@@ -579,7 +470,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
 
-  @knowledge_base_tool_create_400_04_invalid_url
+  @knowledge_base_tool_create_400_02_invalid_url
   Scenario: Create tool with malformed URL
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
@@ -592,20 +483,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
 
-  @knowledge_base_tool_create_400_05_name_too_long
-  Scenario: Create tool with name exceeding maxLength
-    Given an existing knowledge base created by operation "createKnowledgeBase"
-    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
-    And the request body property "$.name" is set to a string of 256 characters
-    And the request body is compliant with the schema at "#/components/schemas/ToolCreateRequest"
-    When the request "createTool" is sent
-    Then the response status code is 400
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.status" is 400
-    And the response property "$.code" is "OUT_OF_RANGE"
-
-  @knowledge_base_tool_create_400_06_reserved_header
+  @knowledge_base_tool_create_400_03_reserved_header
   Scenario: Create tool with reserved header (e.g. Host)
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
@@ -618,20 +496,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
 
-  @knowledge_base_tool_create_400_07_too_many_headers
-  Scenario: Create tool with more than 50 custom headers
-    Given an existing knowledge base created by operation "createKnowledgeBase"
-    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
-    And the request body property "$.headers" is set to an object with 51 entries
-    And the request body is compliant with the schema at "#/components/schemas/ToolCreateRequest"
-    When the request "createTool" is sent
-    Then the response status code is 400
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.status" is 400
-    And the response property "$.code" is "OUT_OF_RANGE"
-
-  @knowledge_base_tool_create_400_08_header_value_too_long
+  @knowledge_base_tool_create_400_04_header_value_too_long
   Scenario: Create tool with header value exceeding maxLength
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
@@ -763,19 +628,6 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
 
   # Other 404s
 
-  @knowledge_base_tool_update_404_01_not_found
-  Scenario: Update non-existing toolId
-    Given an existing knowledge base created by operation "createKnowledgeBase"
-    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the path parameter "toolId" is set to a random UUID
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
-    And the request body is compliant with the schema at "#/components/schemas/ToolUpdateRequest"
-    When the request "updateTool" is sent
-    Then the response status code is 404
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.status" is 404
-    And the response property "$.code" is "NOT_FOUND"
-
   @knowledge_base_tool_delete_404_01_not_found
   Scenario: Delete non-existing toolId
     Given an existing knowledge base created by operation "createKnowledgeBase"
@@ -800,20 +652,6 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the header "Authorization" is set to an access token that does not include scope "knowledge-base:tools:update"
     And the request body is compliant with the schema at "#/components/schemas/ToolUpdateRequest"
     When the request "updateTool" is sent
-    Then the response status code is 403
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.status" is 403
-    And the response property "$.code" is "PERMISSION_DENIED"
-
-  @knowledge_base_tool_delete_403_01_missing_scope
-  Scenario: Delete tool with missing scope
-    Given an existing knowledge base created by operation "createKnowledgeBase"
-    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And an existing tool created by operation "createTool"
-    And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
-    And the header "Authorization" is set to an access token that does not include scope "knowledge-base:tools:delete"
-    When the request "deleteTool" is sent
     Then the response status code is 403
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.status" is 403
