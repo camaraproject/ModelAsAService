@@ -142,6 +142,7 @@ components:
   schemas:
     QueryRequest:
       type: object
+      description: Request payload for querying a QA assistant
       required:
         - assistantId
         - prompt
@@ -151,17 +152,18 @@ components:
           type: string
           format: uuid
           maxLength: 36
-          description: Unique identifier of the QA assistant
+          description: Unique identifier of the QA assistant to query
           example: "a1b2c3d4-5678-90ab-cdef-1234567890ab"
         prompt:
           type: string
           minLength: 1
           maxLength: 1000
-          description: The user's question or query
+          description: The user's question or query to send to the assistant
           example: "How do I reset my password?"
 
     QueryResponse:
       type: object
+      description: Response payload containing the assistant's generated answer
       required:
         - success
         - finished
@@ -169,11 +171,11 @@ components:
       properties:
         success:
           type: boolean
-          description: Indicates whether the query was processed successfully
+          description: Indicates whether the query was processed successfully by the assistant
         finished:
           type: string
           maxLength: 32
-          description: Termination status of the response generation
+          description: Termination status of the response generation (STOP = normal completion, LENGTH = truncated, ERROR = generation error, FILTER = content filtered)
           enum:
             - STOP
             - LENGTH
@@ -183,16 +185,13 @@ components:
         answerText:
           type: string
           maxLength: 65535
-          description: The assistant's generated answer
+          description: The assistant's generated answer text
           example: "To reset your password, go to settings > security..."
         reference:
           type: string
           maxLength: 255
-          description: Optional reference to the knowledge base source
+          description: Optional reference identifier to the knowledge base source used for the answer
           example: "kb123_section5"
-
-    ErrorInfo:
-      $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
 
   responses:
     Generic400:
