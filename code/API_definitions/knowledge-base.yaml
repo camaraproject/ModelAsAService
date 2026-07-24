@@ -1103,6 +1103,7 @@ components:
         properties:
           query:
             type: string
+            maxLength: 4096
     ToolCommon:
       type: object
       description: |
