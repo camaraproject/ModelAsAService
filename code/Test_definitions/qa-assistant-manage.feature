@@ -306,7 +306,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
   Scenario: Update assistant with a malformed toolId
     Given an existing assistant created by operation "createAssistant"
     And the path parameter "assistantId" is set to the value of the identifier for that assistant
-    And the resource "/qa-assistant-manage/v0.2rc1/assistants/{assistantId}"
+    And the resource "/qa-assistant-manage/vwip/assistants/{assistantId}"
     And the request body property "$.toolIds[0]" is set to "not-a-uuid"
     And the request body is compliant with the schema at "#/components/schemas/AssistantUpdateRequest"
     When the request "updateAssistant" is sent
@@ -319,7 +319,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
   Scenario: Update assistant with toolIds that do not exist
     Given an existing assistant created by operation "createAssistant"
     And the path parameter "assistantId" is set to the value of the identifier for that assistant
-    And the resource "/qa-assistant-manage/v0.2rc1/assistants/{assistantId}"
+    And the resource "/qa-assistant-manage/vwip/assistants/{assistantId}"
     And the request body property "$.toolIds" is set to [a random UUID that does not exist]
     And the request body is compliant with the schema at "#/components/schemas/AssistantUpdateRequest"
     When the request "updateAssistant" is sent
