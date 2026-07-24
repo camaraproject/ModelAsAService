@@ -1,4 +1,4 @@
-Feature: CAMARA MaaS Q&A Assistant Service API, v0.2.0-rc.1
+Feature: CAMARA MaaS Q&A Assistant Service API, vwip
 
     CAMARA Commonalities: 0.8.0
 
@@ -14,7 +14,7 @@ Feature: CAMARA MaaS Q&A Assistant Service API, v0.2.0-rc.1
 
   Background: Common QA assistant service setup
     Given an environment at "apiRoot"
-    And the resource "/qa-assistant-service/v0.2rc1/answer"
+    And the resource "/qa-assistant-service/vwip/answer"
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
