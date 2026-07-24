@@ -1,4 +1,4 @@
-Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
+Feature: CAMARA MaaS Knowledge Base API, vwip
 
     CAMARA Commonalities: 0.8.0
 
@@ -14,7 +14,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
 
   Background: Common knowledge-base setup
     Given an environment at "apiRoot"
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases"
+    And the resource "/knowledge-base/vwip/knowledge-bases"
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
@@ -38,15 +38,6 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.items" is an array whose items comply with the OAS schema at "#/components/schemas/KnowledgeBase"
-    And the response property "$.pagination" complies with the OAS schema at "#/components/schemas/Pagination"
-
-  @knowledge_base_list_02_empty
-  Scenario: No existing knowledge bases
-    Given no knowledge bases have been created by operation "createKnowledgeBase"
-    When the request "listKnowledgeBases" is sent
-    Then the response status code is 200
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.items" is an empty array "[]"
     And the response property "$.pagination" complies with the OAS schema at "#/components/schemas/Pagination"
 
   @knowledge_base_get_01_success
@@ -82,7 +73,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
   Scenario: Upload valid document to knowledge base
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/documents"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents"
     And a valid document file with format pdf is available
     When the request "uploadDocument" is sent
     Then the response status code is 201
@@ -99,40 +90,12 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing document created by operation "uploadDocument"
     And the path parameter "documentId" is set to the value of the identifier for that document
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
     When the request "getDocument" is sent
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "#/components/schemas/Document"
-
-  @knowledge_base_get_document_404_01_not_found
-  Scenario: Get a non-existing document
-    Given an existing knowledge base created by operation "createKnowledgeBase"
-    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the path parameter "documentId" is set to a random UUID
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
-    When the request "getDocument" is sent
-    Then the response status code is 404
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.status" is 404
-    And the response property "$.code" is "NOT_FOUND"
-    And the response property "$.message" contains a user friendly text
-
-  @knowledge_base_get_document_403_01_missing_scope
-  Scenario: Get a document with missing access token scope
-    Given an existing knowledge base created by operation "createKnowledgeBase"
-    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And an existing document created by operation "uploadDocument"
-    And the path parameter "documentId" is set to the value of the identifier for that document
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
-    And the header "Authorization" is set to an access token that does not include scope "knowledge-base:documents:read"
-    When the request "getDocument" is sent
-    Then the response status code is 403
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.status" is 403
-    And the response property "$.code" is "PERMISSION_DENIED"
-    And the response property "$.message" contains a user friendly text
 
   @knowledge_base_delete_document_01_success
   Scenario: Delete a document successfully
@@ -140,7 +103,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing document created by operation "uploadDocument"
     And the path parameter "documentId" is set to the value of the identifier for that document
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
     When the request "deleteDocument" is sent
     Then the response status code is 204
     And the response header "x-correlator" has the same value as the request header "x-correlator"
@@ -150,27 +113,12 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And the path parameter "documentId" is set to a random UUID
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
     When the request "deleteDocument" is sent
     Then the response status code is 404
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.status" is 404
     And the response property "$.code" is "NOT_FOUND"
-    And the response property "$.message" contains a user friendly text
-
-  @knowledge_base_delete_document_403_01_missing_scope
-  Scenario: Delete a document with missing access token scope
-    Given an existing knowledge base created by operation "createKnowledgeBase"
-    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And an existing document created by operation "uploadDocument"
-    And the path parameter "documentId" is set to the value of the identifier for that document
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
-    And the header "Authorization" is set to an access token that does not include scope "knowledge-base:documents:delete"
-    When the request "deleteDocument" is sent
-    Then the response status code is 403
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.status" is 403
-    And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
 
   ############################ Tool Happy Path Scenarios #############################################
@@ -179,7 +127,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
   Scenario: Create a new tool successfully
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
     And the request body is set by default to a request body compliant with the schema at "#/components/schemas/ToolCreateRequest"
     When the request "createTool" is sent
     Then the response status code is 201
@@ -191,7 +139,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
   Scenario: List tools successfully
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
     And at least an existing tool created by operation "createTool"
     When the request "listTools" is sent
     Then the response status code is 200
@@ -206,7 +154,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     When the request "getTool" is sent
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
@@ -219,7 +167,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     And the request body is compliant with the schema at "#/components/schemas/ToolUpdateRequest"
     When the request "updateTool" is sent
     Then the response status code is 200
@@ -233,7 +181,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     When the request "deleteTool" is sent
     Then the response status code is 204
     And the response header "x-correlator" has the same value as the request header "x-correlator"
@@ -244,7 +192,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
     And the request body is set by default to a request body compliant with the schema at "#/components/schemas/ToolCallRequest"
     When the request "callTool" is sent
     Then the response status code is 200
@@ -382,7 +330,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
   Scenario: Create tool with missing required property "name"
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
     And the request body property "$.name" is not included
     When the request "createTool" is sent
     Then the response status code is 400
@@ -394,23 +342,11 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
 
   # Tool pagination error scenarios
 
-  @knowledge_base_tool_list_400_01_page_negative
-  Scenario: Invalid negative page parameter for tool list
-    Given an existing knowledge base created by operation "createKnowledgeBase"
-    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
-    And the query parameter "page" is set to -1
-    When the request "listTools" is sent
-    Then the response status code is 400
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.status" is 400
-    And the response property "$.code" is "INVALID_ARGUMENT"
-
   @knowledge_base_tool_create_400_02_missing_url
   Scenario: Create tool with missing required property "url"
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
     And the request body property "$.url" is not included
     When the request "createTool" is sent
     Then the response status code is 400
@@ -426,7 +362,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
   Scenario: Create tool with missing access token scope
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
     And the header "Authorization" is set to an access token that does not include scope "knowledge-base:tools:create"
     When the request "createTool" is sent
     Then the response status code is 403
@@ -443,7 +379,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And the path parameter "toolId" is set to a random UUID
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
     And the request body is set by default to a request body compliant with the schema at "#/components/schemas/ToolCallRequest"
     When the request "callTool" is sent
     Then the response status code is 404
@@ -459,7 +395,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
   Scenario: Internal server error during tool creation
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
     And the system is in a faulty state
     When the request "createTool" is sent
     Then the response status code is 500
@@ -474,7 +410,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
   Scenario: No existing tools in a knowledge base
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
     And no tools have been created by operation "createTool"
     When the request "listTools" is sent
     Then the response status code is 200
@@ -486,7 +422,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
   Scenario: Create a tool without specifying method (defaults to POST)
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
     And the request body is set by default to a request body compliant with the schema at "#/components/schemas/ToolCreateRequest"
     And the request body property "$.method" is not included
     When the request "createTool" is sent
@@ -499,7 +435,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
   Scenario: Create a tool with the PATCH method
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
     And the request body property "$.method" is set to "PATCH"
     And the request body is compliant with the schema at "#/components/schemas/ToolCreateRequest"
     When the request "createTool" is sent
@@ -512,7 +448,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
   Scenario: Create a tool with custom headers, inputSchema and outputSchema
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
     And the request body property "$.headers" is set to a valid headers object
     And the request body property "$.inputSchema" is set to a valid JSON Schema document
     And the request body property "$.outputSchema" is set to a valid JSON Schema document
@@ -528,7 +464,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
     And the upstream tool is configured to return HTTP 500
     And the request body is set by default to a request body compliant with the schema at "#/components/schemas/ToolCallRequest"
     When the request "callTool" is sent
@@ -547,7 +483,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
   Scenario: Create tool with invalid HTTP method (not in enum)
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
     And the request body property "$.method" is set to "TRACE"
     And the request body is compliant with the schema at "#/components/schemas/ToolCreateRequest"
     When the request "createTool" is sent
@@ -560,7 +496,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
   Scenario: Create tool with malformed URL
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
     And the request body property "$.url" is set to "not-a-valid-uri"
     And the request body is compliant with the schema at "#/components/schemas/ToolCreateRequest"
     When the request "createTool" is sent
@@ -573,7 +509,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
   Scenario: Create tool with reserved header (e.g. Host)
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
     And the request body property "$.headers.Host" is set to "evil.example.com"
     And the request body is compliant with the schema at "#/components/schemas/ToolCreateRequest"
     When the request "createTool" is sent
@@ -586,7 +522,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
   Scenario: Create tool with header value exceeding maxLength
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
     And the request body property "$.headers.X-Long-Header" is set to a string of 4097 characters
     And the request body is compliant with the schema at "#/components/schemas/ToolCreateRequest"
     When the request "createTool" is sent
@@ -601,7 +537,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     And the request body is set to {}
     When the request "updateTool" is sent
     Then the response status code is 400
@@ -613,7 +549,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
   Scenario: Unsupported media type for tool creation
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
     And the request "Content-Type" header is set to "application/xml"
     When the request "createTool" is sent
     Then the response status code is 415
@@ -629,7 +565,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool" with inputSchema requiring "query" (string) and "maxResults" (integer)
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
     And the request body property "$.arguments.query" is set to an integer instead of a string
     When the request "callTool" is sent
     Then the response status code is 400
@@ -643,7 +579,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool" that is currently disabled
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
     And the request body is set by default to a request body compliant with the schema at "#/components/schemas/ToolCallRequest"
     When the request "callTool" is sent
     Then the response status code is 422
@@ -657,7 +593,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
     And the request body property "$.arguments" contains values that violate a business rule (e.g. negative maxResults)
     When the request "callTool" is sent
     Then the response status code is 422
@@ -671,7 +607,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
     And the upstream tool is configured to return HTTP 429
     And the request body is set by default to a request body compliant with the schema at "#/components/schemas/ToolCallRequest"
     When the request "callTool" is sent
@@ -689,7 +625,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     And the resource is being modified by another concurrent operation
     And the request body is compliant with the schema at "#/components/schemas/ToolUpdateRequest"
     When the request "updateTool" is sent
@@ -702,7 +638,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
   Scenario: Create tool with a name that already exists in the same knowledge base
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
     And an existing tool created by operation "createTool" with name "weather-lookup"
     And the request body property "$.name" is set to "weather-lookup"
     And the request body is compliant with the schema at "#/components/schemas/ToolCreateRequest"
@@ -719,7 +655,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And the path parameter "toolId" is set to a random UUID
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     When the request "deleteTool" is sent
     Then the response status code is 404
     And the response header "x-correlator" has the same value as the request header "x-correlator"
@@ -734,7 +670,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     And the header "Authorization" is set to an access token that does not include scope "knowledge-base:tools:update"
     And the request body is compliant with the schema at "#/components/schemas/ToolUpdateRequest"
     When the request "updateTool" is sent
@@ -749,7 +685,7 @@ Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.1
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/v0.2rc1/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
     And the header "Authorization" is set to an access token that does not include scope "knowledge-base:tools:call"
     And the request body is set by default to a request body compliant with the schema at "#/components/schemas/ToolCallRequest"
     When the request "callTool" is sent
