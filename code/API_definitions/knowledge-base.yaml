@@ -62,10 +62,10 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: wip
+  version: 0.2.0-rc.1
   x-camara-commonalities: 0.8.0
 servers:
-  - url: '{apiRoot}/knowledge-base/vwip'
+  - url: '{apiRoot}/knowledge-base/v0.2rc1'
     variables:
       apiRoot:
         default: http://localhost:9091
@@ -107,7 +107,7 @@ paths:
       tags:
         - Knowledge Base
       parameters:
-        - $ref: '../common/CAMARA_common.yaml#/components/parameters/x-correlator'
+        - $ref: '#/components/parameters/x-correlator'
       security:
         - openId:
             - knowledge-base:knowledge-bases:create
@@ -122,21 +122,21 @@ paths:
           description: Knowledge base created successfully
           headers:
             x-correlator:
-              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/KnowledgeBase'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '#/components/responses/Generic400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '#/components/responses/Generic401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '#/components/responses/Generic403'
         '409':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic409'
+          $ref: '#/components/responses/Generic409'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Generic500'
     get:
       operationId: listKnowledgeBases
       summary: Get all knowledge bases
@@ -160,9 +160,9 @@ paths:
       tags:
         - Knowledge Base
       parameters:
-        - $ref: '../common/CAMARA_common.yaml#/components/parameters/x-correlator'
-        - $ref: '../common/CAMARA_common.yaml#/components/parameters/page'
-        - $ref: '../common/CAMARA_common.yaml#/components/parameters/perPage'
+        - $ref: '#/components/parameters/x-correlator'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
       security:
         - openId:
             - knowledge-base:knowledge-bases:read
@@ -171,7 +171,7 @@ paths:
           description: List of knowledge bases
           headers:
             x-correlator:
-              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
@@ -189,15 +189,15 @@ paths:
                     items:
                       $ref: '#/components/schemas/KnowledgeBase'
                   pagination:
-                    $ref: '../common/CAMARA_common.yaml#/components/schemas/Pagination'
+                    $ref: '#/components/schemas/Pagination'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '#/components/responses/Generic400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '#/components/responses/Generic401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '#/components/responses/Generic403'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Generic500'
   /knowledge-bases/{knowledgeBaseId}:
     parameters:
       - name: knowledgeBaseId
@@ -208,7 +208,7 @@ paths:
           format: uuid
           maxLength: 36
         description: ID of the knowledge base
-      - $ref: '../common/CAMARA_common.yaml#/components/parameters/x-correlator'
+      - $ref: '#/components/parameters/x-correlator'
     get:
       operationId: getKnowledgeBase
       summary: Get a specific knowledge base
@@ -238,21 +238,21 @@ paths:
           description: Knowledge base details
           headers:
             x-correlator:
-              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/KnowledgeBase'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '#/components/responses/Generic400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '#/components/responses/Generic401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '#/components/responses/Generic403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '#/components/responses/Generic404'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Generic500'
     put:
       operationId: updateKnowledgeBase
       summary: Update a knowledge base
@@ -294,21 +294,21 @@ paths:
           description: Knowledge base updated successfully
           headers:
             x-correlator:
-              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/KnowledgeBase'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '#/components/responses/Generic400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '#/components/responses/Generic401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '#/components/responses/Generic403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '#/components/responses/Generic404'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Generic500'
     delete:
       operationId: deleteKnowledgeBase
       summary: Delete a knowledge base
@@ -340,17 +340,17 @@ paths:
           description: Knowledge base deleted successfully
           headers:
             x-correlator:
-              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+              $ref: '#/components/headers/x-correlator'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '#/components/responses/Generic400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '#/components/responses/Generic401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '#/components/responses/Generic403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '#/components/responses/Generic404'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Generic500'
   /knowledge-bases/{knowledgeBaseId}/documents:
     post:
       operationId: uploadDocument
@@ -399,7 +399,7 @@ paths:
             format: uuid
             maxLength: 36
           description: ID of the knowledge base
-        - $ref: '../common/CAMARA_common.yaml#/components/parameters/x-correlator'
+        - $ref: '#/components/parameters/x-correlator'
       security:
         - openId:
             - knowledge-base:documents:create
@@ -424,7 +424,7 @@ paths:
           description: Document uploaded successfully
           headers:
             x-correlator:
-              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+              $ref: '#/components/headers/x-correlator'
             Location:
               description: |
                 URL of the newly created document resource, for use with `getDocument` and `deleteDocument`. The URL follows the pattern `/knowledge-bases/{knowledgeBaseId}/documents/{documentId}`.
@@ -437,17 +437,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/Document'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '#/components/responses/Generic400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '#/components/responses/Generic401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '#/components/responses/Generic403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '#/components/responses/Generic404'
         '415':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic415'
+          $ref: '#/components/responses/Generic415'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Generic500'
   /knowledge-bases/{knowledgeBaseId}/documents/{documentId}:
     parameters:
       - name: knowledgeBaseId
@@ -466,7 +466,7 @@ paths:
           format: uuid
           maxLength: 36
         description: ID of the document
-      - $ref: '../common/CAMARA_common.yaml#/components/parameters/x-correlator'
+      - $ref: '#/components/parameters/x-correlator'
     get:
       operationId: getDocument
       summary: Get a specific document
@@ -497,21 +497,21 @@ paths:
           description: Document details
           headers:
             x-correlator:
-              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Document'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '#/components/responses/Generic400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '#/components/responses/Generic401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '#/components/responses/Generic403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '#/components/responses/Generic404'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Generic500'
     delete:
       operationId: deleteDocument
       summary: Delete a document
@@ -545,17 +545,17 @@ paths:
           description: Document deleted successfully
           headers:
             x-correlator:
-              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+              $ref: '#/components/headers/x-correlator'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '#/components/responses/Generic400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '#/components/responses/Generic401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '#/components/responses/Generic403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '#/components/responses/Generic404'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Generic500'
   /knowledge-bases/{knowledgeBaseId}/tools:
     post:
       operationId: createTool
@@ -606,7 +606,7 @@ paths:
             format: uuid
             maxLength: 36
           description: ID of the knowledge base
-        - $ref: '../common/CAMARA_common.yaml#/components/parameters/x-correlator'
+        - $ref: '#/components/parameters/x-correlator'
       security:
         - openId:
             - knowledge-base:tools:create
@@ -621,23 +621,23 @@ paths:
           description: Tool created successfully
           headers:
             x-correlator:
-              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Tool'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '#/components/responses/Generic400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '#/components/responses/Generic401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '#/components/responses/Generic403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '#/components/responses/Generic404'
         '409':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic409'
+          $ref: '#/components/responses/Generic409'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Generic500'
     get:
       operationId: listTools
       summary: List all tools in a knowledge base
@@ -671,9 +671,9 @@ paths:
             format: uuid
             maxLength: 36
           description: ID of the knowledge base
-        - $ref: '../common/CAMARA_common.yaml#/components/parameters/x-correlator'
-        - $ref: '../common/CAMARA_common.yaml#/components/parameters/page'
-        - $ref: '../common/CAMARA_common.yaml#/components/parameters/perPage'
+        - $ref: '#/components/parameters/x-correlator'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
       security:
         - openId:
             - knowledge-base:tools:read
@@ -682,7 +682,7 @@ paths:
           description: List of tools
           headers:
             x-correlator:
-              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
@@ -700,17 +700,17 @@ paths:
                     items:
                       $ref: '#/components/schemas/Tool'
                   pagination:
-                    $ref: '../common/CAMARA_common.yaml#/components/schemas/Pagination'
+                    $ref: '#/components/schemas/Pagination'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '#/components/responses/Generic400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '#/components/responses/Generic401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '#/components/responses/Generic403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '#/components/responses/Generic404'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Generic500'
   /knowledge-bases/{knowledgeBaseId}/tools/{toolId}:
     parameters:
       - name: knowledgeBaseId
@@ -729,7 +729,7 @@ paths:
           format: uuid
           maxLength: 36
         description: ID of the tool
-      - $ref: '../common/CAMARA_common.yaml#/components/parameters/x-correlator'
+      - $ref: '#/components/parameters/x-correlator'
     get:
       operationId: getTool
       summary: Get a specific tool
@@ -759,21 +759,21 @@ paths:
           description: Tool details
           headers:
             x-correlator:
-              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Tool'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '#/components/responses/Generic400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '#/components/responses/Generic401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '#/components/responses/Generic403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '#/components/responses/Generic404'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Generic500'
     put:
       operationId: updateTool
       summary: Update a tool
@@ -820,23 +820,23 @@ paths:
           description: Tool updated successfully
           headers:
             x-correlator:
-              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Tool'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '#/components/responses/Generic400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '#/components/responses/Generic401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '#/components/responses/Generic403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '#/components/responses/Generic404'
         '409':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic409'
+          $ref: '#/components/responses/Generic409'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Generic500'
     delete:
       operationId: deleteTool
       summary: Delete a tool
@@ -870,17 +870,17 @@ paths:
           description: Tool deleted successfully
           headers:
             x-correlator:
-              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+              $ref: '#/components/headers/x-correlator'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '#/components/responses/Generic400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '#/components/responses/Generic401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '#/components/responses/Generic403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '#/components/responses/Generic404'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Generic500'
   /knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call:
     post:
       operationId: callTool
@@ -942,7 +942,7 @@ paths:
             format: uuid
             maxLength: 36
           description: ID of the tool
-        - $ref: '../common/CAMARA_common.yaml#/components/parameters/x-correlator'
+        - $ref: '#/components/parameters/x-correlator'
       security:
         - openId:
             - knowledge-base:tools:call
@@ -957,27 +957,29 @@ paths:
           description: Tool executed successfully
           headers:
             x-correlator:
-              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+              $ref: '#/components/headers/x-correlator'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ToolCallResponse'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '#/components/responses/Generic400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '#/components/responses/Generic401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '#/components/responses/Generic403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '#/components/responses/Generic404'
         '422':
           $ref: '#/components/responses/ToolInvalidInput422'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Generic500'
 components:
   securitySchemes:
     openId:
-      $ref: '../common/CAMARA_common.yaml#/components/securitySchemes/openId'
+      type: openIdConnect
+      openIdConnectUrl: https://example.com/.well-known/openid-configuration
+      description: OpenID Connect authentication via discovery metadata.
   schemas:
     KnowledgeBase:
       description: A knowledge base with its metadata and associated documents
@@ -1041,7 +1043,7 @@ components:
           maxLength: 10
           description: File format
         uploadDate:
-          $ref: '../common/CAMARA_common.yaml#/components/schemas/DateTime'
+          $ref: '#/components/schemas/DateTime'
         status:
           type: string
           maxLength: 16
@@ -1122,7 +1124,7 @@ components:
           type: string
           format: uri
           maxLength: 2048
-          pattern: '^https://.*'
+          pattern: ^https://.*
           description: |
             Endpoint URL for invoking the tool. MUST use the `https` scheme. The API provider validates the URL against the security constraints documented in the "Security considerations" section of this API (block private/loopback/link-local ranges and cloud metadata endpoints, restrict ports, do not follow redirects); URLs violating these constraints are rejected at write time with `400 INVALID_ARGUMENT` and, even if accepted, are re-checked at invocation time.
         method:
@@ -1158,9 +1160,9 @@ components:
         outputSchema:
           $ref: '#/components/schemas/JsonSchema'
         createdAt:
-          $ref: '../common/CAMARA_common.yaml#/components/schemas/DateTime'
+          $ref: '#/components/schemas/DateTime'
         updatedAt:
-          $ref: '../common/CAMARA_common.yaml#/components/schemas/DateTime'
+          $ref: '#/components/schemas/DateTime'
     Tool:
       description: A tool registered in a knowledge base, including its definition and server-generated metadata
       allOf:
@@ -1178,12 +1180,12 @@ components:
             createdAt:
               description: Creation timestamp in RFC 3339 format (server-generated)
               allOf:
-                - $ref: '../common/CAMARA_common.yaml#/components/schemas/DateTime'
+                - $ref: '#/components/schemas/DateTime'
                 - readOnly: true
             updatedAt:
               description: Last update timestamp in RFC 3339 format (server-generated)
               allOf:
-                - $ref: '../common/CAMARA_common.yaml#/components/schemas/DateTime'
+                - $ref: '#/components/schemas/DateTime'
                 - readOnly: true
     ToolCreateRequest:
       description: Request body for registering a new tool in a knowledge base
@@ -1279,18 +1281,94 @@ components:
           description: |
             Optional human-readable business context message, per CAMARA API Design Guide §3.1.
           example: The upstream tool returned a non-2xx status code.
+    XCorrelator:
+      type: string
+      description: Correlator string, UUID format recommended but any string matching the pattern can be used
+      pattern: ^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$
+      maxLength: 256
+      example: b4333c46-49c0-4f62-80d7-f0ef930f1c46
+    Page:
+      type: integer
+      format: int32
+      minimum: 1
+      maximum: 2147483647
+      default: 1
+      description: Current page number (1-indexed).
+      example: 1
+    PerPage:
+      type: integer
+      format: int32
+      minimum: 1
+      maximum: 100
+      default: 20
+      description: Number of items per page.
+      example: 20
+    DateTime:
+      type: string
+      format: date-time
+      maxLength: 64
+      description: Timestamp. It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
+      example: '2018-04-05T17:31:00Z'
+    TotalCount:
+      type: integer
+      format: int32
+      minimum: 0
+      maximum: 2147483647
+      description: Total number of items matching the query, after filters applied. MAY be omitted where a full count query is prohibitively expensive.
+      example: 87
+    TotalPages:
+      type: integer
+      format: int32
+      minimum: 0
+      maximum: 2147483647
+      description: Total number of pages. Equals ceil(totalCount / perPage). MAY be omitted where totalCount is omitted.
+      example: 5
+    Pagination:
+      description: Pagination details helping to navigate through paged results efficiently.
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/Page'
+        perPage:
+          $ref: '#/components/schemas/PerPage'
+        totalCount:
+          $ref: '#/components/schemas/TotalCount'
+        totalPages:
+          $ref: '#/components/schemas/TotalPages'
+    ErrorInfo:
+      type: object
+      description: A structured error response providing details about a failed request, including the HTTP status code, an error code, and a human-readable message
+      required:
+        - status
+        - code
+        - message
+      properties:
+        status:
+          type: integer
+          format: int32
+          minimum: 100
+          maximum: 599
+          description: HTTP response status code
+        code:
+          type: string
+          maxLength: 96
+          description: A human-readable code to describe the error
+        message:
+          type: string
+          maxLength: 512
+          description: A human-readable description of what the event represents
   responses:
     ToolInvalidInput422:
       description: |
         The tool arguments are semantically invalid (e.g. the tool is disabled, or arguments fail business-rule validation even though they are syntactically valid against the `inputSchema`).
       headers:
         x-correlator:
-          $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+          $ref: '#/components/headers/x-correlator'
       content:
         application/json:
           schema:
             allOf:
-              - $ref: '../common/CAMARA_common.yaml#/components/schemas/ErrorInfo'
+              - $ref: '#/components/schemas/ErrorInfo'
               - type: object
                 properties:
                   status:
@@ -1313,3 +1391,249 @@ components:
                 status: 422
                 code: KNOWLEDGE_BASE.TOOL_DISABLED
                 message: The requested tool is currently disabled and cannot be invoked.
+    Generic400:
+      description: Bad Request
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 400
+                  code:
+                    enum:
+                      - INVALID_ARGUMENT
+                      - OUT_OF_RANGE
+          examples:
+            GENERIC_400_INVALID_ARGUMENT:
+              description: Invalid Argument. Generic Syntax Exception
+              value:
+                status: 400
+                code: INVALID_ARGUMENT
+                message: Client specified an invalid argument, request body or query param.
+            GENERIC_400_OUT_OF_RANGE:
+              description: Out of Range. Specific Syntax Exception used when a given field has a pre-defined range or a invalid filter criteria combination is requested
+              value:
+                status: 400
+                code: OUT_OF_RANGE
+                message: Client specified an invalid range.
+    Generic401:
+      description: Unauthorized
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 401
+                  code:
+                    enum:
+                      - UNAUTHENTICATED
+          examples:
+            GENERIC_401_UNAUTHENTICATED:
+              description: Request cannot be authenticated and a new authentication is required
+              value:
+                status: 401
+                code: UNAUTHENTICATED
+                message: Request not authenticated due to missing, invalid, or expired credentials. A new authentication is required.
+    Generic403:
+      description: Forbidden
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 403
+                  code:
+                    enum:
+                      - PERMISSION_DENIED
+                      - INVALID_TOKEN_CONTEXT
+          examples:
+            GENERIC_403_PERMISSION_DENIED:
+              description: Permission denied. OAuth2 token access does not have the required scope or when the user fails operational security
+              value:
+                status: 403
+                code: PERMISSION_DENIED
+                message: Client does not have sufficient permissions to perform this action.
+            GENERIC_403_INVALID_TOKEN_CONTEXT:
+              description: Reflect some inconsistency between information in some field of the API and the related OAuth2 Token
+              value:
+                status: 403
+                code: INVALID_TOKEN_CONTEXT
+                message: Request body is not consistent with access token.
+    Generic500:
+      description: Internal Server Error
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 500
+                  code:
+                    enum:
+                      - INTERNAL
+          examples:
+            GENERIC_500_INTERNAL:
+              description: Problem in Server side. Regular Server Exception
+              value:
+                status: 500
+                code: INTERNAL
+                message: Unknown server error. Typically a server bug.
+    Generic409:
+      description: Conflict
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 409
+                  code:
+                    enum:
+                      - ABORTED
+                      - ALREADY_EXISTS
+                      - CONFLICT
+                      - INCOMPATIBLE_STATE
+          examples:
+            GENERIC_409_ABORTED:
+              description: The resource is undergoing modification by another process
+              value:
+                status: 409
+                code: ABORTED
+                message: Resource is being modified by another operation. Please wait, and retry if appropriate.
+            GENERIC_409_ALREADY_EXISTS:
+              description: Trying to create an existing resource
+              value:
+                status: 409
+                code: ALREADY_EXISTS
+                message: The resource that a client tried to create already exists.
+            GENERIC_409_CONFLICT:
+              description: Duplication of an existing resource
+              value:
+                status: 409
+                code: CONFLICT
+                message: A specified resource duplicate entry found.
+            GENERIC_409_INCOMPATIBLE_STATE:
+              description: |
+                The status of the referenced resource is not compatible.
+              value:
+                status: 409
+                code: INCOMPATIBLE_STATE
+                message: Resource must be in AVAILABLE state to extend. Current state is UNAVAILABLE.
+    Generic404:
+      description: Not found
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 404
+                  code:
+                    enum:
+                      - NOT_FOUND
+                      - IDENTIFIER_NOT_FOUND
+          examples:
+            GENERIC_404_NOT_FOUND:
+              description: Resource is not found
+              value:
+                status: 404
+                code: NOT_FOUND
+                message: The specified resource is not found.
+            GENERIC_404_IDENTIFIER_NOT_FOUND:
+              description: Some identifier cannot be matched to a device
+              value:
+                status: 404
+                code: IDENTIFIER_NOT_FOUND
+                message: Device identifier not found.
+    Generic415:
+      description: Unsupported Media Type
+      headers:
+        x-correlator:
+          $ref: '#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 415
+                  code:
+                    enum:
+                      - UNSUPPORTED_MEDIA_TYPE
+          examples:
+            GENERIC_415_UNSUPPORTED_MEDIA_TYPE:
+              description: Payload format of the request is in an unsupported format by the Server. Should not happen
+              value:
+                status: 415
+                code: UNSUPPORTED_MEDIA_TYPE
+                message: The server refuses to accept the request because the payload format is in an unsupported format.
+  parameters:
+    x-correlator:
+      name: x-correlator
+      in: header
+      description: Correlation id for the different services
+      schema:
+        $ref: '#/components/schemas/XCorrelator'
+    page:
+      name: page
+      in: query
+      description: |
+        Requested page number. Pages are 1-indexed. Values below 1 are rejected with `400 INVALID_ARGUMENT`.
+      required: false
+      schema:
+        $ref: '#/components/schemas/Page'
+    perPage:
+      name: perPage
+      in: query
+      description: |
+        Number of subscriptions to return per page. Values outside the allowed range are rejected with `400 INVALID_ARGUMENT`.
+      required: false
+      schema:
+        $ref: '#/components/schemas/PerPage'
+  headers:
+    x-correlator:
+      description: Correlation id for the different services
+      schema:
+        $ref: '#/components/schemas/XCorrelator'
