@@ -36,28 +36,23 @@ info:
 
     This API rejects requests with JSON request bodies that contain properties not declared in this specification, at any nesting level. Unknown properties result in a `400 INVALID_ARGUMENT` response.
     <!-- CAMARA:MANDATORY:request-body-strictness:END -->
-
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   version: wip
   x-camara-commonalities: 0.8.0
-
-externalDocs:
-  description: Product documentation at CAMARA
-  url: https://github.com/camaraproject/ModelAsAService
-
 servers:
   - url: '{apiRoot}/qa-assistant-manage/vwip'
     variables:
       apiRoot:
         default: http://localhost:9091
         description: API root, defined by the service provider, e.g. `api.example.com` or `api.example.com/somepath`
-
 tags:
   - name: Assistants
     description: QA assistant management operations
-
+externalDocs:
+  description: Product documentation at CAMARA
+  url: https://github.com/camaraproject/ModelAsAService
 paths:
   /assistants:
     post:
@@ -73,18 +68,19 @@ paths:
 
         **Key Rules:**
         - Requires `name`, `configurationPrompt`, and `largeModelParameters`
-        - `largeModelParameters` must include `model`, `temperature` (0.0-1.0), `maxTokens` (≥1)
+        - `largeModelParameters` is a flat object whose required fields are `model`, `temperature` (0.0-1.0 by default) and `maxTokens` (≥1); `topP` is optional. The bounds are reference defaults - the provider MAY adjust them to match its backend (see the `largeModelParameters` schema description)
         - Needs `qa-assistant-manage:assistants:create` scope
 
         **Response Characteristics:**
-        - **201 Created**: Returns `AssistantResponse` with generated assistantId
+        - **201 Created**: Returns the created `Assistant` resource (with generated `assistantId`), consistent with how `createKnowledgeBase` / `createTool` on the `knowledge-base` API return the created resource
         - **400 Bad Request**: Missing parameters or invalid values (e.g., temperature out of range)
         - **403 Forbidden**: Missing required scope
+        - **422 Unprocessable**: One or more `toolIds` are invalid (do not exist, or do not belong to the specified `knowledgeBaseId`)
         - **500 Internal Server Error**: Assistant creation failure
       tags:
         - Assistants
       parameters:
-        - $ref: '#/components/parameters/x-correlator'  # Added correlator
+        - $ref: '../common/CAMARA_common.yaml#/components/parameters/x-correlator'
       security:
         - openId:
             - qa-assistant-manage:assistants:create
@@ -99,22 +95,21 @@ paths:
           description: Assistant created successfully
           headers:
             x-correlator:
-              $ref: '#/components/headers/x-correlator'
+              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AssistantResponse'
+                $ref: '#/components/schemas/Assistant'
         '400':
-          $ref: '#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
         '401':
-          $ref: '#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
         '403':
-          $ref: '#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
         '422':
           $ref: '#/components/responses/InvalidToolIds422'
         '500':
-          $ref: '#/components/responses/Generic500'
-
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
     get:
       operationId: listAssistants
       summary: List all QA assistants
@@ -138,7 +133,7 @@ paths:
       tags:
         - Assistants
       parameters:
-        - $ref: '#/components/parameters/x-correlator'
+        - $ref: '../common/CAMARA_common.yaml#/components/parameters/x-correlator'
         - $ref: '../common/CAMARA_common.yaml#/components/parameters/page'
         - $ref: '../common/CAMARA_common.yaml#/components/parameters/perPage'
       security:
@@ -149,11 +144,15 @@ paths:
           description: List of assistants
           headers:
             x-correlator:
-              $ref: '#/components/headers/x-correlator'
+              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
           content:
             application/json:
               schema:
                 type: object
+                description: Paginated collection of QA assistants. Both `items` and `pagination` are always present in the response body, per CAMARA API Design Guide §4.1.3.
+                required:
+                  - items
+                  - pagination
                 properties:
                   items:
                     type: array
@@ -165,14 +164,13 @@ paths:
                   pagination:
                     $ref: '../common/CAMARA_common.yaml#/components/schemas/Pagination'
         '400':
-          $ref: '#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
         '401':
-          $ref: '#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
         '403':
-          $ref: '#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
         '500':
-          $ref: '#/components/responses/Generic500'
-
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
   /assistants/{assistantId}:
     parameters:
       - name: assistantId
@@ -183,8 +181,7 @@ paths:
           format: uuid
           maxLength: 36
         description: Unique identifier of the assistant
-      - $ref: '#/components/parameters/x-correlator'  # Added correlator
-
+      - $ref: '../common/CAMARA_common.yaml#/components/parameters/x-correlator'
     get:
       operationId: getAssistant
       summary: Get a specific QA assistant
@@ -215,44 +212,54 @@ paths:
           description: Assistant details
           headers:
             x-correlator:
-              $ref: '#/components/headers/x-correlator'
+              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Assistant'
         '400':
-          $ref: '#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
         '401':
-          $ref: '#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
         '403':
-          $ref: '#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
         '404':
-          $ref: '#/components/responses/Generic404'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
         '500':
-          $ref: '#/components/responses/Generic500'
-
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
     put:
       operationId: updateAssistant
       summary: Update a QA assistant
       description: |
         Modifies an existing QA assistant configuration.
 
+        This is a partial update (not a full replacement): fields omitted from the request body are left unchanged, they are not cleared. Providing a field replaces its stored value. At least one updatable field MUST be provided; an empty object is rejected with `400 INVALID_ARGUMENT`. The `assistantId`, `createdAt` and `updatedAt` are not modifiable.
+
+        **Merge rules for nested objects:**
+        - `largeModelParameters` is replaced as a whole when provided. Nested merge is NOT supported: to change a single parameter (e.g. `temperature`), the API consumer MUST provide the complete `largeModelParameters` object (`model` + `temperature`/`maxTokens`/`topP` as needed - the structure is flat, with no `parameters` wrapper; see issue #52). Omitting `largeModelParameters` preserves the previously stored value.
+        - `toolIds` is replaced as a whole when provided (the previous array is overwritten, not appended to). Omitting `toolIds` preserves the previously stored array. Every tool ID in a provided `toolIds` array MUST still satisfy the cross-API contract (exist in the `knowledge-base` API and, when `knowledgeBaseId` is also provided, belong to that knowledge base), otherwise `422 KNOWLEDGE_BASE.TOOL_NOT_FOUND` / `KNOWLEDGE_BASE.TOOL_CROSS_KB` is returned.
+        - `knowledgeBaseId`, when provided, replaces the previous association. Providing `knowledgeBaseId` without `toolIds` keeps the existing `toolIds`; if any of those tools no longer belong to the new knowledge base, `422 KNOWLEDGE_BASE.TOOL_CROSS_KB` is returned.
+
         **Key Features:**
         - Updates LLM parameters dynamically
         - Changes knowledge base associations
         - Modifies behavior prompts
+        - Returns the updated `Assistant` resource (the full resource)
 
         **Key Rules:**
+        - Partial update: omitted fields are preserved, not cleared
+        - `largeModelParameters` is replaced as a whole (no nested merge)
         - Requires valid UUID `assistantId`
         - At least one update field must be provided
         - Parameter values must meet constraints (e.g., temperature 0.0-1.0)
         - Needs `qa-assistant-manage:assistants:update` scope
 
         **Response Characteristics:**
-        - **200 OK**: Returns updated `AssistantResponse`
+        - **200 OK**: Returns the updated `Assistant` resource, consistent with how `updateTool` on the `knowledge-base` API returns the updated resource
         - **400 Bad Request**: Invalid parameters or no update fields
         - **404 Not Found**: Invalid assistantId
         - **403 Forbidden**: Missing required scope
+        - **422 Unprocessable**: One or more `toolIds` are invalid (do not exist, or do not belong to the specified `knowledgeBaseId`)
         - **500 Internal Server Error**: Update processing failure
       tags:
         - Assistants
@@ -270,22 +277,21 @@ paths:
           description: Assistant updated successfully
           headers:
             x-correlator:
-              $ref: '#/components/headers/x-correlator'
+              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AssistantResponse'
+                $ref: '#/components/schemas/Assistant'
         '400':
-          $ref: '#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
         '401':
-          $ref: '#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
         '403':
-          $ref: '#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
         '404':
-          $ref: '#/components/responses/Generic404'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
         '422':
           $ref: '#/components/responses/InvalidToolIds422'
-
     delete:
       operationId: deleteAssistant
       summary: Delete a QA assistant
@@ -317,31 +323,21 @@ paths:
           description: Assistant deleted successfully
           headers:
             x-correlator:
-              $ref: '#/components/headers/x-correlator'
+              $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
         '400':
-          $ref: '#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
         '401':
-          $ref: '#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
         '403':
-          $ref: '#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
         '404':
-          $ref: '#/components/responses/Generic404'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
         '500':
-          $ref: '#/components/responses/Generic500'
-
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
 components:
   securitySchemes:
     openId:
-      $ref: "../common/CAMARA_common.yaml#/components/securitySchemes/openId"
-
-  parameters:
-    x-correlator:
-      $ref: "../common/CAMARA_common.yaml#/components/parameters/x-correlator"
-
-  headers:
-    x-correlator:
-      $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
-
+      $ref: '../common/CAMARA_common.yaml#/components/securitySchemes/openId'
   schemas:
     AssistantCreateRequest:
       description: Request body for creating a new QA assistant configuration
@@ -379,61 +375,64 @@ components:
             description: UUID of a tool registered in the associated knowledge base
           description: |
             Optional IDs of tools from the knowledge base to associate with this assistant. Duplicates are rejected with `400 INVALID_ARGUMENT`.
+            **Intended usage:** tools associated here MAY be invoked automatically by the assistant's LLM during answer generation (via `queryAssistant` on the `qa-assistant-service` API), allowing the assistant to take actions to ground or enrich its answers. Whether and when a tool is invoked is decided by the platform's LLM at query time; this field only declares the set of tools the assistant is allowed to use.
             **Cross-API contract (CAMARA ModelAsAService):** every tool ID MUST reference an existing tool owned by the `knowledge-base` API. If `knowledgeBaseId` is also provided, every tool listed here MUST belong to that knowledge base.
-            **Lifecycle behaviour when a referenced tool is deleted:** if a tool listed here is later removed via `DELETE /knowledge-bases/{id}/tools/{toolId}` of the `knowledge-base` API, the server MAY either retain the dangling reference (and return `422 KNOWLEDGE_BASE.TOOL_NOT_FOUND` on subsequent reads) or silently drop it from the `toolIds` array on the next read. Implementations SHOULD document their behaviour.
+            **Lifecycle behaviour when a referenced tool is deleted:** if a tool listed here is later removed via `DELETE /knowledge-bases/{id}/tools/{toolId}` of the `knowledge-base` API, the server MUST silently drop (prune) it from the `toolIds` array on the next read (`getAssistant` / `listAssistants`); reads do NOT return `422 KNOWLEDGE_BASE.TOOL_NOT_FOUND` for a pruned tool. This single behaviour (issue #51) makes the cross-API contract dependable across implementations: the `toolIds` array returned on read always reflects the currently existing tools, and a deleted tool does not make the assistant unreadable. The write-time validation (`422 KNOWLEDGE_BASE.TOOL_NOT_FOUND` / `KNOWLEDGE_BASE.TOOL_CROSS_KB`) still applies on `createAssistant` / `updateAssistant`: a tool ID supplied at write time MUST exist at that moment; the prune behaviour only governs what happens on read after a tool is deleted later.
         configurationPrompt:
           type: string
           maxLength: 8192
           description: Configuration prompt for the assistant
         largeModelParameters:
           type: object
-          description: Parameters for the large language model
+          description: |
+            Parameters for the large language model. The fields are flattened to a single level (issue #52): `model`, `temperature`, `maxTokens` and `topP` are direct properties of this object, with no intermediate `parameters` wrapper.
+            **Provider-specific bounds:** the `minimum`/`maximum` bounds on `temperature`, `maxTokens` and `topP` are reference defaults that fit the model named in `model`. An API provider MAY adjust (widen or tighten) these bounds to match what its backend actually supports (some LLM providers use, for example, a `temperature` range of 0-2 instead of 0-1); the provider SHOULD document the bounds that are actually enforced. Values outside the bounds documented by the provider are rejected with `400 OUT_OF_RANGE`.
           required:
             - model
-            - parameters
+            - temperature
+            - maxTokens
           additionalProperties: false
           properties:
             model:
               type: string
               maxLength: 128
-              description: Name of the large language model
-              example: "gpt-4"
-            parameters:
-              type: object
-              description: Model-specific parameters controlling generation behaviour
-              required:
-                - temperature
-                - maxTokens
-              additionalProperties: false
-              properties:
-                temperature:
-                  type: number
-                  format: float
-                  minimum: 0.0
-                  maximum: 1.0
-                  description: Sampling temperature for generation (0.0 = deterministic, 1.0 = maximally creative)
-                  example: 0.7
-                maxTokens:
-                  type: integer
-                  format: int32
-                  minimum: 1
-                  maximum: 128000
-                  description: Maximum number of tokens to generate
-                  example: 200
-                topP:
-                  type: number
-                  format: float
-                  minimum: 0.0
-                  maximum: 1.0
-                  description: Nucleus sampling parameter (top-p)
-                  example: 0.8
+              description: Name of the large language model. The value is an opaque model identifier chosen by the API provider (the example `gpt-4` is illustrative, not a constraint); the provider SHOULD document the model identifiers it accepts.
+              example: gpt-4
+            temperature:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              description: |
+                Sampling temperature for generation (0.0 = deterministic, 1.0 = maximally creative, per the reference default). The provider MAY adjust the upper bound to match its backend (e.g. 0-2 for some providers); see the `largeModelParameters` description.
+              example: 0.7
+            maxTokens:
+              type: integer
+              format: int32
+              minimum: 1
+              maximum: 128000
+              description: |
+                Maximum number of tokens to generate. The upper bound is a reference default; the provider MAY adjust it to match the model named in `model`; see the `largeModelParameters` description.
+              example: 200
+            topP:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              description: |
+                Nucleus sampling parameter (top-p). The provider MAY adjust the bounds to match its backend; see the `largeModelParameters` description.
+              example: 0.8
         openingRemarks:
           type: string
           maxLength: 4096
           description: Optional opening remarks for the assistant
-
     AssistantUpdateRequest:
-      description: Request body for updating an existing QA assistant configuration
+      description: |
+        Request body for updating an existing QA assistant configuration. This is a partial update (not a full replacement): fields omitted from the body are left unchanged, they are not cleared. Providing a field replaces its stored value. At least one updatable field MUST be provided; an empty object is rejected with `400 INVALID_ARGUMENT`. The `assistantId`, `createdAt` and `updatedAt` are not modifiable.
+
+        **Merge rules for nested objects:**
+        - `largeModelParameters` is replaced as a whole when provided. Nested merge is NOT supported: to change a single parameter (e.g. `temperature`), the API consumer MUST provide the complete `largeModelParameters` object (`model` + `temperature`/`maxTokens`/`topP` as needed - the structure is flat, with no `parameters` wrapper; see issue #52). Omitting `largeModelParameters` preserves the previously stored value.
+        - `toolIds` is replaced as a whole when provided (overwritten, not appended to). Omitting `toolIds` preserves the previously stored array.
       type: object
       additionalProperties: false
       properties:
@@ -465,47 +464,43 @@ components:
           description: |
             Optional new set of tool IDs to associate with this assistant.
             Duplicates are rejected with `400 INVALID_ARGUMENT`. Same cross-API contract as on create.
+            **Lifecycle behaviour when a referenced tool is deleted:** same as on create - if a tool listed here is later removed via `DELETE /knowledge-bases/{id}/tools/{toolId}` of the `knowledge-base` API, the server MUST silently drop (prune) it from the `toolIds` array on the next read; reads do NOT return `422` for a pruned tool (issue #51).
         configurationPrompt:
           type: string
           maxLength: 8192
           description: Updated configuration prompt
         largeModelParameters:
           type: object
-          description: Updated model parameters
+          description: |
+            Updated model parameters. Same flattened structure as on create (issue #52): `model`, `temperature`, `maxTokens` and `topP` are direct properties, with no intermediate `parameters` wrapper. All fields are optional for update; `largeModelParameters` is replaced as a whole when provided (no nested merge). See the `largeModelParameters` description on `AssistantCreateRequest` for the provider-specific bounds note.
           additionalProperties: false
           properties:
             model:
               type: string
               maxLength: 128
-              description: Name of the large language model
-            parameters:
-              type: object
-              description: Model-specific parameters controlling generation behaviour
-              additionalProperties: false
-              properties:
-                temperature:
-                  type: number
-                  format: float
-                  minimum: 0.0
-                  maximum: 1.0
-                  description: Sampling temperature for generation (0.0 = deterministic, 1.0 = maximally creative)
-                maxTokens:
-                  type: integer
-                  format: int32
-                  minimum: 1
-                  maximum: 128000
-                  description: Maximum number of tokens to generate
-                topP:
-                  type: number
-                  format: float
-                  minimum: 0.0
-                  maximum: 1.0
-                  description: Nucleus sampling parameter (top-p)
+              description: Name of the large language model (opaque provider-chosen identifier; see `AssistantCreateRequest.largeModelParameters`).
+            temperature:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              description: Sampling temperature for generation (0.0 = deterministic, 1.0 = maximally creative, per the reference default). The provider MAY adjust the upper bound; see `AssistantCreateRequest.largeModelParameters`.
+            maxTokens:
+              type: integer
+              format: int32
+              minimum: 1
+              maximum: 128000
+              description: Maximum number of tokens to generate. The upper bound is a reference default; the provider MAY adjust it; see `AssistantCreateRequest.largeModelParameters`.
+            topP:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              description: Nucleus sampling parameter (top-p). The provider MAY adjust the bounds; see `AssistantCreateRequest.largeModelParameters`.
         openingRemarks:
           type: string
           maxLength: 4096
           description: Updated opening remarks
-
     Assistant:
       description: A QA assistant configuration including LLM parameters, knowledge base associations, and prompts
       type: object
@@ -515,7 +510,7 @@ components:
           format: uuid
           maxLength: 36
           description: Unique identifier of the assistant
-          example: "a1b2c3d4-5678-90ab-cdef-1234567890ab"
+          example: a1b2c3d4-5678-90ab-cdef-1234567890ab
         name:
           type: string
           maxLength: 255
@@ -542,89 +537,58 @@ components:
             description: UUID of a tool registered in the associated knowledge base
           description: |
             IDs of tools from the knowledge base associated with this assistant.
-            Tools may be pruned by the server if they have been deleted from the knowledge base after the assistant was last updated.
+            Tools are pruned by the server if they have been deleted from the knowledge base after the assistant was last updated: the `toolIds` array returned by `getAssistant` / `listAssistants` always reflects the currently existing tools, and a deleted tool does not make the assistant unreadable (issue #51).
         configurationPrompt:
           type: string
           maxLength: 8192
           description: Configuration prompt for the assistant
         largeModelParameters:
           type: object
-          description: Parameters for the large language model
+          description: |
+            Parameters for the large language model. Same flattened structure as `AssistantCreateRequest.largeModelParameters` (issue #52): `model`, `temperature`, `maxTokens` and `topP` are direct properties, with no intermediate `parameters` wrapper.
           properties:
             model:
               type: string
               maxLength: 128
-              description: Name of the large language model
-            parameters:
-              type: object
-              description: Model-specific parameters
-              properties:
-                temperature:
-                  type: number
-                  format: float
-                  minimum: 0.0
-                  maximum: 1.0
-                  description: Sampling temperature for generation (0.0 = deterministic, 1.0 = maximally creative)
-                maxTokens:
-                  type: integer
-                  format: int32
-                  minimum: 1
-                  maximum: 128000
-                  description: Maximum number of tokens to generate
-                topP:
-                  type: number
-                  format: float
-                  minimum: 0.0
-                  maximum: 1.0
-                  description: Nucleus sampling parameter (top-p)
+              description: Name of the large language model (opaque provider-chosen identifier; see `AssistantCreateRequest.largeModelParameters`).
+            temperature:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              description: Sampling temperature for generation (0.0 = deterministic, 1.0 = maximally creative, per the reference default). The provider MAY adjust the upper bound; see `AssistantCreateRequest.largeModelParameters`.
+            maxTokens:
+              type: integer
+              format: int32
+              minimum: 1
+              maximum: 128000
+              description: Maximum number of tokens to generate. The upper bound is a reference default; the provider MAY adjust it; see `AssistantCreateRequest.largeModelParameters`.
+            topP:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              description: Nucleus sampling parameter (top-p). The provider MAY adjust the bounds; see `AssistantCreateRequest.largeModelParameters`.
         openingRemarks:
           type: string
           maxLength: 4096
           description: Opening remarks for the assistant
         createdAt:
-          $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
+          $ref: '../common/CAMARA_common.yaml#/components/schemas/DateTime'
         updatedAt:
-          $ref: "../common/CAMARA_common.yaml#/components/schemas/DateTime"
-
-    AssistantResponse:
-      type: object
-      description: Response payload returned after creating or updating an assistant
-      properties:
-        success:
-          type: boolean
-          description: Whether the operation succeeded
-        assistantId:
-          type: string
-          format: uuid
-          maxLength: 36
-          description: Unique identifier of the assistant
-        message:
-          type: string
-          maxLength: 512
-          description: Success or failure message describing the result of the operation
-
+          $ref: '../common/CAMARA_common.yaml#/components/schemas/DateTime'
   responses:
-    Generic400:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic400"
-    Generic401:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic401"
-    Generic403:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic403"
-    Generic404:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic404"
-    Generic500:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic500"
     InvalidToolIds422:
       description: |
         One or more IDs in `toolIds` are invalid in the context of this assistant: they either do not exist, or do not belong to the `knowledgeBaseId` referenced in the same request.
       headers:
         x-correlator:
-          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
+          $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
       content:
         application/json:
           schema:
             allOf:
-              - $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
+              - $ref: '../common/CAMARA_common.yaml#/components/schemas/ErrorInfo'
               - type: object
                 properties:
                   status:

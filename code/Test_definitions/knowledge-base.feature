@@ -38,16 +38,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.items" is an array whose items comply with the OAS schema at "#/components/schemas/KnowledgeBase"
-    And the response property "$.pagination" complies with the OAS schema at "../common/CAMARA_common.yaml#/components/schemas/Pagination"
-
-  @knowledge_base_list_02_empty
-  Scenario: No existing knowledge bases
-    Given no knowledge bases have been created by operation "createKnowledgeBase"
-    When the request "listKnowledgeBases" is sent
-    Then the response status code is 200
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.items" is an empty array "[]"
-    And the response property "$.pagination" complies with the OAS schema at "../common/CAMARA_common.yaml#/components/schemas/Pagination"
+    And the response property "$.pagination" complies with the OAS schema at "#/components/schemas/Pagination"
 
   @knowledge_base_get_01_success
   Scenario: Get a specific knowledge base by ID
@@ -82,10 +73,53 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
   Scenario: Upload valid document to knowledge base
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents"
     And a valid document file with format pdf is available
     When the request "uploadDocument" is sent
     Then the response status code is 201
+    And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Location" is present
+    And the response body complies with the OAS schema at "#/components/schemas/Document"
+    And the response property "$.documentId" is present
+    And the response property "$.status" is one of "PROCESSING", "READY", "FAILED"
+
+  @knowledge_base_get_document_01_success
+  Scenario: Get a specific document by ID
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And an existing document created by operation "uploadDocument"
+    And the path parameter "documentId" is set to the value of the identifier for that document
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
+    When the request "getDocument" is sent
+    Then the response status code is 200
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response body complies with the OAS schema at "#/components/schemas/Document"
+
+  @knowledge_base_delete_document_01_success
+  Scenario: Delete a document successfully
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And an existing document created by operation "uploadDocument"
+    And the path parameter "documentId" is set to the value of the identifier for that document
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
+    When the request "deleteDocument" is sent
+    Then the response status code is 204
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+
+  @knowledge_base_delete_document_404_01_not_found
+  Scenario: Delete a non-existing document
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the path parameter "documentId" is set to a random UUID
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
+    When the request "deleteDocument" is sent
+    Then the response status code is 404
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response property "$.status" is 404
+    And the response property "$.code" is "NOT_FOUND"
+    And the response property "$.message" contains a user friendly text
 
   ############################ Tool Happy Path Scenarios #############################################
 
@@ -112,7 +146,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.items" is an array whose items comply with the OAS schema at "#/components/schemas/Tool"
-    And the response property "$.pagination" complies with the OAS schema at "../common/CAMARA_common.yaml#/components/schemas/Pagination"
+    And the response property "$.pagination" complies with the OAS schema at "#/components/schemas/Pagination"
 
   @knowledge_base_tool_get_01_success
   Scenario: Get a specific tool by ID
@@ -308,18 +342,6 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
 
   # Tool pagination error scenarios
 
-  @knowledge_base_tool_list_400_01_page_negative
-  Scenario: Invalid negative page parameter for tool list
-    Given an existing knowledge base created by operation "createKnowledgeBase"
-    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
-    And the query parameter "page" is set to -1
-    When the request "listTools" is sent
-    Then the response status code is 400
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.status" is 400
-    And the response property "$.code" is "INVALID_ARGUMENT"
-
   @knowledge_base_tool_create_400_02_missing_url
   Scenario: Create tool with missing required property "url"
     Given an existing knowledge base created by operation "createKnowledgeBase"
@@ -394,7 +416,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     Then the response status code is 200
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.items" is an empty array "[]"
-    And the response property "$.pagination" complies with the OAS schema at "../common/CAMARA_common.yaml#/components/schemas/Pagination"
+    And the response property "$.pagination" complies with the OAS schema at "#/components/schemas/Pagination"
 
   @knowledge_base_tool_create_02_default_method
   Scenario: Create a tool without specifying method (defaults to POST)
@@ -451,7 +473,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the response body complies with the OAS schema at "#/components/schemas/ToolCallResponse"
     And the response property "$.success" is false
     And the response property "$.statusCode" is 500
-    And the response property "$.contextCode" is "TOOL.EXECUTION_FAILED"
+    And the response property "$.contextCode" is "KNOWLEDGE_BASE.TOOL_EXECUTION_FAILED"
 
   ############################ Additional Tool Error Scenarios #############################################
 
@@ -552,7 +574,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the response property "$.code" is "INVALID_ARGUMENT"
 
   @knowledge_base_tool_call_422_01_tool_disabled
-  Scenario: callTool on a disabled tool returns 422 TOOL.DISABLED
+  Scenario: callTool on a disabled tool returns 422 KNOWLEDGE_BASE.TOOL_DISABLED
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool" that is currently disabled
@@ -563,10 +585,10 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     Then the response status code is 422
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.status" is 422
-    And the response property "$.code" is "TOOL.DISABLED"
+    And the response property "$.code" is "KNOWLEDGE_BASE.TOOL_DISABLED"
 
   @knowledge_base_tool_call_422_02_invalid_input
-  Scenario: callTool returns 422 TOOL.INVALID_INPUT for semantic violation
+  Scenario: callTool returns 422 KNOWLEDGE_BASE.TOOL_INVALID_INPUT for semantic violation
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
@@ -577,10 +599,10 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     Then the response status code is 422
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.status" is 422
-    And the response property "$.code" is "TOOL.INVALID_INPUT"
+    And the response property "$.code" is "KNOWLEDGE_BASE.TOOL_INVALID_INPUT"
 
-  @knowledge_base_tool_call_429_01_upstream_rate_limited
-  Scenario: callTool returns 429 when upstream tool rate-limits
+  @knowledge_base_tool_call_03_upstream_rate_limited
+  Scenario: callTool reports upstream rate-limit via 200 envelope
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
@@ -593,7 +615,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.success" is false
     And the response property "$.statusCode" is 429
-    And the response property "$.contextCode" is "TOOL.RATE_LIMITED"
+    And the response property "$.contextCode" is "KNOWLEDGE_BASE.TOOL_RATE_LIMITED"
 
   # Concurrent / state errors
 

@@ -29,7 +29,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
     Then the response status code is 201
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response body complies with the OAS schema at "#/components/schemas/AssistantResponse"
+    And the response body complies with the OAS schema at "#/components/schemas/Assistant"
 
   @qa_assistant_manage_create_02_with_tools
   Scenario: Create a QA assistant with associated tools
@@ -42,7 +42,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
     Then the response status code is 201
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response body complies with the OAS schema at "#/components/schemas/AssistantResponse"
+    And the response body complies with the OAS schema at "#/components/schemas/Assistant"
 
   @qa_assistant_manage_get_02_includes_tool_ids
   Scenario: Get assistant response includes the configured toolIds
@@ -66,7 +66,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response body complies with the OAS schema at "#/components/schemas/AssistantResponse"
+    And the response body complies with the OAS schema at "#/components/schemas/Assistant"
 
   @qa_assistant_manage_list_01_success
   Scenario: Retrieve all assistants
@@ -76,7 +76,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.items" is an array whose items comply with the OAS schema at "#/components/schemas/Assistant"
-    And the response property "$.pagination" complies with the OAS schema at "../common/CAMARA_common.yaml#/components/schemas/Pagination"
+    And the response property "$.pagination" complies with the OAS schema at "#/components/schemas/Pagination"
 
   @qa_assistant_manage_list_02_empty
   Scenario: No existing assistants
@@ -85,7 +85,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
     Then the response status code is 200
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.items" is an empty array "[]"
-    And the response property "$.pagination" complies with the OAS schema at "../common/CAMARA_common.yaml#/components/schemas/Pagination"
+    And the response property "$.pagination" complies with the OAS schema at "#/components/schemas/Pagination"
 
   @qa_assistant_manage_get_01_success
   Scenario: Get a specific assistant by ID
@@ -106,7 +106,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response body complies with the OAS schema at "#/components/schemas/AssistantResponse"
+    And the response body complies with the OAS schema at "#/components/schemas/Assistant"
 
   @qa_assistant_manage_delete_01_success
   Scenario: Delete an assistant successfully
@@ -166,7 +166,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
 
   @qa_assistant_manage_create_400_05_out_of_range
   Scenario: Error response for out of range parameter
-    Given the request body property "$.largeModelParameters.parameters.temperature" is set to a value outside the allowed range
+    Given the request body property "$.largeModelParameters.temperature" is set to a value outside the allowed range
     When the request "createAssistant" is sent
     Then the response status code is 400
     And the response header "x-correlator" has the same value as the request header "x-correlator"
