@@ -40,7 +40,7 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   version: wip
-  x-camara-commonalities: 0.8.0
+  x-camara-commonalities: 0.9.0
 servers:
   - url: '{apiRoot}/qa-assistant-manage/vwip'
     variables:
@@ -68,7 +68,7 @@ paths:
 
         **Key Rules:**
         - Requires `name`, `configurationPrompt`, and `largeModelParameters`
-        - `largeModelParameters` is a flat object whose required fields are `model`, `temperature` (0.0-1.0 by default) and `maxTokens` (≥1); `topP` is optional. The bounds are reference defaults - the provider MAY adjust them to match its backend (see the `largeModelParameters` schema description)
+        - `largeModelParameters` is a flat object whose required fields are `model`, `temperature` (0.0-1.0) and `maxTokens` (≥1); `topP` is optional. The bounds are fixed contract constraints; values outside the bounds are rejected with `400 OUT_OF_RANGE` (see the `largeModelParameters` schema description)
         - Needs `qa-assistant-manage:assistants:create` scope
 
         **Response Characteristics:**
@@ -227,7 +227,7 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
         '500':
           $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
-    put:
+    patch:
       operationId: updateAssistant
       summary: Update a QA assistant
       description: |
@@ -386,7 +386,7 @@ components:
           type: object
           description: |
             Parameters for the large language model. The fields are flattened to a single level (issue #52): `model`, `temperature`, `maxTokens` and `topP` are direct properties of this object, with no intermediate `parameters` wrapper.
-            **Provider-specific bounds:** the `minimum`/`maximum` bounds on `temperature`, `maxTokens` and `topP` are reference defaults that fit the model named in `model`. An API provider MAY adjust (widen or tighten) these bounds to match what its backend actually supports (some LLM providers use, for example, a `temperature` range of 0-2 instead of 0-1); the provider SHOULD document the bounds that are actually enforced. Values outside the bounds documented by the provider are rejected with `400 OUT_OF_RANGE`.
+            **Parameter bounds:** the `minimum`/`maximum` bounds on `temperature`, `maxTokens` and `topP` are fixed contract constraints, identical for every API provider; they are not provider-adjustable. Values outside these bounds are rejected with `400 OUT_OF_RANGE`.
           required:
             - model
             - temperature
@@ -404,7 +404,7 @@ components:
               minimum: 0
               maximum: 1
               description: |
-                Sampling temperature for generation (0.0 = deterministic, 1.0 = maximally creative, per the reference default). The provider MAY adjust the upper bound to match its backend (e.g. 0-2 for some providers); see the `largeModelParameters` description.
+                Sampling temperature for generation (0.0 = deterministic, 1.0 = maximally creative).
               example: 0.7
             maxTokens:
               type: integer
@@ -412,7 +412,7 @@ components:
               minimum: 1
               maximum: 128000
               description: |
-                Maximum number of tokens to generate. The upper bound is a reference default; the provider MAY adjust it to match the model named in `model`; see the `largeModelParameters` description.
+                Maximum number of tokens to generate.
               example: 200
             topP:
               type: number
@@ -420,7 +420,7 @@ components:
               minimum: 0
               maximum: 1
               description: |
-                Nucleus sampling parameter (top-p). The provider MAY adjust the bounds to match its backend; see the `largeModelParameters` description.
+                Nucleus sampling parameter (top-p).
               example: 0.8
         openingRemarks:
           type: string
@@ -484,19 +484,19 @@ components:
               format: float
               minimum: 0
               maximum: 1
-              description: Sampling temperature for generation (0.0 = deterministic, 1.0 = maximally creative, per the reference default). The provider MAY adjust the upper bound; see `AssistantCreateRequest.largeModelParameters`.
+              description: Sampling temperature for generation (0.0 = deterministic, 1.0 = maximally creative).
             maxTokens:
               type: integer
               format: int32
               minimum: 1
               maximum: 128000
-              description: Maximum number of tokens to generate. The upper bound is a reference default; the provider MAY adjust it; see `AssistantCreateRequest.largeModelParameters`.
+              description: Maximum number of tokens to generate.
             topP:
               type: number
               format: float
               minimum: 0
               maximum: 1
-              description: Nucleus sampling parameter (top-p). The provider MAY adjust the bounds; see `AssistantCreateRequest.largeModelParameters`.
+              description: Nucleus sampling parameter (top-p).
         openingRemarks:
           type: string
           maxLength: 4096
@@ -556,19 +556,19 @@ components:
               format: float
               minimum: 0
               maximum: 1
-              description: Sampling temperature for generation (0.0 = deterministic, 1.0 = maximally creative, per the reference default). The provider MAY adjust the upper bound; see `AssistantCreateRequest.largeModelParameters`.
+              description: Sampling temperature for generation (0.0 = deterministic, 1.0 = maximally creative).
             maxTokens:
               type: integer
               format: int32
               minimum: 1
               maximum: 128000
-              description: Maximum number of tokens to generate. The upper bound is a reference default; the provider MAY adjust it; see `AssistantCreateRequest.largeModelParameters`.
+              description: Maximum number of tokens to generate.
             topP:
               type: number
               format: float
               minimum: 0
               maximum: 1
-              description: Nucleus sampling parameter (top-p). The provider MAY adjust the bounds; see `AssistantCreateRequest.largeModelParameters`.
+              description: Nucleus sampling parameter (top-p).
         openingRemarks:
           type: string
           maxLength: 4096
