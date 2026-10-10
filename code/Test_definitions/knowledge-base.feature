@@ -1,6 +1,6 @@
 Feature: CAMARA MaaS Knowledge Base API, vwip
 
-    CAMARA Commonalities: 0.8.0
+    CAMARA Commonalities: 0.9.0
 
     # Input to be provided by the implementation to the tester
     #
@@ -38,6 +38,16 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.items" is an array whose items comply with the OAS schema at "#/components/schemas/KnowledgeBase"
+    And the response property "$.pagination" complies with the OAS schema at "#/components/schemas/Pagination"
+
+  @knowledge_base_list_02_empty
+  Scenario: Get all knowledge bases when none exist
+    Given no knowledge bases have been created by operation "createKnowledgeBase"
+    When the request "listKnowledgeBases" is sent
+    Then the response status code is 200
+    And the response header "Content-Type" is "application/json"
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response property "$.items" is an empty array "[]"
     And the response property "$.pagination" complies with the OAS schema at "#/components/schemas/Pagination"
 
   @knowledge_base_get_01_success
@@ -115,6 +125,19 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the path parameter "documentId" is set to a random UUID
     And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
     When the request "deleteDocument" is sent
+    Then the response status code is 404
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response property "$.status" is 404
+    And the response property "$.code" is "NOT_FOUND"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_get_document_404_01_not_found
+  Scenario: Get a non-existing document
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the path parameter "documentId" is set to a random UUID
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
+    When the request "getDocument" is sent
     Then the response status code is 404
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.status" is 404
@@ -643,6 +666,17 @@ Feature: CAMARA MaaS Knowledge Base API, vwip
     And the request body property "$.name" is set to "weather-lookup"
     And the request body is compliant with the schema at "#/components/schemas/ToolCreateRequest"
     When the request "createTool" is sent
+    Then the response status code is 409
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response property "$.status" is 409
+    And the response property "$.code" is "ALREADY_EXISTS"
+
+  @knowledge_base_create_409_01_duplicate_name
+  Scenario: Create knowledge base with a name that already exists
+    Given an existing knowledge base created by operation "createKnowledgeBase" with name "duplicate-kb"
+    And the request body property "$.name" is set to "duplicate-kb"
+    And the request body is compliant with the schema at "#/components/schemas/KnowledgeBaseCreateRequest"
+    When the request "createKnowledgeBase" is sent
     Then the response status code is 409
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.status" is 409
