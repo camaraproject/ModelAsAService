@@ -31,3 +31,50 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation updateKnowledgeBase
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "#/components/schemas/KnowledgeBase"
+
+  ############################ Error Scenarios #############################################
+
+  # Syntax / validation errors
+
+  @knowledge_base_update_400_01_empty_body
+  Scenario: Update knowledge base with empty body (at least one field required)
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the request body is set to {}
+    When the request "updateKnowledgeBase" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  # Generic 403 errors
+
+  @knowledge_base_update_403_01_missing_scope
+  Scenario: Update knowledge base with missing access token scope
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the header "Authorization" is set to an access token that does not include scope "knowledge-base:knowledge-bases:update"
+    And the request body is compliant with the schema at "#/components/schemas/KnowledgeBaseUpdateRequest"
+    When the request "updateKnowledgeBase" is sent
+    Then the response status code is 403
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 403
+    And the response property "$.code" is "PERMISSION_DENIED"
+    And the response property "$.message" contains a user friendly text
+
+  # Generic 404 Errors
+
+  @knowledge_base_update_404_01_not_found
+  Scenario: Update non-existing knowledgeBaseId
+    Given the path parameter "knowledgeBaseId" is set to a random UUID
+    And the request body is compliant with the schema at "#/components/schemas/KnowledgeBaseUpdateRequest"
+    When the request "updateKnowledgeBase" is sent
+    Then the response status code is 404
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 404
+    And the response property "$.code" is "NOT_FOUND"
+    And the response property "$.message" contains a user friendly text
