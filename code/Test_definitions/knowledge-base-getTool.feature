@@ -33,3 +33,39 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation getTool
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "#/components/schemas/Tool"
+
+  ############################ Error Scenarios #############################################
+
+  # Generic 403 errors
+
+  @knowledge_base_tool_get_403_01_missing_scope
+  Scenario: Get tool with missing access token scope
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And an existing tool created by operation "createTool"
+    And the path parameter "toolId" is set to the value of the identifier for that tool
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the header "Authorization" is set to an access token that does not include scope "knowledge-base:tools:read"
+    When the request "getTool" is sent
+    Then the response status code is 403
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 403
+    And the response property "$.code" is "PERMISSION_DENIED"
+    And the response property "$.message" contains a user friendly text
+
+  # Generic 404 Errors
+
+  @knowledge_base_tool_get_404_01_not_found
+  Scenario: Get non-existing toolId
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the path parameter "toolId" is set to a random UUID
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    When the request "getTool" is sent
+    Then the response status code is 404
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 404
+    And the response property "$.code" is "NOT_FOUND"
+    And the response property "$.message" contains a user friendly text
