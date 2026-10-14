@@ -1,6 +1,6 @@
 Feature: CAMARA MaaS Q&A Assistant Service API, vwip
 
-    CAMARA Commonalities: 0.8.0
+    CAMARA Commonalities: 0.9.0
 
     # Input to be provided by the implementation to the tester
     #
