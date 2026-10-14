@@ -1,4 +1,4 @@
-Feature: CAMARA MaaS Knowledge Base API, vwip - Operation updateKnowledgeBase
+Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.2 - Operation updateKnowledgeBase
 
     CAMARA Commonalities: 0.9.0
 
@@ -14,7 +14,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation updateKnowledgeBase
 
   Background: Common knowledge-base setup
     Given an environment at "apiRoot"
-    And the resource "/knowledge-base/vwip/knowledge-bases"
+    And the resource "/knowledge-base/v0.2rc2/knowledge-bases"
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
