@@ -474,7 +474,7 @@ components:
         largeModelParameters:
           type: object
           description: |
-            Updated model parameters. Same flattened structure as on create (issue #52): `model`, `temperature`, `maxTokens` and `topP` are direct properties, with no intermediate `parameters` wrapper. All fields are optional for update; `largeModelParameters` is replaced as a whole when provided (no nested merge). See the `largeModelParameters` description on `AssistantCreateRequest` for the provider-specific bounds note.
+            Updated model parameters. Same flattened structure as on create (issue #52): `model`, `temperature`, `maxTokens` and `topP` are direct properties, with no intermediate `parameters` wrapper. All fields are optional for update; `largeModelParameters` is replaced as a whole when provided (no nested merge).
           additionalProperties: false
           properties:
             model:
