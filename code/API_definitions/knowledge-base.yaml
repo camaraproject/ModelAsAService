@@ -131,15 +131,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/KnowledgeBase'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/BadRequest400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Unauthenticated401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '409':
           $ref: '../common/CAMARA_common.yaml#/components/responses/AlreadyExists409'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Internal500'
     get:
       operationId: listKnowledgeBases
       summary: Get all knowledge bases
@@ -194,13 +194,13 @@ paths:
                   pagination:
                     $ref: '../common/CAMARA_common.yaml#/components/schemas/Pagination'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/BadRequestWithRange400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Unauthenticated401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Internal500'
   /knowledge-bases/{knowledgeBaseId}:
     parameters:
       - name: knowledgeBaseId
@@ -247,15 +247,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/KnowledgeBase'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/BadRequest400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Unauthenticated401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Internal500'
     patch:
       operationId: updateKnowledgeBase
       summary: Update a knowledge base
@@ -303,15 +303,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/KnowledgeBase'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/BadRequest400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Unauthenticated401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Internal500'
     delete:
       operationId: deleteKnowledgeBase
       summary: Delete a knowledge base
@@ -345,15 +345,15 @@ paths:
             x-correlator:
               $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/BadRequest400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Unauthenticated401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Internal500'
   /knowledge-bases/{knowledgeBaseId}/documents:
     post:
       operationId: uploadDocument
@@ -440,17 +440,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/Document'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/BadRequest400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Unauthenticated401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '415':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic415'
+          $ref: '#/components/responses/UnsupportedMediaType415'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Internal500'
   /knowledge-bases/{knowledgeBaseId}/documents/{documentId}:
     parameters:
       - name: knowledgeBaseId
@@ -506,15 +506,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Document'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/BadRequest400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Unauthenticated401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Internal500'
     delete:
       operationId: deleteDocument
       summary: Delete a document
@@ -550,15 +550,15 @@ paths:
             x-correlator:
               $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/BadRequest400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Unauthenticated401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Internal500'
   /knowledge-bases/{knowledgeBaseId}/tools:
     post:
       operationId: createTool
@@ -630,17 +630,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/Tool'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/BadRequest400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Unauthenticated401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '409':
           $ref: '../common/CAMARA_common.yaml#/components/responses/AlreadyExists409'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Internal500'
     get:
       operationId: listTools
       summary: List all tools in a knowledge base
@@ -705,15 +705,15 @@ paths:
                   pagination:
                     $ref: '../common/CAMARA_common.yaml#/components/schemas/Pagination'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/BadRequestWithRange400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Unauthenticated401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Internal500'
   /knowledge-bases/{knowledgeBaseId}/tools/{toolId}:
     parameters:
       - name: knowledgeBaseId
@@ -768,15 +768,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Tool'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/BadRequest400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Unauthenticated401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Internal500'
     patch:
       operationId: updateTool
       summary: Update a tool
@@ -829,17 +829,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/Tool'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/BadRequest400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Unauthenticated401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '409':
           $ref: '#/components/responses/Aborted409'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Internal500'
     delete:
       operationId: deleteTool
       summary: Delete a tool
@@ -875,15 +875,15 @@ paths:
             x-correlator:
               $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/BadRequest400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Unauthenticated401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Internal500'
   /knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call:
     post:
       operationId: callTool
@@ -966,17 +966,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/ToolCallResponse'
         '400':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/BadRequest400'
         '401':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/Unauthenticated401'
         '403':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
+          $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '422':
           $ref: '#/components/responses/ToolInvalidInput422'
         '500':
-          $ref: '../common/CAMARA_common.yaml#/components/responses/Generic500'
+          $ref: '#/components/responses/Internal500'
 components:
   securitySchemes:
     openId:
@@ -1283,6 +1283,48 @@ components:
             Optional human-readable business context message, per CAMARA API Design Guide §3.1.
           example: The upstream tool returned a non-2xx status code.
   responses:
+    Internal500:
+      description: Internal Server Error
+      headers:
+        x-correlator:
+          $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '../common/CAMARA_common.yaml#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 500
+                  code:
+                    enum:
+                      - INTERNAL
+          examples:
+            GENERIC_500_INTERNAL:
+              $ref: '../common/CAMARA_common.yaml#/components/examples/GENERIC_500_INTERNAL'
+    UnsupportedMediaType415:
+      description: Unsupported Media Type
+      headers:
+        x-correlator:
+          $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '../common/CAMARA_common.yaml#/components/schemas/ErrorInfo'
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 415
+                  code:
+                    enum:
+                      - UNSUPPORTED_MEDIA_TYPE
+          examples:
+            GENERIC_415_UNSUPPORTED_MEDIA_TYPE:
+              $ref: '../common/CAMARA_common.yaml#/components/examples/GENERIC_415_UNSUPPORTED_MEDIA_TYPE'
     Aborted409:
       description: Conflict
       headers:
