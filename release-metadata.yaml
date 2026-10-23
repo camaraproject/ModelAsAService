@@ -1,0 +1,19 @@
+repository:
+  repository_name: ModelAsAService
+  release_tag: r2.2
+  release_type: pre-release-rc
+  release_date: null
+  src_commit_sha: dc5116cfe897a3601403709e3e4b0fe6d82bf297
+apis:
+- api_name: knowledge-base
+  api_version: 0.2.0-rc.2
+  api_title: Knowledge Base
+- api_name: qa-assistant-manage
+  api_version: 0.2.0-rc.2
+  api_title: Q&A Assistant - Manage
+- api_name: qa-assistant-service
+  api_version: 0.2.0-rc.2
+  api_title: Q&A Assistant - Service
+dependencies:
+  commonalities_release: r4.4 (0.9.0)
+  identity_consent_management_release: r4.2 (0.5.0)

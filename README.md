@@ -47,13 +47,13 @@ Sandbox API Repository to describe, develop, document, and test the ModelAsAServ
 
 ### Upcoming Release Preview
 
-* Pre-release: [r2.1](https://github.com/camaraproject/ModelAsAService/releases/tag/r2.1) (release candidate)
-  * **knowledge-base 0.2.0-rc.1**
-  [[YAML]](https://github.com/camaraproject/ModelAsAService/blob/r2.1/code/API_definitions/knowledge-base.yaml)  [[ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r2.1/code/API_definitions/knowledge-base.yaml&nocors)  [[Swagger]](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r2.1/code/API_definitions/knowledge-base.yaml)
-  * **qa-assistant-manage 0.2.0-rc.1**
-  [[YAML]](https://github.com/camaraproject/ModelAsAService/blob/r2.1/code/API_definitions/qa-assistant-manage.yaml)  [[ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r2.1/code/API_definitions/qa-assistant-manage.yaml&nocors)  [[Swagger]](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r2.1/code/API_definitions/qa-assistant-manage.yaml)
-  * **qa-assistant-service 0.2.0-rc.1**
-  [[YAML]](https://github.com/camaraproject/ModelAsAService/blob/r2.1/code/API_definitions/qa-assistant-service.yaml)  [[ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r2.1/code/API_definitions/qa-assistant-service.yaml&nocors)  [[Swagger]](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r2.1/code/API_definitions/qa-assistant-service.yaml)
+* Pre-release: [r2.2](https://github.com/camaraproject/ModelAsAService/releases/tag/r2.2) (release candidate)
+  * **knowledge-base 0.2.0-rc.2**
+  [[YAML]](https://github.com/camaraproject/ModelAsAService/blob/r2.2/code/API_definitions/knowledge-base.yaml)  [[ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r2.2/code/API_definitions/knowledge-base.yaml&nocors)  [[Swagger]](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r2.2/code/API_definitions/knowledge-base.yaml)
+  * **qa-assistant-manage 0.2.0-rc.2**
+  [[YAML]](https://github.com/camaraproject/ModelAsAService/blob/r2.2/code/API_definitions/qa-assistant-manage.yaml)  [[ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r2.2/code/API_definitions/qa-assistant-manage.yaml&nocors)  [[Swagger]](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r2.2/code/API_definitions/qa-assistant-manage.yaml)
+  * **qa-assistant-service 0.2.0-rc.2**
+  [[YAML]](https://github.com/camaraproject/ModelAsAService/blob/r2.2/code/API_definitions/qa-assistant-service.yaml)  [[ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r2.2/code/API_definitions/qa-assistant-service.yaml&nocors)  [[Swagger]](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/ModelAsAService/r2.2/code/API_definitions/qa-assistant-service.yaml)
 
 
 _The above section is automatically synchronized by CAMARA project-administration._
