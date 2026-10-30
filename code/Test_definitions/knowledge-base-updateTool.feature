@@ -67,7 +67,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation updateTool
     And the response property "$.status" is 409
     And the response property "$.code" is "ABORTED"
 
-  # Generic 403s for other tool operations
+  # Common 403 error (PermissionDenied403) for other tool operations
   @knowledge_base_tool_update_403_01_missing_scope
   Scenario: Update tool with missing scope
     Given an existing knowledge base created by operation "createKnowledgeBase"

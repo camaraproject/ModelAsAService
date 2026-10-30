@@ -120,7 +120,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation createTool
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
 
-  # Generic 500 Error
+  # Common 500 error (Internal500)
   @knowledge_base_tool_create_500_01_internal_error
   Scenario: Internal server error during tool creation
     Given an existing knowledge base created by operation "createKnowledgeBase"

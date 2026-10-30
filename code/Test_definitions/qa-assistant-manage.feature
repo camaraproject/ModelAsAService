@@ -121,7 +121,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
   # Syntax Error scenarios
 
   @qa_assistant_manage_create_400_01_schema_not_compliant
-  Scenario: Invalid Argument. Generic Syntax Exception
+  Scenario: Invalid Argument. Schema Violation
     Given the request body is included but is not compliant with the schema at "#/components/schemas/AssistantCreateRequest"
     When the request "createAssistant" is sent
     Then the response status code is 400
@@ -230,7 +230,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
-  # Generic 403 errors
+  # Common 403 error (PermissionDenied403)
 
   @qa_assistant_manage_create_403_01_missing_scope
   Scenario: Missing access token scope
@@ -328,7 +328,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
     And the response property "$.status" is 422
     And the response property "$.code" is "KNOWLEDGE_BASE.TOOL_NOT_FOUND"
 
-  # Generic 404 Errors
+  # Common 404 error (NotFound404)
 
   @qa_assistant_manage_get_404_01_not_found
   Scenario: non-existing assistantId
@@ -360,7 +360,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
     And the response property "$.status" is 404
     And the response property "$.code" is "NOT_FOUND"
 
-  # Generic 500 Error
+  # Common 500 error (Internal500)
 
   @qa_assistant_manage_create_500_01_internal_error
   Scenario: Internal server error

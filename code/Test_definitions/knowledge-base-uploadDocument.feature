@@ -49,7 +49,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  # Generic 415 Error
+  # Error 415 (UnsupportedMediaType415)
   @knowledge_base_upload_document_415_01_unsupported_media_type
   Scenario: Unsupported media type for document upload
     Given the request has a payload format in an unsupported format

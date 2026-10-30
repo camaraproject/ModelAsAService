@@ -34,7 +34,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation createKnowledgeBase
 
   # Syntax Error scenarios
   @knowledge_base_create_400_01_schema_not_compliant
-  Scenario: Invalid Argument. Generic Syntax Exception
+  Scenario: Invalid Argument. Schema Violation
     Given the request body is included but is not compliant with the schema at "#/components/schemas/KnowledgeBaseCreateRequest"
     When the request "createKnowledgeBase" is sent
     Then the response status code is 400
@@ -66,7 +66,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation createKnowledgeBase
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  # Generic 403 errors
+  # Common 403 error (PermissionDenied403)
   @knowledge_base_create_403_01_missing_scope
   Scenario: Missing access token scope
     Given the header "Authorization" is set to an access token that does not include scope "knowledge-base:knowledge-bases:create"
@@ -78,7 +78,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation createKnowledgeBase
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
 
-  # Generic 500 Error
+  # Common 500 error (Internal500)
   @knowledge_base_create_500_01_internal_error
   Scenario: Internal server error
     Given the system is in a faulty state

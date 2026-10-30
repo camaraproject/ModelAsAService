@@ -49,7 +49,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation updateKnowledgeBase
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  # Generic 403 errors
+  # Common 403 error (PermissionDenied403)
 
   @knowledge_base_update_403_01_missing_scope
   Scenario: Update knowledge base with missing access token scope
@@ -65,7 +65,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation updateKnowledgeBase
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
 
-  # Generic 404 Errors
+  # Common 404 error (NotFound404)
 
   @knowledge_base_update_404_01_not_found
   Scenario: Update non-existing knowledgeBaseId
