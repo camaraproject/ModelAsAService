@@ -36,7 +36,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation getTool
 
   ############################ Error Scenarios #############################################
 
-  # Generic 403 errors
+  # Common 403 error (PermissionDenied403)
 
   @knowledge_base_tool_get_403_01_missing_scope
   Scenario: Get tool with missing access token scope
@@ -54,7 +54,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation getTool
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
 
-  # Generic 404 Errors
+  # Common 404 error (NotFound404)
 
   @knowledge_base_tool_get_404_01_not_found
   Scenario: Get non-existing toolId
