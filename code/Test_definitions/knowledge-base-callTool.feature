@@ -70,7 +70,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation callTool
 
   ############################ Error Scenarios #############################################
 
-  # Generic 404 Errors
+  # Common 404 error (NotFound404)
   @knowledge_base_tool_call_404_01_not_found
   Scenario: Invoke non-existing tool
     Given an existing knowledge base created by operation "createKnowledgeBase"
