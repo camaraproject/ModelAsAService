@@ -33,7 +33,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation getKnowledgeBase
 
   ############################ Error Scenarios #############################################
 
-  # Generic 404 Errors
+  # Common 404 error (NotFound404)
   @knowledge_base_get_404_01_not_found
   Scenario: non-existing knowledgeBaseId
     Given the path parameter "knowledgeBaseId" is set to a random UUID
