@@ -70,7 +70,7 @@ Feature: CAMARA MaaS Q&A Assistant Service API, vwip
   # Syntax Error scenarios
 
   @qa_assistant_service_query_400_01_schema_not_compliant
-  Scenario: Invalid Argument. Generic Syntax Exception
+  Scenario: Invalid Argument. Schema Violation
     Given the request body is included but is not compliant with the schema at "#/components/schemas/QueryRequest"
     When the request "queryAssistant" is sent
     Then the response status code is 400
@@ -159,7 +159,7 @@ Feature: CAMARA MaaS Q&A Assistant Service API, vwip
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
-  # Generic 403 errors
+  # Common 403 error (PermissionDenied403)
 
   @qa_assistant_service_query_403_01_missing_scope
   Scenario: Missing access token scope
@@ -172,7 +172,7 @@ Feature: CAMARA MaaS Q&A Assistant Service API, vwip
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
 
-  # Generic 404 Error
+  # Common 404 error (NotFound404)
 
   @qa_assistant_service_query_404_01_not_found
   Scenario: Assistant not found
@@ -185,7 +185,7 @@ Feature: CAMARA MaaS Q&A Assistant Service API, vwip
     And the response property "$.code" is "NOT_FOUND"
     And the response property "$.message" contains a user friendly text
 
-  # Generic 500 Error
+  # Common 500 error (Internal500)
 
   @qa_assistant_service_query_500_01_internal_error
   Scenario: Internal server error
