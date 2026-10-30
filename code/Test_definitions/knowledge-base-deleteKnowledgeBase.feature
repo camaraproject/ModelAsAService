@@ -31,7 +31,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation deleteKnowledgeBase
 
   ############################ Error Scenarios #############################################
 
-  # Generic 403 errors
+  # Common 403 error (PermissionDenied403)
 
   @knowledge_base_delete_403_01_missing_scope
   Scenario: Delete knowledge base with missing access token scope
@@ -46,7 +46,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation deleteKnowledgeBase
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
 
-  # Generic 404 Errors
+  # Common 404 error (NotFound404)
 
   @knowledge_base_delete_404_01_not_found
   Scenario: Delete non-existing knowledgeBaseId
