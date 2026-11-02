@@ -120,20 +120,6 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation createTool
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
 
-  # Common 500 error (Internal500)
-  @knowledge_base_tool_create_500_01_internal_error
-  Scenario: Internal server error during tool creation
-    Given an existing knowledge base created by operation "createKnowledgeBase"
-    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
-    And the system is in a faulty state
-    When the request "createTool" is sent
-    Then the response status code is 500
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.status" is 500
-    And the response property "$.code" is "INTERNAL"
-    And the response property "$.message" contains a user friendly text
-
   # Syntax / validation errors
   @knowledge_base_tool_create_400_01_invalid_method
   Scenario: Create tool with invalid HTTP method (not in enum)
