@@ -573,6 +573,7 @@ paths:
         - **403 Forbidden**: Missing required scope
         - **404 Not Found**: Invalid knowledgeBaseId
         - **409 Conflict**: Duplicate tool name within the knowledge base (the tool `name` must be unique within a knowledge base)
+        - **415 Unsupported Media Type**: Unacceptable format
       tags:
         - Tools
       parameters:
@@ -614,6 +615,8 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '409':
           $ref: '../common/CAMARA_common.yaml#/components/responses/AlreadyExists409'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType415'
     get:
       operationId: listTools
       summary: List all tools in a knowledge base
