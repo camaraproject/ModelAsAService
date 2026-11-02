@@ -1,4 +1,4 @@
-Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
+Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.2 - Operation uploadDocument
 
     CAMARA Commonalities: 0.9.0
 
@@ -14,7 +14,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
 
   Background: Common knowledge-base setup
     Given an environment at "apiRoot"
-    And the resource "/knowledge-base/vwip/knowledge-bases"
+    And the resource "/knowledge-base/v0.2rc2/knowledge-bases"
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
@@ -25,7 +25,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
   Scenario: Upload valid document to knowledge base
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents"
+    And the resource "/knowledge-base/v0.2rc2/knowledge-bases/{knowledgeBaseId}/documents"
     And a valid document file with format pdf is available
     When the request "uploadDocument" is sent
     Then the response status code is 201

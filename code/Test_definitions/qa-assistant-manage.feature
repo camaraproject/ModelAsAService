@@ -1,4 +1,4 @@
-Feature: CAMARA MaaS QA Assistant Management API, vwip
+Feature: CAMARA MaaS QA Assistant Management API, v0.2.0-rc.2
 
     CAMARA Commonalities: 0.9.0
 
@@ -15,7 +15,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
 
   Background: Common QA assistant management setup
     Given an environment at "apiRoot"
-    And the resource "/qa-assistant-manage/vwip/assistants"
+    And the resource "/qa-assistant-manage/v0.2rc2/assistants"
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
@@ -446,7 +446,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
   Scenario: Update assistant with a malformed toolId
     Given an existing assistant created by operation "createAssistant"
     And the path parameter "assistantId" is set to the value of the identifier for that assistant
-    And the resource "/qa-assistant-manage/vwip/assistants/{assistantId}"
+    And the resource "/qa-assistant-manage/v0.2rc2/assistants/{assistantId}"
     And the request body property "$.toolIds[0]" is set to "not-a-uuid"
     And the request body is compliant with the schema at "#/components/schemas/AssistantUpdateRequest"
     When the request "updateAssistant" is sent
@@ -459,7 +459,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
   Scenario: Update assistant with toolIds that do not exist
     Given an existing assistant created by operation "createAssistant"
     And the path parameter "assistantId" is set to the value of the identifier for that assistant
-    And the resource "/qa-assistant-manage/vwip/assistants/{assistantId}"
+    And the resource "/qa-assistant-manage/v0.2rc2/assistants/{assistantId}"
     And the request body property "$.toolIds" is set to [a random UUID that does not exist]
     And the request body is compliant with the schema at "#/components/schemas/AssistantUpdateRequest"
     When the request "updateAssistant" is sent
@@ -474,7 +474,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
   Scenario: Empty object as update request body
     Given an existing assistant created by operation "createAssistant"
     And the path parameter "assistantId" is set to the value of the identifier for that assistant
-    And the resource "/qa-assistant-manage/vwip/assistants/{assistantId}"
+    And the resource "/qa-assistant-manage/v0.2rc2/assistants/{assistantId}"
     And the request body is set to {}
     When the request "updateAssistant" is sent
     Then the response status code is 400
@@ -488,7 +488,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
   Scenario: Missing update request body
     Given an existing assistant created by operation "createAssistant"
     And the path parameter "assistantId" is set to the value of the identifier for that assistant
-    And the resource "/qa-assistant-manage/vwip/assistants/{assistantId}"
+    And the resource "/qa-assistant-manage/v0.2rc2/assistants/{assistantId}"
     And the request body is not included
     When the request "updateAssistant" is sent
     Then the response status code is 400
@@ -501,7 +501,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
   @qa_assistant_manage_update_400_04_malformed_assistant_id
   Scenario: Update assistant with an assistantId that is not a UUID
     Given the path parameter "assistantId" is set to "not-a-uuid"
-    And the resource "/qa-assistant-manage/vwip/assistants/{assistantId}"
+    And the resource "/qa-assistant-manage/v0.2rc2/assistants/{assistantId}"
     And the request body is compliant with the schema at "#/components/schemas/AssistantUpdateRequest"
     When the request "updateAssistant" is sent
     Then the response status code is 400
@@ -518,7 +518,7 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
     And an existing tool created by operation "createTool" owned by knowledge base "B"
     And an existing assistant created by operation "createAssistant" with knowledgeBaseId set to knowledge base "A"'s ID
     And the path parameter "assistantId" is set to the value of the identifier for that assistant
-    And the resource "/qa-assistant-manage/vwip/assistants/{assistantId}"
+    And the resource "/qa-assistant-manage/v0.2rc2/assistants/{assistantId}"
     And the request body property "$.toolIds" is set to [the tool's UUID]
     And the request body is compliant with the schema at "#/components/schemas/AssistantUpdateRequest"
     When the request "updateAssistant" is sent

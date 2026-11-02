@@ -1,4 +1,4 @@
-Feature: CAMARA MaaS Knowledge Base API, vwip - Operation updateTool
+Feature: CAMARA MaaS Knowledge Base API, v0.2.0-rc.2 - Operation updateTool
 
     CAMARA Commonalities: 0.9.0
 
@@ -14,7 +14,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation updateTool
 
   Background: Common knowledge-base setup
     Given an environment at "apiRoot"
-    And the resource "/knowledge-base/vwip/knowledge-bases"
+    And the resource "/knowledge-base/v0.2rc2/knowledge-bases"
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
@@ -27,7 +27,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation updateTool
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/v0.2rc2/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     And the request body is compliant with the schema at "#/components/schemas/ToolUpdateRequest"
     When the request "updateTool" is sent
     Then the response status code is 200
@@ -43,7 +43,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation updateTool
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/v0.2rc2/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     And the request body is set to {}
     When the request "updateTool" is sent
     Then the response status code is 400
@@ -58,7 +58,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation updateTool
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/v0.2rc2/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     And the resource is being modified by another concurrent operation
     And the request body is compliant with the schema at "#/components/schemas/ToolUpdateRequest"
     When the request "updateTool" is sent
@@ -74,7 +74,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation updateTool
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/v0.2rc2/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     And the header "Authorization" is set to an access token that does not include scope "knowledge-base:tools:update"
     And the request body is compliant with the schema at "#/components/schemas/ToolUpdateRequest"
     When the request "updateTool" is sent
