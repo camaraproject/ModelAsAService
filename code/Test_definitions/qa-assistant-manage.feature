@@ -175,6 +175,44 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
     And the response property "$.code" is "OUT_OF_RANGE"
     And the response property "$.message" contains a user friendly text
 
+  # Request body strictness (undeclared properties are rejected at any nesting level)
+
+  @qa_assistant_manage_create_400_09_unknown_top_level_property
+  Scenario: Create assistant with an undeclared top-level property
+    Given the request body property "$.unknownProperty" is set to "value"
+    When the request "createAssistant" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @qa_assistant_manage_create_400_10_unknown_nested_property
+  Scenario: Create assistant with an undeclared nested property in largeModelParameters
+    Given the request body property "$.largeModelParameters.unknownParameter" is set to "value"
+    When the request "createAssistant" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  # Header validation errors
+
+  @qa_assistant_manage_get_400_01_invalid_x_correlator
+  Scenario: Invalid x-correlator header value
+    Given an existing assistant created by operation "createAssistant"
+    And the path parameter "assistantId" is set to the value of the identifier for that assistant
+    And the header "x-correlator" is set to "invalid correlator!"
+    When the request "getAssistant" is sent
+    Then the response status code is 400
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
   # Pagination error scenarios
 
   @qa_assistant_manage_list_400_01_page_negative
@@ -230,12 +268,114 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
+  @qa_assistant_manage_create_401_01_expired_access_token
+  Scenario: Error response for expired access token on assistant creation
+    Given the header "Authorization" is set to an expired access token
+    When the request "createAssistant" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @qa_assistant_manage_get_401_01_expired_access_token
+  Scenario: Error response for expired access token on assistant retrieval
+    Given an existing assistant created by operation "createAssistant"
+    And the path parameter "assistantId" is set to the value of the identifier for that assistant
+    And the header "Authorization" is set to an expired access token
+    When the request "getAssistant" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @qa_assistant_manage_update_401_01_expired_access_token
+  Scenario: Error response for expired access token on assistant update
+    Given an existing assistant created by operation "createAssistant"
+    And the path parameter "assistantId" is set to the value of the identifier for that assistant
+    And the request body is compliant with the schema at "#/components/schemas/AssistantUpdateRequest"
+    And the header "Authorization" is set to an expired access token
+    When the request "updateAssistant" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @qa_assistant_manage_delete_401_01_expired_access_token
+  Scenario: Error response for expired access token on assistant deletion
+    Given an existing assistant created by operation "createAssistant"
+    And the path parameter "assistantId" is set to the value of the identifier for that assistant
+    And the header "Authorization" is set to an expired access token
+    When the request "deleteAssistant" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
   # Common 403 error (PermissionDenied403)
 
   @qa_assistant_manage_create_403_01_missing_scope
   Scenario: Missing access token scope
     Given the header "Authorization" is set to an access token that does not include scope "qa-assistant-manage:assistants:create"
     When the request "createAssistant" is sent
+    Then the response status code is 403
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 403
+    And the response property "$.code" is "PERMISSION_DENIED"
+    And the response property "$.message" contains a user friendly text
+
+  @qa_assistant_manage_list_403_01_missing_scope
+  Scenario: Missing access token scope on assistant listing
+    Given the header "Authorization" is set to an access token that does not include scope "qa-assistant-manage:assistants:read"
+    When the request "listAssistants" is sent
+    Then the response status code is 403
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 403
+    And the response property "$.code" is "PERMISSION_DENIED"
+    And the response property "$.message" contains a user friendly text
+
+  @qa_assistant_manage_get_403_01_missing_scope
+  Scenario: Missing access token scope on assistant retrieval
+    Given an existing assistant created by operation "createAssistant"
+    And the path parameter "assistantId" is set to the value of the identifier for that assistant
+    And the header "Authorization" is set to an access token that does not include scope "qa-assistant-manage:assistants:read"
+    When the request "getAssistant" is sent
+    Then the response status code is 403
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 403
+    And the response property "$.code" is "PERMISSION_DENIED"
+    And the response property "$.message" contains a user friendly text
+
+  @qa_assistant_manage_update_403_01_missing_scope
+  Scenario: Missing access token scope on assistant update
+    Given an existing assistant created by operation "createAssistant"
+    And the path parameter "assistantId" is set to the value of the identifier for that assistant
+    And the request body is compliant with the schema at "#/components/schemas/AssistantUpdateRequest"
+    And the header "Authorization" is set to an access token that does not include scope "qa-assistant-manage:assistants:update"
+    When the request "updateAssistant" is sent
+    Then the response status code is 403
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 403
+    And the response property "$.code" is "PERMISSION_DENIED"
+    And the response property "$.message" contains a user friendly text
+
+  @qa_assistant_manage_delete_403_01_missing_scope
+  Scenario: Missing access token scope on assistant deletion
+    Given an existing assistant created by operation "createAssistant"
+    And the path parameter "assistantId" is set to the value of the identifier for that assistant
+    And the header "Authorization" is set to an access token that does not include scope "qa-assistant-manage:assistants:delete"
+    When the request "deleteAssistant" is sent
     Then the response status code is 403
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response header "Content-Type" is "application/json"
@@ -328,6 +468,65 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
     And the response property "$.status" is 422
     And the response property "$.code" is "KNOWLEDGE_BASE.TOOL_NOT_FOUND"
 
+  # updateAssistant body and path validation
+
+  @qa_assistant_manage_update_400_02_empty_request_body
+  Scenario: Empty object as update request body
+    Given an existing assistant created by operation "createAssistant"
+    And the path parameter "assistantId" is set to the value of the identifier for that assistant
+    And the resource "/qa-assistant-manage/vwip/assistants/{assistantId}"
+    And the request body is set to {}
+    When the request "updateAssistant" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @qa_assistant_manage_update_400_03_no_request_body
+  Scenario: Missing update request body
+    Given an existing assistant created by operation "createAssistant"
+    And the path parameter "assistantId" is set to the value of the identifier for that assistant
+    And the resource "/qa-assistant-manage/vwip/assistants/{assistantId}"
+    And the request body is not included
+    When the request "updateAssistant" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @qa_assistant_manage_update_400_04_malformed_assistant_id
+  Scenario: Update assistant with an assistantId that is not a UUID
+    Given the path parameter "assistantId" is set to "not-a-uuid"
+    And the resource "/qa-assistant-manage/vwip/assistants/{assistantId}"
+    And the request body is compliant with the schema at "#/components/schemas/AssistantUpdateRequest"
+    When the request "updateAssistant" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @qa_assistant_manage_update_422_02_tool_cross_kb
+  Scenario: Update assistant with a toolId that belongs to a different knowledge base
+    Given an existing knowledge base "A" created by operation "createKnowledgeBase"
+    And an existing knowledge base "B" created by operation "createKnowledgeBase"
+    And an existing tool created by operation "createTool" owned by knowledge base "B"
+    And an existing assistant created by operation "createAssistant" with knowledgeBaseId set to knowledge base "A"'s ID
+    And the path parameter "assistantId" is set to the value of the identifier for that assistant
+    And the resource "/qa-assistant-manage/vwip/assistants/{assistantId}"
+    And the request body property "$.toolIds" is set to [the tool's UUID]
+    And the request body is compliant with the schema at "#/components/schemas/AssistantUpdateRequest"
+    When the request "updateAssistant" is sent
+    Then the response status code is 422
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response property "$.status" is 422
+    And the response property "$.code" is "KNOWLEDGE_BASE.TOOL_CROSS_KB"
+
   # Common 404 error (NotFound404)
 
   @qa_assistant_manage_get_404_01_not_found
@@ -359,6 +558,19 @@ Feature: CAMARA MaaS QA Assistant Management API, vwip
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.status" is 404
     And the response property "$.code" is "NOT_FOUND"
+
+  @qa_assistant_manage_get_404_02_after_delete
+  Scenario: Get an assistant that has just been deleted
+    Given an existing assistant created by operation "createAssistant"
+    And the path parameter "assistantId" is set to the value of the identifier for that assistant
+    And that assistant has been deleted by operation "deleteAssistant"
+    When the request "getAssistant" is sent
+    Then the response status code is 404
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 404
+    And the response property "$.code" is "NOT_FOUND"
+    And the response property "$.message" contains a user friendly text
 
   # Common 500 error (Internal500)
 
