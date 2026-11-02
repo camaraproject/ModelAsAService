@@ -78,17 +78,6 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation createKnowledgeBase
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
 
-  # Common 500 error (Internal500)
-  @knowledge_base_create_500_01_internal_error
-  Scenario: Internal server error
-    Given the system is in a faulty state
-    When the request "createKnowledgeBase" is sent
-    Then the response status code is 500
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.status" is 500
-    And the response property "$.code" is "INTERNAL"
-    And the response property "$.message" contains a user friendly text
-
   @knowledge_base_create_409_01_duplicate_name
   Scenario: Create knowledge base with a name that already exists
     Given an existing knowledge base created by operation "createKnowledgeBase" with name "duplicate-kb"

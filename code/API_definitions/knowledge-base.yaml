@@ -106,7 +106,6 @@ paths:
         - **400 Bad Request**: Missing `name` or invalid parameters
         - **403 Forbidden**: Missing required scope
         - **409 Conflict**: Duplicate knowledge base name (the `name` must be unique within the system)
-        - **500 Internal Server Error**: Backend processing failure
       tags:
         - Knowledge Base
       parameters:
@@ -138,8 +137,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '409':
           $ref: '../common/CAMARA_common.yaml#/components/responses/AlreadyExists409'
-        '500':
-          $ref: '#/components/responses/Internal500'
     get:
       operationId: listKnowledgeBases
       summary: Get all knowledge bases
@@ -159,7 +156,6 @@ paths:
         - **200 OK**: Array of `KnowledgeBase` objects
         - **401 Unauthenticated**: Invalid/missing credentials
         - **403 Forbidden**: Insufficient permissions
-        - **500 Internal Server Error**: Data retrieval failure
       tags:
         - Knowledge Base
       parameters:
@@ -199,8 +195,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/Unauthenticated401'
         '403':
           $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
-        '500':
-          $ref: '#/components/responses/Internal500'
   /knowledge-bases/{knowledgeBaseId}:
     parameters:
       - name: knowledgeBaseId
@@ -230,7 +224,6 @@ paths:
         - **200 OK**: Complete `KnowledgeBase` object
         - **404 Not Found**: Invalid/non-existent knowledgeBaseId
         - **403 Forbidden**: Missing required scope
-        - **500 Internal Server Error**: Data retrieval failure
       tags:
         - Knowledge Base
       security:
@@ -254,8 +247,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
           $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
-        '500':
-          $ref: '#/components/responses/Internal500'
     patch:
       operationId: updateKnowledgeBase
       summary: Update a knowledge base
@@ -280,7 +271,6 @@ paths:
         - **400 Bad Request**: No update fields provided
         - **404 Not Found**: Invalid knowledgeBaseId
         - **403 Forbidden**: Missing required scope
-        - **500 Internal Server Error**: Update processing failure
       tags:
         - Knowledge Base
       security:
@@ -310,8 +300,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
           $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
-        '500':
-          $ref: '#/components/responses/Internal500'
     delete:
       operationId: deleteKnowledgeBase
       summary: Delete a knowledge base
@@ -332,7 +320,6 @@ paths:
         - **204 No Content**: Successful deletion (no body)
         - **404 Not Found**: Invalid knowledgeBaseId
         - **403 Forbidden**: Missing required scope
-        - **500 Internal Server Error**: Deletion processing failure
       tags:
         - Knowledge Base
       security:
@@ -352,8 +339,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
           $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
-        '500':
-          $ref: '#/components/responses/Internal500'
   /knowledge-bases/{knowledgeBaseId}/documents:
     post:
       operationId: uploadDocument
@@ -390,7 +375,6 @@ paths:
         - **415 Unsupported Media Type**: Unacceptable format
         - **404 Not Found**: Invalid knowledgeBaseId
         - **403 Forbidden**: Missing required scope
-        - **500 Internal Server Error**: Storage failure
       tags:
         - Documents
       parameters:
@@ -449,8 +433,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '415':
           $ref: '#/components/responses/UnsupportedMediaType415'
-        '500':
-          $ref: '#/components/responses/Internal500'
   /knowledge-bases/{knowledgeBaseId}/documents/{documentId}:
     parameters:
       - name: knowledgeBaseId
@@ -489,7 +471,6 @@ paths:
         - **200 OK**: Complete `Document` object
         - **404 Not Found**: Invalid documentId or knowledgeBaseId
         - **403 Forbidden**: Missing required scope
-        - **500 Internal Server Error**: Data retrieval failure
       tags:
         - Documents
       security:
@@ -513,8 +494,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
           $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
-        '500':
-          $ref: '#/components/responses/Internal500'
     delete:
       operationId: deleteDocument
       summary: Delete a document
@@ -537,7 +516,6 @@ paths:
         - **204 No Content**: Successful deletion (no body)
         - **404 Not Found**: Invalid documentId or knowledgeBaseId
         - **403 Forbidden**: Missing required scope
-        - **500 Internal Server Error**: Deletion processing failure
       tags:
         - Documents
       security:
@@ -557,8 +535,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
           $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
-        '500':
-          $ref: '#/components/responses/Internal500'
   /knowledge-bases/{knowledgeBaseId}/tools:
     post:
       operationId: createTool
@@ -597,7 +573,6 @@ paths:
         - **403 Forbidden**: Missing required scope
         - **404 Not Found**: Invalid knowledgeBaseId
         - **409 Conflict**: Duplicate tool name within the knowledge base (the tool `name` must be unique within a knowledge base)
-        - **500 Internal Server Error**: Tool creation failure
       tags:
         - Tools
       parameters:
@@ -639,8 +614,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '409':
           $ref: '../common/CAMARA_common.yaml#/components/responses/AlreadyExists409'
-        '500':
-          $ref: '#/components/responses/Internal500'
     get:
       operationId: listTools
       summary: List all tools in a knowledge base
@@ -662,7 +635,6 @@ paths:
         - **401 Unauthenticated**: Invalid/missing credentials
         - **403 Forbidden**: Insufficient permissions
         - **404 Not Found**: Invalid knowledgeBaseId
-        - **500 Internal Server Error**: Data retrieval failure
       tags:
         - Tools
       parameters:
@@ -712,8 +684,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
           $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
-        '500':
-          $ref: '#/components/responses/Internal500'
   /knowledge-bases/{knowledgeBaseId}/tools/{toolId}:
     parameters:
       - name: knowledgeBaseId
@@ -751,7 +721,6 @@ paths:
         - **200 OK**: Complete `Tool` object
         - **404 Not Found**: Invalid toolId or knowledgeBaseId
         - **403 Forbidden**: Missing required scope
-        - **500 Internal Server Error**: Data retrieval failure
       tags:
         - Tools
       security:
@@ -775,8 +744,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
           $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
-        '500':
-          $ref: '#/components/responses/Internal500'
     patch:
       operationId: updateTool
       summary: Update a tool
@@ -806,7 +773,6 @@ paths:
         - **404 Not Found**: Invalid toolId
         - **403 Forbidden**: Missing required scope
         - **409 Conflict**: Concurrent modification of the tool (the resource is being modified by another operation)
-        - **500 Internal Server Error**: Update processing failure
       tags:
         - Tools
       security:
@@ -838,8 +804,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '409':
           $ref: '#/components/responses/Aborted409'
-        '500':
-          $ref: '#/components/responses/Internal500'
     delete:
       operationId: deleteTool
       summary: Delete a tool
@@ -862,7 +826,6 @@ paths:
         - **204 No Content**: Successful deletion (no body)
         - **404 Not Found**: Invalid toolId
         - **403 Forbidden**: Missing required scope
-        - **500 Internal Server Error**: Deletion processing failure
       tags:
         - Tools
       security:
@@ -882,8 +845,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
           $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
-        '500':
-          $ref: '#/components/responses/Internal500'
   /knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call:
     post:
       operationId: callTool
@@ -925,7 +886,6 @@ paths:
         - **403 Forbidden**: Missing required scope
         - **404 Not Found**: Invalid toolId or knowledgeBaseId
         - **422 Unprocessable**: Tool is disabled or arguments are semantically invalid
-        - **500 Internal Server Error**: Platform internal error (not an upstream tool failure; upstream failures are reported via the 200 envelope as described above)
       tags:
         - Tools
       parameters:
@@ -975,8 +935,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
         '422':
           $ref: '#/components/responses/ToolInvalidInput422'
-        '500':
-          $ref: '#/components/responses/Internal500'
 components:
   securitySchemes:
     openId:
@@ -1283,27 +1241,6 @@ components:
             Optional human-readable business context message, per CAMARA API Design Guide §3.1.
           example: The upstream tool returned a non-2xx status code.
   responses:
-    Internal500:
-      description: Internal Server Error
-      headers:
-        x-correlator:
-          $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '../common/CAMARA_common.yaml#/components/schemas/ErrorInfo'
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 500
-                  code:
-                    enum:
-                      - INTERNAL
-          examples:
-            GENERIC_500_INTERNAL:
-              $ref: '../common/CAMARA_common.yaml#/components/examples/GENERIC_500_INTERNAL'
     UnsupportedMediaType415:
       description: Unsupported Media Type
       headers:

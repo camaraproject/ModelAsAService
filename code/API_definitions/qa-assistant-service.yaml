@@ -109,9 +109,6 @@ paths:
         - **404 Not Found**:
           - Assistant doesn't exist
           - Identifier not found
-        - **500 Internal Server Error**:
-          - LLM processing failure
-          - Knowledge base access error
       tags:
         - Query
       parameters:
@@ -143,8 +140,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
           $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
-        '500':
-          $ref: '#/components/responses/Internal500'
 components:
   securitySchemes:
     openId:
@@ -220,25 +215,3 @@ components:
           maxLength: 255
           description: Optional reference identifier to the knowledge base source used for the answer
           example: kb123_section5
-  responses:
-    Internal500:
-      description: Internal Server Error
-      headers:
-        x-correlator:
-          $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '../common/CAMARA_common.yaml#/components/schemas/ErrorInfo'
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 500
-                  code:
-                    enum:
-                      - INTERNAL
-          examples:
-            GENERIC_500_INTERNAL:
-              $ref: '../common/CAMARA_common.yaml#/components/examples/GENERIC_500_INTERNAL'

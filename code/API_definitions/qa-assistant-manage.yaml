@@ -80,7 +80,6 @@ paths:
         - **400 Bad Request**: Missing parameters or invalid values (e.g., temperature out of range)
         - **403 Forbidden**: Missing required scope
         - **422 Unprocessable**: One or more `toolIds` are invalid (do not exist, or do not belong to the specified `knowledgeBaseId`)
-        - **500 Internal Server Error**: Assistant creation failure
       tags:
         - Assistants
       parameters:
@@ -112,8 +111,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '422':
           $ref: '#/components/responses/InvalidToolIds422'
-        '500':
-          $ref: '#/components/responses/Internal500'
     get:
       operationId: listAssistants
       summary: List all QA assistants
@@ -133,7 +130,6 @@ paths:
         - **200 OK**: Array of `Assistant` objects
         - **401 Unauthenticated**: Invalid credentials
         - **403 Forbidden**: Insufficient permissions
-        - **500 Internal Server Error**: Data retrieval failure
       tags:
         - Assistants
       parameters:
@@ -173,8 +169,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/Unauthenticated401'
         '403':
           $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
-        '500':
-          $ref: '#/components/responses/Internal500'
   /assistants/{assistantId}:
     parameters:
       - name: assistantId
@@ -205,7 +199,6 @@ paths:
         - **200 OK**: Complete `Assistant` object
         - **404 Not Found**: Invalid/non-existent assistantId
         - **403 Forbidden**: Missing required scope
-        - **500 Internal Server Error**: Configuration retrieval failure
       tags:
         - Assistants
       security:
@@ -229,8 +222,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
           $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
-        '500':
-          $ref: '#/components/responses/Internal500'
     patch:
       operationId: updateAssistant
       summary: Update a QA assistant
@@ -264,7 +255,6 @@ paths:
         - **404 Not Found**: Invalid assistantId
         - **403 Forbidden**: Missing required scope
         - **422 Unprocessable**: One or more `toolIds` are invalid (do not exist, or do not belong to the specified `knowledgeBaseId`)
-        - **500 Internal Server Error**: Update processing failure
       tags:
         - Assistants
       security:
@@ -316,7 +306,6 @@ paths:
         - **204 No Content**: Successful deletion (no body)
         - **404 Not Found**: Invalid assistantId
         - **403 Forbidden**: Missing required scope
-        - **500 Internal Server Error**: Deletion processing failure
       tags:
         - Assistants
       security:
@@ -336,8 +325,6 @@ paths:
           $ref: '../common/CAMARA_common.yaml#/components/responses/PermissionDenied403'
         '404':
           $ref: '../common/CAMARA_common.yaml#/components/responses/NotFound404'
-        '500':
-          $ref: '#/components/responses/Internal500'
 components:
   securitySchemes:
     openId:
@@ -582,27 +569,6 @@ components:
         updatedAt:
           $ref: '../common/CAMARA_common.yaml#/components/schemas/DateTime'
   responses:
-    Internal500:
-      description: Internal Server Error
-      headers:
-        x-correlator:
-          $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '../common/CAMARA_common.yaml#/components/schemas/ErrorInfo'
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 500
-                  code:
-                    enum:
-                      - INTERNAL
-          examples:
-            GENERIC_500_INTERNAL:
-              $ref: '../common/CAMARA_common.yaml#/components/examples/GENERIC_500_INTERNAL'
     InvalidToolIds422:
       description: |
         One or more IDs in `toolIds` are invalid in the context of this assistant: they either do not exist, or do not belong to the `knowledgeBaseId` referenced in the same request.
