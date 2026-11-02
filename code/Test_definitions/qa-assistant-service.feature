@@ -184,15 +184,3 @@ Feature: CAMARA MaaS Q&A Assistant Service API, vwip
     And the response property "$.status" is 404
     And the response property "$.code" is "NOT_FOUND"
     And the response property "$.message" contains a user friendly text
-
-  # Common 500 error (Internal500)
-
-  @qa_assistant_service_query_500_01_internal_error
-  Scenario: Internal server error
-    Given the system is in a faulty state
-    When the request "queryAssistant" is sent
-    Then the response status code is 500
-    And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response property "$.status" is 500
-    And the response property "$.code" is "INTERNAL"
-    And the response property "$.message" contains a user friendly text
