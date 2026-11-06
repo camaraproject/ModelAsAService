@@ -16,17 +16,17 @@ repository:
   # Initialized to the latest release; update when planning the next release.
   # - New release cycle (increment first number, reset second to 1)
   # - Progression in same cycle (increment second number)
-  target_release_tag: r2.2
+  target_release_tag: r2.3
 
   # Release type being prepared (must be set before release can be triggered)
   # Options: none | pre-release-alpha | pre-release-rc | public-release | maintenance-release
-  target_release_type: pre-release-rc
+  target_release_type: public-release
 
 # Dependencies on Commonalities and ICM releases
 # Update per ReleaseManagement requirements for each release cycle
 dependencies:
-  commonalities_release: r4.4
-  identity_consent_management_release: r4.2
+  commonalities_release: r4.4 (0.9.0)
+  identity_consent_management_release: r4.2 (0.5.0)
 
 # APIs in this repository
 # - api_name: kebab-case identifier (must be filename in code/API_definitions/)
@@ -34,16 +34,16 @@ dependencies:
 apis:
   - api_name: knowledge-base
     target_api_version: 0.2.0
-    target_api_status: rc
+    target_api_status: public
     main_contacts:
       - lihaojie-CMCC
   - api_name: qa-assistant-manage
     target_api_version: 0.2.0
-    target_api_status: rc
+    target_api_status: public
     main_contacts:
       - lihaojie-CMCC
   - api_name: qa-assistant-service
     target_api_version: 0.2.0
-    target_api_status: rc
+    target_api_status: public
     main_contacts:
       - lihaojie-CMCC
