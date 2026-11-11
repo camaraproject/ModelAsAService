@@ -1,4 +1,4 @@
-Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
+Feature: CAMARA MaaS Knowledge Base API, v0.2.0 - Operation uploadDocument
 
     CAMARA Commonalities: 0.9.0
 
@@ -14,7 +14,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
 
   Background: Common knowledge-base setup
     Given an environment at "apiRoot"
-    And the resource "/knowledge-base/vwip/knowledge-bases"
+    And the resource "/knowledge-base/v0.2/knowledge-bases"
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
@@ -25,7 +25,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
   Scenario: Upload valid document to knowledge base
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents"
     And a valid document file with format pdf is available
     When the request "uploadDocument" is sent
     Then the response status code is 201
@@ -42,7 +42,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
   Scenario Outline: Upload document - all three processing_status values are observable
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents"
     And the document indexing for this upload is configured to end with status "<processing_status>"
     And a valid document file with format pdf is available
     When the request "uploadDocument" is sent
@@ -62,7 +62,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing document created by operation "uploadDocument"
     And the path parameter "documentId" is set to the value of the identifier for that document
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
     When the request "getDocument" is sent
     Then the response status code is 200
     And the response body complies with the OAS schema at "#/components/schemas/Document"
@@ -75,7 +75,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
   Scenario: Invalid document file format in the multipart "document" part (400)
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents"
     And the request body's "document" form part contains a file whose format is not one of "DOC", "PDF", "TXT", "CSV"
     When the request "uploadDocument" is sent
     Then the response status code is 400
@@ -90,7 +90,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
   Scenario: Unsupported MIME type for document upload (415)
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents"
     And the request "Content-Type" header is set to "application/xml" instead of "multipart/form-data"
     And a valid document file with format pdf is available
     When the request "uploadDocument" is sent
@@ -106,7 +106,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
   Scenario: Request body strictness - undeclared multipart form part is rejected
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents"
     And the request body contains an undeclared form part "metadata" in addition to "document"
     And a valid document file with format pdf is available
     When the request "uploadDocument" is sent
@@ -121,7 +121,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
   Scenario: Invalid x-correlator header value
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents"
     And a valid document file with format pdf is available
     And the header "x-correlator" is set to "invalid correlator!"
     When the request "uploadDocument" is sent
@@ -135,7 +135,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
   Scenario: Error response for no header "Authorization"
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents"
     And a valid document file with format pdf is available
     And the header "Authorization" is not sent
     When the request "uploadDocument" is sent
@@ -150,7 +150,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
   Scenario: Error response for no access token in the "Authorization" header
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents"
     And a valid document file with format pdf is available
     And the header "Authorization" is set to "Bearer"
     When the request "uploadDocument" is sent
@@ -165,7 +165,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
   Scenario: Error response for expired access token
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents"
     And a valid document file with format pdf is available
     And the header "Authorization" is set to an expired access token
     When the request "uploadDocument" is sent
@@ -180,7 +180,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
   Scenario: Missing access token scope
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents"
     And a valid document file with format pdf is available
     And the header "Authorization" is set to an access token that does not include scope "knowledge-base:documents:create"
     When the request "uploadDocument" is sent
@@ -194,7 +194,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation uploadDocument
   @knowledge_base_upload_document_404_01_not_found
   Scenario: non-existing knowledgeBaseId
     Given the path parameter "knowledgeBaseId" is set to a random UUID
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents"
     And a valid document file with format pdf is available
     When the request "uploadDocument" is sent
     Then the response status code is 404

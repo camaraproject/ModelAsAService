@@ -1,4 +1,4 @@
-Feature: CAMARA MaaS Knowledge Base API, vwip - Operation listTools
+Feature: CAMARA MaaS Knowledge Base API, v0.2.0 - Operation listTools
 
     CAMARA Commonalities: 0.9.0
 
@@ -14,7 +14,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation listTools
 
   Background: Common knowledge-base setup
     Given an environment at "apiRoot"
-    And the resource "/knowledge-base/vwip/knowledge-bases"
+    And the resource "/knowledge-base/v0.2/knowledge-bases"
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
@@ -25,7 +25,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation listTools
   Scenario: List tools successfully
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools"
     And at least an existing tool created by operation "createTool"
     When the request "listTools" is sent
     Then the response status code is 200
@@ -38,7 +38,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation listTools
   Scenario: No existing tools in a knowledge base
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools"
     And no tools have been created by operation "createTool"
     When the request "listTools" is sent
     Then the response status code is 200
@@ -54,7 +54,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation listTools
   Scenario: PerPage exceeds maximum allowed value
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools"
     And the query parameter "perPage" is set to 999
     When the request "listTools" is sent
     Then the response status code is 400
@@ -68,7 +68,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation listTools
   Scenario: Invalid negative page parameter
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools"
     And the query parameter "page" is set to -1
     When the request "listTools" is sent
     Then the response status code is 400
@@ -82,7 +82,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation listTools
   Scenario: Invalid x-correlator header value
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools"
     And the header "x-correlator" is set to "invalid correlator!"
     When the request "listTools" is sent
     Then the response status code is 400
@@ -95,7 +95,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation listTools
   Scenario: Error response for no header "Authorization"
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools"
     And the header "Authorization" is not sent
     When the request "listTools" is sent
     Then the response status code is 401
@@ -109,7 +109,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation listTools
   Scenario: Error response for no access token in the "Authorization" header
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools"
     And the header "Authorization" is set to "Bearer"
     When the request "listTools" is sent
     Then the response status code is 401
@@ -123,7 +123,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation listTools
   Scenario: Error response for expired access token
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools"
     And the header "Authorization" is set to an expired access token
     When the request "listTools" is sent
     Then the response status code is 401
@@ -137,7 +137,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation listTools
   Scenario: Missing access token scope
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools"
     And the header "Authorization" is set to an access token that does not include scope "knowledge-base:tools:read"
     When the request "listTools" is sent
     Then the response status code is 403
@@ -150,7 +150,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation listTools
   @knowledge_base_tool_list_404_01_not_found
   Scenario: non-existing knowledgeBaseId
     Given the path parameter "knowledgeBaseId" is set to a random UUID
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools"
     When the request "listTools" is sent
     Then the response status code is 404
     And the response header "x-correlator" has the same value as the request header "x-correlator"

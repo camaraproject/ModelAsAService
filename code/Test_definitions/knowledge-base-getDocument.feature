@@ -1,4 +1,4 @@
-Feature: CAMARA MaaS Knowledge Base API, vwip - Operation getDocument
+Feature: CAMARA MaaS Knowledge Base API, v0.2.0 - Operation getDocument
 
     CAMARA Commonalities: 0.9.0
 
@@ -14,7 +14,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation getDocument
 
   Background: Common knowledge-base setup
     Given an environment at "apiRoot"
-    And the resource "/knowledge-base/vwip/knowledge-bases"
+    And the resource "/knowledge-base/v0.2/knowledge-bases"
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
@@ -27,7 +27,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation getDocument
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing document created by operation "uploadDocument"
     And the path parameter "documentId" is set to the value of the identifier for that document
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
     When the request "getDocument" is sent
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
@@ -41,7 +41,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation getDocument
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And the path parameter "documentId" is set to a random UUID
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
     When the request "getDocument" is sent
     Then the response status code is 404
     And the response header "x-correlator" has the same value as the request header "x-correlator"
@@ -56,7 +56,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation getDocument
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And the path parameter "documentId" is set to "not-a-uuid"
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
     When the request "getDocument" is sent
     Then the response status code is 400
     And the response header "x-correlator" has the same value as the request header "x-correlator"
@@ -71,7 +71,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation getDocument
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing document created by operation "uploadDocument"
     And the path parameter "documentId" is set to the value of the identifier for that document
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
     And the header "x-correlator" is set to "invalid correlator!"
     When the request "getDocument" is sent
     Then the response status code is 400
@@ -86,7 +86,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation getDocument
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing document created by operation "uploadDocument"
     And the path parameter "documentId" is set to the value of the identifier for that document
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
     And the header "Authorization" is not sent
     When the request "getDocument" is sent
     Then the response status code is 401
@@ -102,7 +102,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation getDocument
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing document created by operation "uploadDocument"
     And the path parameter "documentId" is set to the value of the identifier for that document
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
     And the header "Authorization" is set to "Bearer"
     When the request "getDocument" is sent
     Then the response status code is 401
@@ -118,7 +118,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation getDocument
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing document created by operation "uploadDocument"
     And the path parameter "documentId" is set to the value of the identifier for that document
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
     And the header "Authorization" is set to an expired access token
     When the request "getDocument" is sent
     Then the response status code is 401
@@ -134,7 +134,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation getDocument
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing document created by operation "uploadDocument"
     And the path parameter "documentId" is set to the value of the identifier for that document
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/documents/{documentId}"
     And the header "Authorization" is set to an access token that does not include scope "knowledge-base:documents:read"
     When the request "getDocument" is sent
     Then the response status code is 403

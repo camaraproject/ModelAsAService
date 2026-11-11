@@ -1,4 +1,4 @@
-Feature: CAMARA MaaS Knowledge Base API, vwip - Operation deleteTool
+Feature: CAMARA MaaS Knowledge Base API, v0.2.0 - Operation deleteTool
 
     CAMARA Commonalities: 0.9.0
 
@@ -14,7 +14,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation deleteTool
 
   Background: Common knowledge-base setup
     Given an environment at "apiRoot"
-    And the resource "/knowledge-base/vwip/knowledge-bases"
+    And the resource "/knowledge-base/v0.2/knowledge-bases"
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
@@ -27,7 +27,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation deleteTool
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     When the request "deleteTool" is sent
     Then the response status code is 204
     And the response header "x-correlator" has the same value as the request header "x-correlator"
@@ -40,7 +40,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation deleteTool
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And the path parameter "toolId" is set to a random UUID
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     When the request "deleteTool" is sent
     Then the response status code is 404
     And the response header "x-correlator" has the same value as the request header "x-correlator"
@@ -54,7 +54,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation deleteTool
     Given an existing knowledge base created by operation "createKnowledgeBase"
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And the path parameter "toolId" is set to "not-a-uuid"
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     When the request "deleteTool" is sent
     Then the response status code is 400
     And the response header "x-correlator" has the same value as the request header "x-correlator"
@@ -69,7 +69,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation deleteTool
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     And the header "x-correlator" is set to "invalid correlator!"
     When the request "deleteTool" is sent
     Then the response status code is 400
@@ -84,7 +84,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation deleteTool
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     And the header "Authorization" is not sent
     When the request "deleteTool" is sent
     Then the response status code is 401
@@ -100,7 +100,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation deleteTool
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     And the header "Authorization" is set to "Bearer"
     When the request "deleteTool" is sent
     Then the response status code is 401
@@ -116,7 +116,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation deleteTool
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     And the header "Authorization" is set to an expired access token
     When the request "deleteTool" is sent
     Then the response status code is 401
@@ -132,7 +132,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation deleteTool
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     And the header "Authorization" is set to an access token that does not include scope "knowledge-base:tools:delete"
     When the request "deleteTool" is sent
     Then the response status code is 403
@@ -148,7 +148,7 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation deleteTool
     And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
     And an existing tool created by operation "createTool"
     And the path parameter "toolId" is set to the value of the identifier for that tool
-    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
+    And the resource "/knowledge-base/v0.2/knowledge-bases/{knowledgeBaseId}/tools/{toolId}"
     And that tool has been deleted by operation "deleteTool"
     When the request "getTool" is sent
     Then the response status code is 404
