@@ -30,6 +30,18 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation createKnowledgeBase
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "#/components/schemas/KnowledgeBase"
 
+  # Lifecycle / state verification scenarios (issue #87)
+
+  @knowledge_base_create_02_create_then_get_lifecycle
+  Scenario: Create then get - the created knowledge base is retrievable
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    When the request "getKnowledgeBase" is sent
+    Then the response status code is 200
+    And the response body complies with the OAS schema at "#/components/schemas/KnowledgeBase"
+    And the response property "$.knowledgeBaseId" has the same value as the identifier of that knowledge base
+    And the response property "$.name" has the same value as the name used when that knowledge base was created
+
   ############################ Error Scenarios #############################################
 
   # Syntax Error scenarios
@@ -88,3 +100,64 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation createKnowledgeBase
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.status" is 409
     And the response property "$.code" is "ALREADY_EXISTS"
+
+  # Common mandatory error scenarios (issue #87)
+
+  @knowledge_base_create_400_04_unknown_top_level_property
+  Scenario: Request body strictness - undeclared property is rejected
+    Given the request body is set by default to a request body compliant with the schema at "#/components/schemas/KnowledgeBaseCreateRequest"
+    And the request body property "$.unknownProperty" is set to "value"
+    When the request "createKnowledgeBase" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_create_400_05_invalid_x_correlator
+  Scenario: Invalid x-correlator header value
+    Given the request body is set by default to a request body compliant with the schema at "#/components/schemas/KnowledgeBaseCreateRequest"
+    And the header "x-correlator" is set to "invalid correlator!"
+    When the request "createKnowledgeBase" is sent
+    Then the response status code is 400
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_create_401_01_no_authorization_header
+  Scenario: Error response for no header "Authorization"
+    Given the request body is set by default to a request body compliant with the schema at "#/components/schemas/KnowledgeBaseCreateRequest"
+    And the header "Authorization" is not sent
+    When the request "createKnowledgeBase" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_create_401_02_no_access_token
+  Scenario: Error response for no access token in the "Authorization" header
+    Given the request body is set by default to a request body compliant with the schema at "#/components/schemas/KnowledgeBaseCreateRequest"
+    And the header "Authorization" is set to "Bearer"
+    When the request "createKnowledgeBase" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_create_401_03_expired_access_token
+  Scenario: Error response for expired access token
+    Given the request body is set by default to a request body compliant with the schema at "#/components/schemas/KnowledgeBaseCreateRequest"
+    And the header "Authorization" is set to an expired access token
+    When the request "createKnowledgeBase" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
