@@ -45,3 +45,116 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation listTools
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.items" is an empty array "[]"
     And the response property "$.pagination" complies with the OAS schema at "#/components/schemas/Pagination"
+
+  ############################ Error Scenarios #############################################
+
+  # Common mandatory error scenarios (issue #87)
+
+  @knowledge_base_tool_list_400_01_perPage_exceeds_max
+  Scenario: PerPage exceeds maximum allowed value
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the query parameter "perPage" is set to 999
+    When the request "listTools" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "OUT_OF_RANGE"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_tool_list_400_02_page_negative
+  Scenario: Invalid negative page parameter
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the query parameter "page" is set to -1
+    When the request "listTools" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_tool_list_400_03_invalid_x_correlator
+  Scenario: Invalid x-correlator header value
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the header "x-correlator" is set to "invalid correlator!"
+    When the request "listTools" is sent
+    Then the response status code is 400
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_tool_list_401_01_no_authorization_header
+  Scenario: Error response for no header "Authorization"
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the header "Authorization" is not sent
+    When the request "listTools" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_tool_list_401_02_no_access_token
+  Scenario: Error response for no access token in the "Authorization" header
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the header "Authorization" is set to "Bearer"
+    When the request "listTools" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_tool_list_401_03_expired_access_token
+  Scenario: Error response for expired access token
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the header "Authorization" is set to an expired access token
+    When the request "listTools" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_tool_list_403_01_missing_scope
+  Scenario: Missing access token scope
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    And the header "Authorization" is set to an access token that does not include scope "knowledge-base:tools:read"
+    When the request "listTools" is sent
+    Then the response status code is 403
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 403
+    And the response property "$.code" is "PERMISSION_DENIED"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_tool_list_404_01_not_found
+  Scenario: non-existing knowledgeBaseId
+    Given the path parameter "knowledgeBaseId" is set to a random UUID
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools"
+    When the request "listTools" is sent
+    Then the response status code is 404
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 404
+    And the response property "$.code" is "NOT_FOUND"
+    And the response property "$.message" contains a user friendly text

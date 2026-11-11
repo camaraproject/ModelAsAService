@@ -44,3 +44,80 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation getKnowledgeBase
     And the response property "$.status" is 404
     And the response property "$.code" is "NOT_FOUND"
     And the response property "$.message" contains a user friendly text
+
+  # Common mandatory error scenarios (issue #87)
+
+  @knowledge_base_get_400_01_malformed_knowledge_base_id
+  Scenario: Invalid Argument. Malformed knowledgeBaseId (not a UUID)
+    Given the path parameter "knowledgeBaseId" is set to "not-a-uuid"
+    When the request "getKnowledgeBase" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_get_400_02_invalid_x_correlator
+  Scenario: Invalid x-correlator header value
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the header "x-correlator" is set to "invalid correlator!"
+    When the request "getKnowledgeBase" is sent
+    Then the response status code is 400
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_get_401_01_no_authorization_header
+  Scenario: Error response for no header "Authorization"
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the header "Authorization" is not sent
+    When the request "getKnowledgeBase" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_get_401_02_no_access_token
+  Scenario: Error response for no access token in the "Authorization" header
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the header "Authorization" is set to "Bearer"
+    When the request "getKnowledgeBase" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_get_401_03_expired_access_token
+  Scenario: Error response for expired access token
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the header "Authorization" is set to an expired access token
+    When the request "getKnowledgeBase" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_get_403_01_missing_scope
+  Scenario: Missing access token scope
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the header "Authorization" is set to an access token that does not include scope "knowledge-base:knowledge-bases:read"
+    When the request "getKnowledgeBase" is sent
+    Then the response status code is 403
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 403
+    And the response property "$.code" is "PERMISSION_DENIED"
+    And the response property "$.message" contains a user friendly text
