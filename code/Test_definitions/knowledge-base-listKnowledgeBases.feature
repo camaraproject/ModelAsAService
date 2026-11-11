@@ -64,3 +64,59 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation listKnowledgeBases
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
+
+  # Common mandatory error scenarios (issue #87)
+
+  @knowledge_base_list_400_02_page_negative
+  Scenario: Invalid negative page parameter
+    Given the query parameter "page" is set to -1
+    When the request "listKnowledgeBases" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_list_400_03_invalid_x_correlator
+  Scenario: Invalid x-correlator header value
+    Given the header "x-correlator" is set to "invalid correlator!"
+    When the request "listKnowledgeBases" is sent
+    Then the response status code is 400
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_list_401_01_no_authorization_header
+  Scenario: Error response for no header "Authorization"
+    Given the header "Authorization" is not sent
+    When the request "listKnowledgeBases" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_list_401_02_no_access_token
+  Scenario: Error response for no access token in the "Authorization" header
+    Given the header "Authorization" is set to "Bearer"
+    When the request "listKnowledgeBases" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_list_403_01_missing_scope
+  Scenario: Missing access token scope
+    Given the header "Authorization" is set to an access token that does not include scope "knowledge-base:knowledge-bases:read"
+    When the request "listKnowledgeBases" is sent
+    Then the response status code is 403
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 403
+    And the response property "$.code" is "PERMISSION_DENIED"
+    And the response property "$.message" contains a user friendly text
