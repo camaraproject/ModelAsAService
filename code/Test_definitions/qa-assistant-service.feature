@@ -65,6 +65,43 @@ Feature: CAMARA MaaS Q&A Assistant Service API, vwip
     And the response property "$.finished" is "ERROR"
     And the response property "$.success" is false
 
+  # Coverage completeness scenarios (issue #88)
+
+  @qa_assistant_service_query_06_response_field_formats
+  Scenario: Valid format of the QueryResponse fields
+    Given the request body is set by default to a request body compliant with the schema at "#/components/schemas/QueryRequest"
+    When the request "queryAssistant" is sent
+    Then the response status code is 200
+    And the response body complies with the OAS schema at "#/components/schemas/QueryResponse"
+    And the response property "$.success" is a boolean
+    And the response property "$.finished" is one of "STOP", "LENGTH", "ERROR", "FILTER"
+    And the response property "$.answerText" is a string
+
+  @qa_assistant_service_query_07_lifecycle_assistant_exists
+  Scenario: Lifecycle state - the referenced assistant exists
+    Given the request body is set by default to a request body compliant with the schema at "#/components/schemas/QueryRequest"
+    And the request body property "$.assistantId" is set to the identifier of an existing assistant
+    When the request "queryAssistant" is sent
+    Then the response status code is 200
+    And the response body complies with the OAS schema at "#/components/schemas/QueryResponse"
+
+  @qa_assistant_service_query_08_lifecycle_assistant_active
+  Scenario: Lifecycle state - the referenced assistant is active
+    Given the request body is set by default to a request body compliant with the schema at "#/components/schemas/QueryRequest"
+    And the request body property "$.assistantId" is set to the identifier of an existing active assistant
+    When the request "queryAssistant" is sent
+    Then the response status code is 200
+    And the response property "$.success" is true
+    And the response property "$.finished" is "STOP"
+
+  @qa_assistant_service_query_09_lifecycle_knowledge_base_available
+  Scenario: Lifecycle state - the assistant's knowledge base is available
+    Given the request body is set by default to a request body compliant with the schema at "#/components/schemas/QueryRequest"
+    And the request body property "$.assistantId" is set to the identifier of an existing active assistant whose knowledge base contains documents with status "READY"
+    When the request "queryAssistant" is sent
+    Then the response status code is 200
+    And the response body complies with the OAS schema at "#/components/schemas/QueryResponse"
+
   ############################ Error Scenarios #############################################
 
   # Syntax Error scenarios
@@ -184,3 +221,91 @@ Feature: CAMARA MaaS Q&A Assistant Service API, vwip
     And the response property "$.status" is 404
     And the response property "$.code" is "NOT_FOUND"
     And the response property "$.message" contains a user friendly text
+
+  # Mandatory / recommended / completeness error scenarios (issue #88)
+
+  @qa_assistant_service_query_400_06_invalid_x_correlator
+  Scenario: Invalid x-correlator header value
+    Given the request body is set by default to a request body compliant with the schema at "#/components/schemas/QueryRequest"
+    And the header "x-correlator" is set to "invalid correlator!"
+    When the request "queryAssistant" is sent
+    Then the response status code is 400
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @qa_assistant_service_query_400_07_malformed_assistant_id
+  Scenario: assistantId is not a valid UUID
+    Given the request body is set by default to a request body compliant with the schema at "#/components/schemas/QueryRequest"
+    And the request body property "$.assistantId" is set to "not-a-uuid"
+    When the request "queryAssistant" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @qa_assistant_service_query_400_08_empty_prompt
+  Scenario: Empty prompt violates minLength 1
+    Given the request body is set by default to a request body compliant with the schema at "#/components/schemas/QueryRequest"
+    And the request body property "$.prompt" is set to ""
+    When the request "queryAssistant" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @qa_assistant_service_query_400_09_prompt_whitespace_only
+  Scenario: Whitespace-only prompt is rejected
+    Given the request body is set by default to a request body compliant with the schema at "#/components/schemas/QueryRequest"
+    And the request body property "$.prompt" is set to a string containing only whitespace
+    When the request "queryAssistant" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @qa_assistant_service_query_400_10_unknown_property
+  Scenario: Undeclared property is rejected (400 unknown property)
+    Given the request body is set by default to a request body compliant with the schema at "#/components/schemas/QueryRequest"
+    And the request body property "$.unknownProperty" is set to "value"
+    When the request "queryAssistant" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @qa_assistant_service_query_400_11_request_body_strictness
+  Scenario Outline: Request body strictness - undeclared properties rejected at any nesting level
+    Given the request body is set by default to a request body compliant with the schema at "#/components/schemas/QueryRequest"
+    And the request body property "<property>" is set to "value"
+    When the request "queryAssistant" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+    Examples:
+      | property                             |
+      | $.unknownProperty                   |
+      | $.extraObject.undeclaredNestedField |
+
+  @qa_assistant_service_query_400_12_error_response_field_formats
+  Scenario: 400 error response fields have the declared format
+    Given the request body is set by default to a request body compliant with the schema at "#/components/schemas/QueryRequest"
+    And the request body property "$.prompt" is set to ""
+    When the request "queryAssistant" is sent
+    Then the response status code is 400
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" is a non-empty string
