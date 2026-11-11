@@ -143,3 +143,121 @@ Feature: CAMARA MaaS Knowledge Base API, vwip - Operation callTool
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response property "$.status" is 403
     And the response property "$.code" is "PERMISSION_DENIED"
+
+  # Common mandatory error scenarios (issue #87)
+
+  @knowledge_base_tool_call_400_02_malformed_tool_id
+  Scenario: Invalid Argument. Malformed toolId (not a UUID)
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And the path parameter "toolId" is set to "not-a-uuid"
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
+    And the request body is set by default to a request body compliant with the schema at "#/components/schemas/ToolCallRequest"
+    When the request "callTool" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_tool_call_400_03_unknown_top_level_property
+  Scenario: Request body strictness - undeclared property is rejected
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And an existing tool created by operation "createTool"
+    And the path parameter "toolId" is set to the value of the identifier for that tool
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
+    And the request body is set by default to a request body compliant with the schema at "#/components/schemas/ToolCallRequest"
+    And the request body property "$.unknownProperty" is set to "value"
+    When the request "callTool" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_tool_call_400_04_invalid_x_correlator
+  Scenario: Invalid x-correlator header value
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And an existing tool created by operation "createTool"
+    And the path parameter "toolId" is set to the value of the identifier for that tool
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
+    And the request body is set by default to a request body compliant with the schema at "#/components/schemas/ToolCallRequest"
+    And the header "x-correlator" is set to "invalid correlator!"
+    When the request "callTool" is sent
+    Then the response status code is 400
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_tool_call_400_05_missing_required_property
+  Scenario: Error response for missing required property "arguments" in request body
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And an existing tool created by operation "createTool"
+    And the path parameter "toolId" is set to the value of the identifier for that tool
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
+    And the request body is set by default to a request body compliant with the schema at "#/components/schemas/ToolCallRequest"
+    And the request body property "$.arguments" is not included
+    When the request "callTool" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_tool_call_401_01_no_authorization_header
+  Scenario: Error response for no header "Authorization"
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And an existing tool created by operation "createTool"
+    And the path parameter "toolId" is set to the value of the identifier for that tool
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
+    And the request body is set by default to a request body compliant with the schema at "#/components/schemas/ToolCallRequest"
+    And the header "Authorization" is not sent
+    When the request "callTool" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_tool_call_401_02_no_access_token
+  Scenario: Error response for no access token in the "Authorization" header
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And an existing tool created by operation "createTool"
+    And the path parameter "toolId" is set to the value of the identifier for that tool
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
+    And the request body is set by default to a request body compliant with the schema at "#/components/schemas/ToolCallRequest"
+    And the header "Authorization" is set to "Bearer"
+    When the request "callTool" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
+
+  @knowledge_base_tool_call_401_03_expired_access_token
+  Scenario: Error response for expired access token
+    Given an existing knowledge base created by operation "createKnowledgeBase"
+    And the path parameter "knowledgeBaseId" is set to the value of the identifier for that knowledge base
+    And an existing tool created by operation "createTool"
+    And the path parameter "toolId" is set to the value of the identifier for that tool
+    And the resource "/knowledge-base/vwip/knowledge-bases/{knowledgeBaseId}/tools/{toolId}/call"
+    And the request body is set by default to a request body compliant with the schema at "#/components/schemas/ToolCallRequest"
+    And the header "Authorization" is set to an expired access token
+    When the request "callTool" is sent
+    Then the response status code is 401
+    And the response header "x-correlator" has the same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 401
+    And the response property "$.code" is "UNAUTHENTICATED"
+    And the response property "$.message" contains a user friendly text
