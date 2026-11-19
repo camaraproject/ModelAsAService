@@ -176,7 +176,8 @@ Changes documented below are compared to version 0.1.0.
 
 ### Breaking changes
 
-* Replace deprecated GenericXXX error schemas with Commonalities r4.4 common error schemas by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/71
+* `QueryResponse.finished`: the enum values changed from `Stop`, `Length`, `Error`, `Filter` to `STOP`, `LENGTH`, `ERROR`, `FILTER` by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/33
+* Error codes: `INVALID_ASSISTANT_ID` and `MISSING_PROMPT` (400), `INVALID_TOKEN_CONTEXT` (403), and `ASSISTANT_NOT_FOUND` and `IDENTIFIER_NOT_FOUND` (404) were removed. `queryAssistant` returns `INVALID_ARGUMENT` or `OUT_OF_RANGE` (400), `PERMISSION_DENIED` (403) and `NOT_FOUND` (404) by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/33 and https://github.com/camaraproject/ModelAsAService/pull/71
 
 ### Added
 
