@@ -109,10 +109,7 @@ Changes documented below are compared to version 0.1.0.
 
 ### Fixed
 
-* Removed `additionalProperties: false` from the `allOf` inline branch of `ToolCreateRequest` and `ToolUpdateRequest`. In OpenAPI 3.0, `additionalProperties` does not propagate through `allOf`, so a `false` value on a branch with no own properties rejected every property (including required `name`/`url`), making the request schemas unsatisfiable for strict validators. Request body strictness for these composed schemas is now enforced by the `request-body-strictness` rule in `info.description`, as required by CAMARA API Design Guide §2.3 (issue [#43](https://github.com/camaraproject/ModelAsAService/issues/43)).
-* Update API files for Sync26 Release r2.2 by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/63
-  * Removed the contradiction between the Security considerations text and the enforced `https`-only constraint (issue [#56](https://github.com/camaraproject/ModelAsAService/issues/56)). The Security considerations section (introduced for the SSRF mitigation of issue #40) documented three aspects of the tool `url` protocol restriction, one of which contradicted the other two: the schema enforces `https` unconditionally via `pattern: '^https://.*'` (an `http://` URL is rejected at write time with `400 INVALID_ARGUMENT`) and the `ToolCommon.url` description states "MUST use the `https` scheme", but the URL scheme bullet of the Security considerations still read "Only `https` (and optionally `http` for non-sensitive, explicitly documented local testing) URLs are accepted" - an exception the schema does not implement. The parenthetical was removed so the bullet now reads "Only `https` URLs are accepted."; in the same pass the ports bullet was aligned ("e.g. `443` for HTTPS, optionally `80` for HTTP" → "e.g. `443` for HTTPS"), since port 80 is unreachable under the `https`-only constraint. Documentation-only change; the enforced behaviour is unchanged.
-* Clean up 'GenericXXX' in Test_definitions by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/77
+* N/A
 
 ### Removed
 
