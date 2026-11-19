@@ -187,9 +187,11 @@ Changes documented below are compared to version 0.1.0.
 
 ### Changed
 
-* Clarified in the `queryAssistant` operation description that only documents with indexing `status = READY` in the associated knowledge bases participate in answer generation (issue [#48](https://github.com/camaraproject/ModelAsAService/issues/48)). Documents in `PROCESSING` or `FAILED` status are excluded. This is a documentation-only change; the request/response structure is unchanged.
-* Update API files for Sync26 Release r2.2 by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/63
-  * Aligned with Commonalities r4.4 (0.9.0): the `x-camara-commonalities` marker updated from 0.8.0 to 0.9.0 and the `info.description` Commonalities reference updated to the r4.4 template wording (the applicable Commonalities Release is now identified from the `x-camara-commonalities` field, the changelog and the released API version metadata). The components `$ref`-ed by this API from `code/common/CAMARA_common.yaml` are unchanged between r4.3 and r4.4. No behavioural change to this API. The test file `qa-assistant-service.feature` received only the same marker update (16 scenarios, below the 50-scenarios-per-file limit, so no split was needed).
+* The `QueryResponse.finished` enum values are now uppercase. This is a breaking change (see Breaking changes above).
+* Error codes were aligned with the standard CAMARA error codes. This is a breaking change (see Breaking changes above).
+* Documented the relationship between `success` and `finished` in `QueryResponse`: `STOP` and `LENGTH` mean `success=true`, `ERROR` and `FILTER` mean `success=false`; the HTTP status is `200` for every value of `finished` by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/54
+* Only documents with `status = READY` in the associated knowledge bases are used for answer generation by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/54
+* Aligned with Commonalities r4.4 (0.9.0), from 0.6 in version 0.1.0: unknown request body properties are now rejected with `400 INVALID_ARGUMENT` by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/33, https://github.com/camaraproject/ModelAsAService/pull/63 and https://github.com/camaraproject/ModelAsAService/pull/71
 
 ### Fixed
 
