@@ -199,7 +199,7 @@ Changes documented below are compared to version 0.1.0.
 
 ### Removed
 
-* Remove 500 responses from API definitions and test cases by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/83
+* The documented `500` response was removed from the operation by @lihaojie-CMCC in https://github.com/camaraproject/ModelAsAService/pull/83
 
 **Full Changelog**: https://github.com/camaraproject/ModelAsAService/compare/r1.2...r2.3
 
